@@ -11,14 +11,14 @@ CSS CUSTOM PROPERTIES (Theme Variables)
 
 :root {
     /* Light mode colors (default) */
-    --theme-bg: #fffff8;
-    --theme-text: #111;
-    --theme-heading: #111;
-    --theme-code-bg: #f7f7f7;
+    --theme-bg: #e8e6dc;
+    --theme-text: #141413;
+    --theme-heading: #141413;
+    --theme-code-bg: #dcd9ce;
     --theme-code-text: inherit;
-    --theme-code-border: #e7e7e7;
-    --theme-pre-bg: #f7f7f7;
-    --theme-pre-border: #e0e0e0;
+    --theme-code-border: #ccc9be;
+    --theme-pre-bg: #dcd9ce;
+    --theme-pre-border: #ccc9be;
     --theme-line-numbers-border: #ddd;
     --theme-line-numbers-text: #aaa;
     --theme-copy-btn-bg: #fff;
@@ -67,14 +67,14 @@ html:not([data-theme]) {
 /* System preference: only apply dark variables when no explicit theme is set */
 @media (prefers-color-scheme: light) {
     html:not([data-theme]) {
-        --theme-bg: #fffff8;
-        --theme-text: #111;
-        --theme-heading: #111;
-        --theme-code-bg: #f7f7f7;
+        --theme-bg: #e8e6dc;
+        --theme-text: #141413;
+        --theme-heading: #141413;
+        --theme-code-bg: #dcd9ce;
         --theme-code-text: inherit;
-        --theme-code-border: #e7e7e7;
-        --theme-pre-bg: #f7f7f7;
-        --theme-pre-border: #e0e0e0;
+        --theme-code-border: #ccc9be;
+        --theme-pre-bg: #dcd9ce;
+        --theme-pre-border: #ccc9be;
         --theme-line-numbers-border: #ddd;
         --theme-line-numbers-text: #aaa;
         --theme-copy-btn-bg: #fff;
@@ -124,7 +124,9 @@ a:visited {
     text-shadow: none !important;
     background-image: none !important;
     text-decoration: underline !important;
-    text-underline-offset: 0.15em;
+    text-underline-offset: 0.3em;
+    text-decoration-thickness: 1px;
+    text-decoration-skip-ink: auto;
 }
 
 code {

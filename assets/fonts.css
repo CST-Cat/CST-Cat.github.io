@@ -1,0 +1,65 @@
+/*******************************************************************************
+CUSTOM FONTS - 自定义字体
+这个文件需要在其他 CSS 之前加载
+*******************************************************************************/
+
+/* Anthropic Sans - 英文无衬线（用于标题） */
+@font-face {
+    font-family: 'AnthropicSans';
+    src: url('/assets/AnthropicSans-Roman-Web.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AnthropicSans';
+    src: url('/assets/AnthropicSans-Italic-Web.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Anthropic Serif - 英文衬线（用于正文） */
+@font-face {
+    font-family: 'AnthropicSerif';
+    src: url('/assets/AnthropicSerif-Roman-Web.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AnthropicSerif';
+    src: url('/assets/AnthropicSerif-Italic-Web.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* JetBrains Mono - 代码字体 */
+@font-face {
+    font-family: 'JetBrainsMono';
+    src: url('/assets/JetBrainsMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 楷体加粗 - 用于标题中文 */
+@font-face {
+    font-family: 'STKaiBold';
+    src: url('/assets/STKaiBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 宋体加粗 - 用于正文中文 */
+@font-face {
+    font-family: 'STSongBold';
+    src: url('/assets/STSongBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

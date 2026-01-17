@@ -2,6 +2,8 @@
 CSS VARIABLES
 *******************************************************************************/
 
+/* 字体定义已移至 fonts.css */
+
 :root {
     --highlight-weak: rgba(128, 128, 128, 0.2);
     --highlight-strong: rgba(128, 128, 128, 0.4);
@@ -23,6 +25,10 @@ body {
     min-height: 100%;
     display: flex;
     flex-direction: column;
+    /* 正文字体：英文用 AnthropicSerif 衬线，中文用宋体加粗 */
+    font-family: 'AnthropicSerif', 'STSongBold', serif;
+    /* 禁用连字（fi, fl 等不会黏在一起） */
+    font-variant-ligatures: none;
 }
 
 /* Main content fills remaining space */
@@ -87,11 +93,22 @@ h1,
 h2,
 h3,
 h4,
-h5 {
-    font-family: "Gill Sans", "Gill Sans MT", "Helvetica Neue", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-    font-style: normal;
-    font-weight: bold;
-    color: #111;
+h5,
+article h1,
+article h2,
+article h3,
+article h4,
+article h5,
+section h1,
+section h2,
+section h3,
+section h4,
+section h5 {
+    font-family: 'AnthropicSans', 'STKaiBold', sans-serif !important;
+    font-style: normal !important;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #141413;
 }
 
 h2 {
@@ -123,8 +140,15 @@ h5 {
 }
 
 /* English/numeric text in headings */
-.heading-en {
-    font-style: normal;
+.heading-en,
+h1 .heading-en,
+h2 .heading-en,
+h3 .heading-en,
+h4 .heading-en,
+h5 .heading-en {
+    font-family: 'AnthropicSans', sans-serif !important;
+    font-style: normal !important;
+    letter-spacing: 0.05em;
 }
 
 
@@ -182,11 +206,12 @@ pre.has-line-numbers {
     min-width: 1.2em;
     font-size: 1.2rem;
     line-height: 1.5;
-    font-family: monospace;
+    font-family: 'JetBrainsMono', monospace;
 }
 
 /* Inline code */
 code {
+    font-family: 'JetBrainsMono', monospace;
     font-size: 1.2rem;
     background-color: #f7f7f7;
     padding: 0.1em 0.3em;
@@ -433,6 +458,7 @@ sup.footnote-ref {
     position: relative;
     vertical-align: baseline;
     top: -0.5em;
+    margin-left: 0.1em;
 }
 
 .footnote-ref,

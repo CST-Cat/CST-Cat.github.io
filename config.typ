@@ -6,10 +6,10 @@
   // 然后在 `content/` 路径中新建 `Entry/`路径，在其中添加 `index.typ` 作为 Entry 页的内容
   header-links: (
     "/": "Home",
-    "/Politics/": "Politics",
-    "/English/": "English",
-    "/Math/": "Math",
-    "/408/": "408",
+    "/Notes/": "Notes",
+    "/Weekly/": "Weekly",
+    "/Project/": "Project",
+    "/About/": "About",
   ),
   lang: "zh",
   title: "小猫の小窝", // 你的网站在浏览器中显示的标题

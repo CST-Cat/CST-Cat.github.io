@@ -19,6 +19,7 @@
   title: "Tufted",
   lang: "en",
   css: (
+    "/assets/fonts.css",
     "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
     "/assets/tufted.css",
     "/assets/theme.css",
