@@ -72,7 +72,6 @@ TYPOGRAPHY
 /* Paragraph alignment and spacing */
 p {
     text-align: justify;
-    text-justify: inter-ideograph;
     line-height: 2.2rem;
 }
 
@@ -89,6 +88,7 @@ h2,
 h3,
 h4,
 h5 {
+    font-family: "Gill Sans", "Gill Sans MT", "Helvetica Neue", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     font-style: normal;
     font-weight: bold;
     color: #111;
@@ -124,7 +124,7 @@ h5 {
 
 /* English/numeric text in headings */
 .heading-en {
-    font-style: italic;
+    font-style: normal;
 }
 
 
@@ -176,6 +176,7 @@ pre.has-line-numbers {
     margin-right: 0.4em;
     border-right: 1px solid #ddd;
     color: #aaa;
+    -webkit-user-select: none;
     user-select: none;
     text-align: right;
     min-width: 1.2em;
