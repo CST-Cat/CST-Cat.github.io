@@ -9,6 +9,7 @@
     "/Notes/": "Notes",
     "/Weekly/": "Weekly",
     "/Project/": "Project",
+    "/Docs/": "Docs",
   ),
   lang: "zh",
   title: "小猫の小窝", // 你的网站在浏览器中显示的标题

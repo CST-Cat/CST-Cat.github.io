@@ -3,7 +3,7 @@
 
 // 侧边栏个人头像
 #tufted.margin-note[
-  #image("imgs/cat.png")
+  #image("imgs/cat.png", width: 40%)
 ]
 
 #tufted.margin-note[
@@ -19,6 +19,11 @@
 
 == About
 
+// 侧边栏亚托莉
+#tufted.margin-note[
+  #image("imgs/atri1.jpg")
+]
+
 这是一个关于*学习*与*成长*的空间：
 
 - *Notes* — 记录各科目重要知识点
@@ -27,11 +32,6 @@
 
 == My Goal
 
-// 侧边栏亚托莉
-#tufted.margin-note[
-  #image("imgs/atri1.jpg")
-]
-
 正在为 2027 年研究生入学考试努力中！希望通过这个博客督促自己坚持学习，也希望能与同样在备考路上的你互相鼓励 💪
 
 == Together
@@ -39,5 +39,5 @@
 无论你是同为考研人,还是偶然路过的朋友,都欢迎你的到来。让我们一起努力,向着目标前进！
 
 #quote[
-  _千里之行,始于足下._
+  千里之行,始于足下.
 ]
