@@ -26,7 +26,7 @@ body {
     display: flex;
     flex-direction: column;
     /* 正文字体：英文用 AnthropicSerif 衬线，中文用宋体加粗 */
-    font-family: 'AnthropicSerif', 'STSongBold', serif;
+    font-family: 'AnthropicSerif', 'STSong', serif;
     /* 禁用连字（fi, fl 等不会黏在一起） */
     font-variant-ligatures: none;
 }
@@ -104,7 +104,7 @@ section h2,
 section h3,
 section h4,
 section h5 {
-    font-family: 'AnthropicSans', 'STKaiBold', sans-serif !important;
+    font-family: 'AnthropicSans', 'STKaiti', sans-serif !important;
     font-style: normal !important;
     font-weight: 600;
     letter-spacing: 0.05em;

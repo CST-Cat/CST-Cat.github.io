@@ -6,7 +6,7 @@ CUSTOM FONTS - 自定义字体
 /* Anthropic Sans - 英文无衬线（用于标题） */
 @font-face {
     font-family: 'AnthropicSans';
-    src: url('/assets/AnthropicSans-Roman-Web.ttf') format('truetype');
+    src: url('/assets/AnthropicSans-Roman-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -14,7 +14,7 @@ CUSTOM FONTS - 自定义字体
 
 @font-face {
     font-family: 'AnthropicSans';
-    src: url('/assets/AnthropicSans-Italic-Web.ttf') format('truetype');
+    src: url('/assets/AnthropicSans-Italic-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
@@ -23,7 +23,7 @@ CUSTOM FONTS - 自定义字体
 /* Anthropic Serif - 英文衬线（用于正文） */
 @font-face {
     font-family: 'AnthropicSerif';
-    src: url('/assets/AnthropicSerif-Roman-Web.ttf') format('truetype');
+    src: url('/assets/AnthropicSerif-Roman-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -31,7 +31,7 @@ CUSTOM FONTS - 自定义字体
 
 @font-face {
     font-family: 'AnthropicSerif';
-    src: url('/assets/AnthropicSerif-Italic-Web.ttf') format('truetype');
+    src: url('/assets/AnthropicSerif-Italic-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
@@ -40,25 +40,25 @@ CUSTOM FONTS - 自定义字体
 /* JetBrains Mono - 代码字体 */
 @font-face {
     font-family: 'JetBrainsMono';
-    src: url('/assets/JetBrainsMono-Regular.ttf') format('truetype');
+    src: url('/assets/JetBrainsMono-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
-/* 楷体加粗 - 用于标题中文 */
+/* 楷体 - 用于标题中文 */
 @font-face {
-    font-family: 'STKaiBold';
-    src: url('/assets/STKaiBold.ttf') format('truetype');
+    font-family: 'STKaiti';
+    src: url('/assets/STKaiti.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
-/* 宋体加粗 - 用于正文中文 */
+/* 宋体 - 用于正文中文 */
 @font-face {
-    font-family: 'STSongBold';
-    src: url('/assets/STSongBold.ttf') format('truetype');
+    font-family: 'STSong';
+    src: url('/assets/STSong.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
