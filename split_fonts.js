@@ -12,8 +12,8 @@ const CONFIG = {
     // 输入目录：读取 assets 下的原始字体文件
     inputDir: path.join(__dirname, 'assets'),
 
-    // 输出目录：生成到 public/fonts 下
-    outputDir: path.join(__dirname, 'public', 'fonts'),
+    // 输出目录：生成到 assets/fonts 下
+    outputDir: path.join(__dirname, 'assets', 'fonts'),
 
     // 待处理字体列表
     fonts: [
