@@ -3,6 +3,11 @@ CUSTOM FONTS - 自定义字体
 这个文件需要在其他 CSS 之前加载
 *******************************************************************************/
 
+/* 字体切片引用 */
+@import url('/assets/fonts/STKaiti/result.css');
+@import url('/assets/fonts/STZhongsong/result.css');
+@import url('/assets/fonts/STHeiti/result.css');
+
 /* Anthropic Sans - 英文无衬线（用于标题） */
 @font-face {
     font-family: 'AnthropicSans';
@@ -46,20 +51,4 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* 楷体 - 用于标题中文 */
-@font-face {
-    font-family: 'STKaiti';
-    src: url('/assets/STKaiti.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* 宋体 - 用于正文中文 */
-@font-face {
-    font-family: 'STSong';
-    src: url('/assets/STSong.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
+/* 中文字体已通过顶部 @import 引用切片文件 */

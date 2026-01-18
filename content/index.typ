@@ -3,15 +3,14 @@
 
 // 侧边栏个人头像
 #tufted.margin-note[
-  #image("imgs/cat.png", width: 40%)
+  #image("imgs/cat.png", width: 50%)
 ]
 
 #tufted.margin-note[
-  *工仔小猫*\
   潜心备考，记录成长，一只追逐梦想的小猫 🐱
 ]
 
-= 你好！
+= 你好，我是工仔小猫！
 
 欢迎来到我的小角落！这里是我的*考研日记*，记录着备考之旅。
 

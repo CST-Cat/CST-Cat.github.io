@@ -16,7 +16,7 @@ BASE STYLES
 *******************************************************************************/
 
 html {
-    font-size: 10.5pt;
+    font-size: 12.5pt;
     height: 100%;
 }
 
@@ -25,8 +25,8 @@ body {
     min-height: 100%;
     display: flex;
     flex-direction: column;
-    /* 正文字体：英文用 AnthropicSerif 衬线，中文用宋体加粗 */
-    font-family: 'AnthropicSerif', 'STSong', serif;
+    /* 正文字体：英文用 AnthropicSerif 衬线，中文用中宋 */
+    font-family: 'AnthropicSerif', 'STZhongsong', serif;
     /* 禁用连字（fi, fl 等不会黏在一起） */
     font-variant-ligatures: none;
 }
@@ -459,6 +459,11 @@ sup.footnote-ref {
     vertical-align: baseline;
     top: -0.5em;
     margin-left: 0.1em;
+}
+
+/* Margin notes font */
+.marginnote {
+    font-family: 'AnthropicSans', 'STHeiti', sans-serif;
 }
 
 .footnote-ref,

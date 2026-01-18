@@ -1,0 +1,211 @@
+/*******************************************************************************
+ * 番茄钟样式 - 与 Tufted 主题风格一致
+ ******************************************************************************/
+
+/* 番茄钟容器 - 限制在正文区域内（与 Tufted 主题一致） */
+#pomodoro-app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 55%;
+    margin: 2rem 0;
+    padding: 2rem 0;
+    box-sizing: border-box;
+}
+
+/* 计时器模式按钮 */
+.timer-modes {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.mode-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    font-family: 'AnthropicSans', 'STZhongsong', serif;
+    font-style: normal;
+    font-size: 1.1rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+    background: var(--fg);
+    color: var(--bg);
+}
+
+.mode-btn.active {
+    background: var(--fg);
+    color: var(--bg);
+}
+
+.btn-number {
+    position: relative;
+    top: 2px;
+}
+
+/* 计时器显示 */
+.timer-display {
+    font-size: 5rem;
+    font-weight: 300;
+    font-family: 'AnthropicSerif', serif;
+    letter-spacing: 0.05em;
+    margin: 1.5rem 0;
+    color: var(--fg);
+}
+
+.timer-label {
+    color: var(--fg-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    font-style: normal !important;
+    font-family: 'AnthropicSerif', 'STZhongsong', serif;
+}
+
+/* 控制按钮 */
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.control-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--fg);
+    background: transparent;
+    color: var(--fg);
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    transform: scale(1.1);
+}
+
+.control-btn.primary {
+    background: var(--fg);
+    color: var(--bg);
+}
+
+.control-btn.primary:hover {
+    opacity: 0.9;
+}
+
+/* 统计信息 */
+.timer-stats {
+    display: flex;
+    gap: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--fg-muted);
+    justify-content: center;
+    width: 100%;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    font-family: 'AnthropicSerif', serif;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    font-family: 'AnthropicSerif', 'STZhongsong', serif;
+}
+
+/* 倒计时显示 */
+.countdown-display {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 4rem;
+}
+
+.countdown-value {
+    font-size: 3rem;
+    font-weight: 300;
+    font-family: 'AnthropicSerif', serif;
+}
+
+.countdown-unit {
+    font-size: 1rem;
+    color: var(--fg-muted);
+    font-family: 'AnthropicSerif', 'STZhongsong', serif;
+}
+
+.exam-info {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--fg);
+    background: var(--bg-offset);
+    font-family: 'AnthropicSerif', 'STZhongsong', serif;
+}
+
+.exam-date {
+    color: var(--fg-muted);
+}
+
+/* 运行中动画 */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.running .timer-display {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* 边栏内的紧凑倒计时样式 */
+.countdown-compact {
+    display: block;
+    margin-top: 0.5rem;
+    line-height: 1.8;
+}
+
+.countdown-compact .countdown-value {
+    font-size: 1.3rem;
+    font-weight: 500;
+    font-family: 'AnthropicSerif', serif;
+}
+
+.countdown-compact .countdown-unit {
+    font-family: 'AnthropicSerif', 'STHeiti', sans-serif;
+    font-size: 0.9rem;
+    color: var(--fg-muted);
+    margin-right: 0.5rem;
+}

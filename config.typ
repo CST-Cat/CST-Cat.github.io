@@ -8,11 +8,28 @@
     "/": "Home",
     "/Notes/": "Notes",
     "/Weekly/": "Weekly",
-    "/Project/": "Project",
+    "/Projects/": "Projects",
+    "/Tools/": "Tools",
     "/Docs/": "Docs",
   ),
   lang: "zh",
   title: "小猫の小窝", // 你的网站在浏览器中显示的标题
+
+  // 自定义样式
+  css: (
+    "/assets/fonts.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
+    "/assets/tufted.css",
+    "/assets/theme.css",
+    "/assets/custom.css",
+  ),
+
+  // 自定义脚本
+  js-scripts: (
+    "/assets/code-blocks.js",
+    "/assets/format-headings.js",
+    "/assets/theme-toggle.js",
+  ),
 
   // 自定义 header 和 footer 元素
   // 数组格式，可以添加任意数量的内容，内容之间使用换行分隔
