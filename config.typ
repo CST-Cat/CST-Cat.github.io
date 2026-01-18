@@ -9,7 +9,6 @@
     "/Notes/": "Notes",
     "/Weekly/": "Weekly",
     "/Project/": "Project",
-    "/About/": "About",
   ),
   lang: "zh",
   title: "小猫の小窝", // 你的网站在浏览器中显示的标题
@@ -17,8 +16,7 @@
   // 自定义 header 和 footer 元素
   // 数组格式，可以添加任意数量的内容，内容之间使用换行分隔
   header-elements: (
-    [你好Ciallo～(∠・ω< )⌒☆],
-    [我是工仔小猫],
+    [Ciallo～(∠・ω< )⌒☆],
   ),
   footer-elements: (
     "© 2026 CST-Cat",
