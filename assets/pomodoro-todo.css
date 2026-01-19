@@ -216,7 +216,7 @@
 .countdown-compact .countdown-unit {
     font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
     font-size: 0.9rem;
-    color: var(--fg-muted);
+    color: var(--theme-margin-text);
     margin-right: 0.5rem;
 }
 
@@ -264,6 +264,7 @@
     line-height: 1;
     padding: 0 0.4rem;
     transition: all 0.2s;
+    user-select: none;
 }
 
 #add-todo-btn:hover {
@@ -286,7 +287,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
     line-height: 1.4;
-    color: var(--fg);
+    color: var(--theme-margin-text);
     transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
     padding: 0.2rem 0.3rem;
     margin-left: -0.3rem;
@@ -369,7 +370,7 @@
 .todo-checkbox {
     width: 1em;
     height: 1em;
-    border: 1.5px solid var(--fg);
+    border: 1.5px solid var(--theme-margin-text);
     border-radius: 2px;
     display: inline-flex;
     align-items: center;
@@ -384,6 +385,7 @@
 
 .todo-checkbox.checked {
     background: var(--fg);
+    border-color: var(--fg);
 }
 
 .todo-checkbox.checked::after {
@@ -417,6 +419,7 @@
     flex: 1;
     word-break: break-word;
     cursor: text;
+    color: var(--theme-margin-text);
 }
 
 .todo-delete {
@@ -620,6 +623,7 @@
     padding: 0 0.4rem;
     transition: all 0.2s;
     border-radius: 3px;
+    user-select: none;
 }
 
 .todo-groups-add:hover {
@@ -654,7 +658,7 @@
 .todo-group-checkbox {
     width: 1em;
     height: 1em;
-    border: 1.5px solid var(--fg);
+    border: 1.5px solid var(--theme-margin-text);
     border-radius: 3px;
     display: inline-flex;
     align-items: center;
@@ -701,6 +705,7 @@
     text-align: right;
     font-family: 'AnthropicSerif', serif;
     opacity: 0.8;
+    user-select: none;
 }
 
 .todo-main-section {
@@ -1090,4 +1095,91 @@
     /* 确保在右侧浮动流中另起一行 */
     float: right;
     /* 保持浮动特性 */
+}
+
+/* 自定义输入框模态窗口 */
+.todo-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    backdrop-filter: blur(2px);
+}
+
+.todo-modal {
+    background: var(--bg);
+    border: 1px solid var(--fg-muted);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 320px;
+    max-width: 90%;
+    padding: 1.5rem;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+}
+
+.todo-modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 1rem;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    letter-spacing: 0.02em;
+}
+
+.todo-modal-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--fg-muted);
+    border-radius: 4px;
+    color: var(--fg);
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.todo-modal-input:focus {
+    border-color: var(--fg);
+}
+
+.todo-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.2rem;
+}
+
+.todo-modal-btn {
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    border: 1px solid var(--fg-muted);
+    background: transparent;
+    color: var(--fg);
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    user-select: none;
+}
+
+.todo-modal-btn:hover {
+    background: var(--bg-offset);
+}
+
+.todo-modal-btn.primary {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+}
+
+.todo-modal-btn.primary:hover {
+    opacity: 0.9;
 }

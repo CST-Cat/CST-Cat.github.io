@@ -441,6 +441,87 @@
         const groupsAddBtn = container.querySelector('.todo-groups-add');
         const contextMenu = document.getElementById('todo-context-menu');
 
+        // 自定义输入框模态窗口
+        function showInputModal(title, defaultValue = '', onConfirm, onCancel) {
+            // 创建遮罩层
+            const overlay = document.createElement('div');
+            overlay.className = 'todo-modal-overlay';
+
+            // 创建模态窗口
+            const modal = document.createElement('div');
+            modal.className = 'todo-modal';
+
+            // 标题
+            const titleEl = document.createElement('div');
+            titleEl.className = 'todo-modal-title';
+            titleEl.textContent = title;
+
+            // 输入框
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'todo-modal-input';
+            input.value = defaultValue;
+            input.placeholder = '请输入...';
+
+            // 按钮组
+            const actions = document.createElement('div');
+            actions.className = 'todo-modal-actions';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'todo-modal-btn';
+            cancelBtn.textContent = '取消';
+            cancelBtn.onclick = () => {
+                overlay.remove();
+                if (onCancel) onCancel();
+            };
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = 'todo-modal-btn primary';
+            confirmBtn.textContent = '确定';
+            confirmBtn.onclick = () => {
+                const value = input.value.trim();
+                overlay.remove();
+                if (value && onConfirm) {
+                    onConfirm(value);
+                }
+            };
+
+            // 回车确认，ESC 取消
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmBtn.click();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelBtn.click();
+                }
+            };
+
+            // 组装
+            actions.appendChild(cancelBtn);
+            actions.appendChild(confirmBtn);
+            modal.appendChild(titleEl);
+            modal.appendChild(input);
+            modal.appendChild(actions);
+            overlay.appendChild(modal);
+
+            // 点击遮罩层关闭
+            overlay.onclick = (e) => {
+                if (e.target === overlay) {
+                    cancelBtn.click();
+                }
+            };
+
+            // 添加到页面
+            document.body.appendChild(overlay);
+
+            // 聚焦输入框并选中文本
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 50);
+        }
+
         // 分组数据
         let groups = [];
         try {
@@ -521,22 +602,20 @@
         }
 
         function addGroup() {
-            const name = prompt('请输入分组名称：');
-            if (name && name.trim()) {
+            showInputModal('请输入分组名称', '', (name) => {
                 const id = 'group_' + Date.now();
-                groups.push({ id, name: name.trim(), checked: true });
+                groups.push({ id, name: name, checked: true });
                 saveGroups();
                 renderGroups();
-            }
+            });
         }
 
         function renameGroup(index) {
-            const newName = prompt('请输入新的分组名称：', groups[index].name);
-            if (newName && newName.trim()) {
-                groups[index].name = newName.trim();
+            showInputModal('请输入新的分组名称', groups[index].name, (newName) => {
+                groups[index].name = newName;
                 saveGroups();
                 renderGroups();
-            }
+            });
         }
 
         function deleteGroup(index) {
