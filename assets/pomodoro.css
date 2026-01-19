@@ -2,6 +2,14 @@
  * 番茄钟样式 - 与 Tufted 主题风格一致
  ******************************************************************************/
 
+/* Define Pomodoro variables based on Theme variables */
+:root {
+    --fg: var(--theme-text);
+    --bg: var(--theme-bg);
+    --fg-muted: var(--theme-copy-btn-text);
+    --bg-offset: var(--theme-code-bg);
+}
+
 /* 番茄钟容器 - 限制在正文区域内（与 Tufted 主题一致） */
 #pomodoro-app {
     display: flex;
@@ -204,7 +212,7 @@
 }
 
 .countdown-compact .countdown-unit {
-    font-family: 'AnthropicSerif', 'STHeiti', sans-serif;
+    font-family: 'AnthropicSerif', 'NotoSansSC', sans-serif;
     font-size: 0.9rem;
     color: var(--fg-muted);
     margin-right: 0.5rem;

@@ -17,9 +17,11 @@ const CONFIG = {
 
     // 待处理字体列表
     fonts: [
-        { filename: 'STKaiti.woff2', family: 'STKaiti' },
-        { filename: 'STZhongsong.woff2', family: 'STZhongsong' },
-        { filename: 'STHeiti.woff2', family: 'STHeiti' }
+        { filename: 'STKaiti.woff2', family: 'STKaiti', weight: 400 },
+        { filename: 'STZhongsong.woff2', family: 'STZhongsong', weight: 400 },
+        { filename: 'STHeiti.woff2', family: 'STHeiti', weight: 400 },
+        { filename: 'NotoSansSC-Regular.woff2', family: 'NotoSansSC', weight: 400, outputName: 'NotoSansSC-Regular' },
+        { filename: 'NotoSansSC-SemiBold.woff2', family: 'NotoSansSC', weight: 600, outputName: 'NotoSansSC-SemiBold' }
     ]
 };
 
@@ -36,7 +38,9 @@ async function processFonts() {
 
     for (const font of CONFIG.fonts) {
         const inputPath = path.join(CONFIG.inputDir, font.filename);
-        const outputPath = path.join(CONFIG.outputDir, font.family);
+        // 使用 outputName（如果存在），否则使用 family
+        const outputDirName = font.outputName || font.family;
+        const outputPath = path.join(CONFIG.outputDir, outputDirName);
 
         // 检查源文件是否存在
         if (!fs.existsSync(inputPath)) {
@@ -44,9 +48,10 @@ async function processFonts() {
             continue;
         }
 
-        console.log(`\n📦 正在处理: ${font.family}`);
+        console.log(`\n📦 正在处理: ${outputDirName}`);
         console.log(`   源文件: ${inputPath}`);
         console.log(`   输出到: ${outputPath}`);
+        console.log(`   font-family: ${font.family}, font-weight: ${font.weight}`);
 
         try {
             await fontSplit({
@@ -60,12 +65,12 @@ async function processFonts() {
                 css: {
                     // 强制指定 font-family，确保与现有 CSS 一致
                     fontFamily: font.family,
-                    fontWeight: 400,
+                    fontWeight: font.weight || 400,
                 }
             });
-            console.log(`✅ [完成] ${font.family} 处理完毕`);
+            console.log(`✅ [完成] ${outputDirName} 处理完毕`);
         } catch (err) {
-            console.error(`❌ [错误] 处理 ${font.family} 失败:`, err);
+            console.error(`❌ [错误] 处理 ${outputDirName} 失败:`, err);
         }
     }
 

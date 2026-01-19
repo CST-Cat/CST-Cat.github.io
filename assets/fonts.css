@@ -7,6 +7,8 @@ CUSTOM FONTS - 自定义字体
 @import url('/assets/fonts/STKaiti/result.css');
 @import url('/assets/fonts/STZhongsong/result.css');
 @import url('/assets/fonts/STHeiti/result.css');
+@import url('/assets/fonts/NotoSansSC-Regular/result.css');
+@import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
 
 /* Anthropic Sans - 英文无衬线（用于标题） */
 @font-face {
@@ -51,4 +53,5 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* 中文字体已通过顶部 @import 引用切片文件 */
+/* Noto Sans SC - 思源黑体（用于侧栏，通过切片引用） */
+/* 切片文件已在顶部 @import 引用 */

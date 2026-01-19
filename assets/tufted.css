@@ -463,7 +463,7 @@ sup.footnote-ref {
 
 /* Margin notes font */
 .marginnote {
-    font-family: 'AnthropicSans', 'STHeiti', sans-serif;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
 }
 
 .footnote-ref,
