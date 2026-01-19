@@ -217,3 +217,194 @@
     color: var(--fg-muted);
     margin-right: 0.5rem;
 }
+
+/* 待办清单样式 */
+.todo-wrapper {
+    display: block;
+    /* Ensure it behaves like a block even as a span */
+    text-align: left;
+    margin-top: 0.5rem;
+    font-family: 'AnthropicSerif', 'NotoSansSC', sans-serif;
+    width: 100%;
+}
+
+.todo-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+#new-todo {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--fg-muted);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--fg);
+    padding: 0.2rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#new-todo:focus {
+    border-bottom-color: var(--fg);
+}
+
+#add-todo-btn {
+    background: transparent;
+    border: 1px solid var(--fg-muted);
+    color: var(--fg-muted);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0 0.4rem;
+    transition: all 0.2s;
+}
+
+#add-todo-btn:hover {
+    color: var(--fg);
+    border-color: var(--fg);
+}
+
+#todo-list {
+    display: block;
+    /* Create block formatting context for list items */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--fg);
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--fg-muted);
+}
+
+/* 优化5: CSS 自绘复选框，替代 Unicode 字符 */
+.todo-checkbox {
+    width: 1em;
+    height: 1em;
+    border: 1.5px solid var(--fg);
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    min-width: 1em;
+    flex-shrink: 0;
+    margin-top: 0.15em;
+    transition: all 0.15s ease;
+}
+
+.todo-checkbox.checked {
+    background: var(--fg);
+}
+
+.todo-checkbox.checked::after {
+    content: '';
+    width: 0.3em;
+    height: 0.55em;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 0.1em;
+}
+
+.todo-checkbox:hover {
+    opacity: 0.7;
+}
+
+/* 优化4: 待办编辑输入框样式 */
+.todo-edit-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--fg);
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--fg);
+    padding: 0;
+    outline: none;
+}
+
+.todo-text {
+    flex: 1;
+    word-break: break-word;
+    cursor: text;
+}
+
+.todo-delete {
+    cursor: pointer;
+    color: var(--fg-muted);
+    font-size: 1.1rem;
+    line-height: 1.2;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.todo-item:hover .todo-delete {
+    opacity: 1;
+}
+
+.todo-delete:hover {
+    color: var(--fg);
+}
+
+/* 已完成区域样式 */
+#todo-completed-section {
+    display: block;
+    margin-top: 0.8rem;
+}
+
+.todo-completed-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    color: var(--fg-muted);
+    font-size: 0.85rem;
+    padding: 0.3rem 0;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.todo-completed-header:hover {
+    color: var(--fg);
+}
+
+.todo-chevron {
+    font-size: 0.9rem;
+    line-height: 1;
+    transition: transform 0.2s;
+    display: inline-block;
+    width: 0.8em;
+    text-align: center;
+}
+
+.todo-completed-list {
+    display: block;
+    margin-top: 0.3rem;
+    padding-left: 0.2rem;
+    border-left: 1px solid var(--fg-muted);
+    margin-left: 0.3rem;
+}
+
+.todo-completed-list .todo-item {
+    opacity: 0.7;
+}
+
+.todo-completed-list .todo-item:hover {
+    opacity: 1;
+}

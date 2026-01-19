@@ -33,35 +33,39 @@ CSS CUSTOM PROPERTIES (Theme Variables)
     --theme-table-header-bg: #f5f5f5;
     --theme-table-row-even: #fafafa;
     --theme-table-row-hover: #f0f0f0;
+    --theme-table-row-hover: #f0f0f0;
     --theme-math-filter: none;
+    --theme-margin-text: #4a4a45;
 }
 
-/* Dark mode variables */
+/* Dark mode variables - 低对比度柔和配色 */
 html[data-theme="dark"],
 html:not([data-theme]) {
-    --theme-bg: #151515;
-    --theme-text: #ddd;
-    --theme-heading: #eee;
-    --theme-code-bg: #2d2d2d;
-    --theme-code-text: #e8e8e8;
-    --theme-code-border: #3d3d3d;
-    --theme-pre-bg: #2d2d2d;
-    --theme-pre-border: #3d3d3d;
-    --theme-line-numbers-border: #555;
-    --theme-line-numbers-text: #666;
-    --theme-copy-btn-bg: #333;
-    --theme-copy-btn-text: #ccc;
-    --theme-copy-btn-border: #555;
-    --theme-copy-btn-hover-bg: #444;
-    --theme-copy-btn-hover-text: #eee;
-    --theme-copy-btn-copied-bg: #1a4d3a;
-    --theme-copy-btn-copied-text: #5fda9d;
-    --theme-copy-btn-copied-border: #5fda9d;
-    --theme-table-border: #444;
-    --theme-table-header-bg: #333;
-    --theme-table-row-even: #2a2a2a;
-    --theme-table-row-hover: #383838;
-    --theme-math-filter: invert(1) hue-rotate(180deg);
+    --theme-bg: #1e1e1e;
+    --theme-text: #c5c5c5;
+    --theme-heading: #d8d8d8;
+    --theme-code-bg: #2a2a2a;
+    --theme-code-text: #c8c8c8;
+    --theme-code-border: #383838;
+    --theme-pre-bg: #2a2a2a;
+    --theme-pre-border: #383838;
+    --theme-line-numbers-border: #404040;
+    --theme-line-numbers-text: #606060;
+    --theme-copy-btn-bg: #2e2e2e;
+    --theme-copy-btn-text: #a0a0a0;
+    --theme-copy-btn-border: #454545;
+    --theme-copy-btn-hover-bg: #3a3a3a;
+    --theme-copy-btn-hover-text: #c8c8c8;
+    --theme-copy-btn-copied-bg: #1f3d2d;
+    --theme-copy-btn-copied-text: #6bc485;
+    --theme-copy-btn-copied-border: #6bc485;
+    --theme-table-border: #3a3a3a;
+    --theme-table-header-bg: #282828;
+    --theme-table-row-even: #252525;
+    --theme-table-row-hover: #303030;
+    --theme-table-row-hover: #303030;
+    --theme-math-filter: invert(0.88) hue-rotate(180deg);
+    --theme-margin-text: #8a8a8a;
 }
 
 /* System preference: only apply dark variables when no explicit theme is set */
@@ -89,7 +93,9 @@ html:not([data-theme]) {
         --theme-table-header-bg: #f5f5f5;
         --theme-table-row-even: #fafafa;
         --theme-table-row-hover: #f0f0f0;
+        --theme-table-row-hover: #f0f0f0;
         --theme-math-filter: none;
+        --theme-margin-text: #4a4a45;
     }
 }
 
@@ -164,6 +170,10 @@ pre>code {
     background-color: var(--theme-copy-btn-copied-bg) !important;
     color: var(--theme-copy-btn-copied-text) !important;
     border-color: var(--theme-copy-btn-copied-border) !important;
+}
+
+.marginnote {
+    color: var(--theme-margin-text) !important;
 }
 
 div[style*="border-inline-start"] .footnote-ref,

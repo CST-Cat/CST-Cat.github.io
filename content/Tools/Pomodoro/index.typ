@@ -1,10 +1,10 @@
 #import "../../index.typ": template, tufted
 #show: template.with(title: "番茄钟")
 
-#html.elem("link", attrs: (rel: "stylesheet", href: "/assets/pomodoro.css"))
-#html.elem("script", attrs: (src: "/assets/pomodoro.js", defer: "true"))[]
+#html.elem("link", attrs: (rel: "stylesheet", href: "/assets/pomodoro-todo.css"))
+#html.elem("script", attrs: (src: "/assets/pomodoro-todo.js", defer: "true"))[]
 
-= Pomodoro
+= Pomodoro-Todo
 
 #tufted.margin-note[
   *考研倒计时* \
@@ -12,9 +12,8 @@
 ]
 
 #tufted.margin-note[
-  *快捷键*\
-  空格：开始/暂停\
-  R：重置
+  *待办事项* \
+  #html.span(id: "todo-app")[]
 ]
 
 #html.div(id: "pomodoro-app")[]

@@ -3,3 +3,175 @@ CUSTOM STYLES
 
 Add your custom CSS styles here to override or extend the default styles.
 *******************************************************************************/
+
+/*******************************************************************************
+SCROLLBAR STYLING - 全局滚动条重构
+完美融入背景，纤细优雅
+*******************************************************************************/
+
+/* ===== Webkit 内核浏览器（Chrome, Safari, Edge）===== */
+
+/* 全局滚动条 - 页面右侧 */
+::-webkit-scrollbar {
+    width: 6px !important;           /* 纵向滚动条宽度 */
+    height: 6px !important;          /* 横向滚动条高度 */
+}
+
+/* 滚动条轨道 - 融入背景 */
+::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: 3px;
+}
+
+/* 滚动条角落（横纵交汇处） */
+::-webkit-scrollbar-corner {
+    background: transparent !important;
+}
+
+/* ===== 代码块专用滚动条 ===== */
+
+pre::-webkit-scrollbar,
+pre code::-webkit-scrollbar {
+    width: 5px !important;
+    height: 5px !important;
+}
+
+pre::-webkit-scrollbar-track,
+pre code::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: 2.5px;
+}
+
+pre::-webkit-scrollbar-corner,
+pre code::-webkit-scrollbar-corner {
+    background: transparent !important;
+}
+
+/* ===== Firefox 浏览器 ===== */
+
+/* 全局滚动条 */
+* {
+    scrollbar-width: thin;
+}
+
+/* 页面主体 */
+html, body {
+    scrollbar-width: thin;
+}
+
+/* 代码块 */
+pre, pre code {
+    scrollbar-width: thin;
+}
+
+/* ===== 浅色模式（默认） ===== */
+
+/* 全局滚动条滑块 - 浅色模式 */
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3) !important;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.5) !important;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgba(100, 100, 100, 0.6) !important;
+}
+
+/* 代码块滚动条滑块 - 浅色模式 */
+pre::-webkit-scrollbar-thumb,
+pre code::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.25) !important;
+    border-radius: 2.5px;
+}
+
+pre::-webkit-scrollbar-thumb:hover,
+pre code::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.4) !important;
+}
+
+/* Firefox 浅色模式 */
+html, body, * {
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+}
+
+pre, pre code {
+    scrollbar-color: rgba(100, 100, 100, 0.25) transparent;
+}
+
+/* ===== 浅色模式明确设置 ===== */
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3) !important;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.5) !important;
+}
+
+html[data-theme="light"] pre::-webkit-scrollbar-thumb,
+html[data-theme="light"] pre code::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.25) !important;
+}
+
+html[data-theme="light"] pre::-webkit-scrollbar-thumb:hover,
+html[data-theme="light"] pre code::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.4) !important;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] * {
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+}
+
+/* ===== 深色模式适配 ===== */
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: rgba(180, 180, 180, 0.2) !important;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(180, 180, 180, 0.35) !important;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:active {
+    background: rgba(180, 180, 180, 0.45) !important;
+}
+
+html[data-theme="dark"] pre::-webkit-scrollbar-thumb,
+html[data-theme="dark"] pre code::-webkit-scrollbar-thumb {
+    background: rgba(180, 180, 180, 0.15) !important;
+}
+
+html[data-theme="dark"] pre::-webkit-scrollbar-thumb:hover,
+html[data-theme="dark"] pre code::-webkit-scrollbar-thumb:hover {
+    background: rgba(180, 180, 180, 0.28) !important;
+}
+
+/* Firefox 深色模式 */
+html[data-theme="dark"],
+html[data-theme="dark"] * {
+    scrollbar-color: rgba(180, 180, 180, 0.2) transparent;
+}
+
+/* 系统偏好深色模式 - 未设置 data-theme 时 */
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) ::-webkit-scrollbar-thumb {
+        background: rgba(180, 180, 180, 0.2) !important;
+    }
+    
+    html:not([data-theme]) ::-webkit-scrollbar-thumb:hover {
+        background: rgba(180, 180, 180, 0.35) !important;
+    }
+    
+    html:not([data-theme]) pre::-webkit-scrollbar-thumb,
+    html:not([data-theme]) pre code::-webkit-scrollbar-thumb {
+        background: rgba(180, 180, 180, 0.15) !important;
+    }
+    
+    html:not([data-theme]),
+    html:not([data-theme]) * {
+        scrollbar-color: rgba(180, 180, 180, 0.2) transparent;
+    }
+}

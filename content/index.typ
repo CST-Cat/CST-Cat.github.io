@@ -1,14 +1,7 @@
 #import "../config.typ": template, tufted
 #show: template
 
-// 侧边栏个人头像
-#tufted.margin-note[
-  #image("imgs/cat.png", width: 50%)
-]
-
-#tufted.margin-note[
-  潜心备考，记录成长，一只追逐梦想的小猫 🐱
-]
+#figure[#image("imgs/cat.png", width: 20%)]
 
 = 你好，我是工仔小猫！
 
@@ -17,11 +10,6 @@
 #figure[#image("imgs/atri2.jpg")]
 
 == About
-
-// 侧边栏亚托莉
-#tufted.margin-note[
-  #image("imgs/atri1.jpg")
-]
 
 这是一个关于*学习*与*成长*的空间：
 
