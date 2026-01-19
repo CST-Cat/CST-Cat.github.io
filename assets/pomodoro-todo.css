@@ -209,11 +209,12 @@
 .countdown-compact .countdown-value {
     font-size: 1.3rem;
     font-weight: 500;
-    font-family: 'AnthropicSerif', serif;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    color: var(--theme-margin-text);
 }
 
 .countdown-compact .countdown-unit {
-    font-family: 'AnthropicSerif', 'NotoSansSC', sans-serif;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
     font-size: 0.9rem;
     color: var(--fg-muted);
     margin-right: 0.5rem;
@@ -224,15 +225,16 @@
     display: block;
     /* Ensure it behaves like a block even as a span */
     text-align: left;
-    margin-top: 0.5rem;
-    font-family: 'AnthropicSerif', 'NotoSansSC', sans-serif;
+    margin-top: 0.6rem;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    color: var(--theme-margin-text);
     width: 100%;
 }
 
 .todo-input-group {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
 }
 
 #new-todo {
@@ -591,54 +593,69 @@
 /* 分组区域样式 */
 .todo-groups-section {
     display: block;
-    margin-bottom: 1rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 1px solid var(--fg-muted);
+    margin-bottom: 0.6rem;
+    padding-bottom: 0;
 }
 
 .todo-groups-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
 }
 
 .todo-groups-title {
-    font-size: 0.85rem;
-    color: var(--fg-muted);
-    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--theme-margin-text);
+    font-weight: 600;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    letter-spacing: 0.02em;
 }
 
 .todo-groups-add {
     cursor: pointer;
     color: var(--fg-muted);
-    font-size: 1rem;
-    padding: 0 0.3rem;
-    transition: color 0.2s;
+    font-size: 1.1rem;
+    font-weight: 300;
+    padding: 0 0.4rem;
+    transition: all 0.2s;
+    border-radius: 3px;
 }
 
 .todo-groups-add:hover {
     color: var(--fg);
+    background: var(--bg-offset);
 }
 
 .todo-groups-list {
     display: block;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .todo-group-item {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.2rem 0;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    margin: 0.15rem 0;
+    margin-left: -0.5rem;
     font-size: 0.9rem;
-    cursor: default;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+}
+
+.todo-group-item:hover {
+    background: var(--bg-offset);
 }
 
 .todo-group-checkbox {
-    width: 0.9em;
-    height: 0.9em;
+    width: 1em;
+    height: 1em;
     border: 1.5px solid var(--fg);
-    border-radius: 2px;
+    border-radius: 3px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -650,32 +667,40 @@
 
 .todo-group-checkbox.checked {
     background: var(--fg);
+    border-color: var(--fg);
 }
 
 .todo-group-checkbox.checked::after {
     content: '';
-    width: 0.25em;
-    height: 0.45em;
+    width: 0.28em;
+    height: 0.5em;
     border: solid var(--bg);
-    border-width: 0 1.5px 1.5px 0;
+    border-width: 0 2px 2px 0;
     transform: rotate(45deg);
-    margin-bottom: 0.08em;
+    margin-bottom: 0.1em;
 }
 
 .todo-group-checkbox:hover {
-    opacity: 0.7;
+    opacity: 0.8;
+    border-color: var(--fg);
 }
 
 .todo-group-name {
     flex: 1;
-    color: var(--fg);
+    color: var(--theme-margin-text);
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .todo-group-count {
     color: var(--fg-muted);
-    font-size: 0.85em;
-    min-width: 1em;
+    font-size: 0.8em;
+    min-width: 1.2em;
     text-align: right;
+    font-family: 'AnthropicSerif', serif;
+    opacity: 0.8;
 }
 
 .todo-main-section {
@@ -1053,4 +1078,16 @@
 /* 子待办截止时间选择器 */
 .todo-sub-due-picker {
     margin-left: 0.5rem;
+}
+
+/* 自定义 margin-note 间距 */
+/* 为第二个 margin-note (待办事项) 添加顶部间距，使其与上方的倒计时分开 */
+.todo-margin-note {
+    margin-top: 1.5rem !important;
+    display: block;
+    /* 确保 margin 生效 */
+    clear: right;
+    /* 确保在右侧浮动流中另起一行 */
+    float: right;
+    /* 保持浮动特性 */
 }

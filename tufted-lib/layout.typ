@@ -1,7 +1,11 @@
 // TODO: figures and figures with captions inside margin notes
 
-#let margin-note(content) = {
-  html.span(class: "marginnote", content)
+#let margin-note(content, class: none) = {
+  let classes = "marginnote"
+  if class != none {
+    classes = classes + " " + class
+  }
+  html.span(class: classes, content)
 }
 
 // TODO: implement <figure class="fullwidth">
@@ -26,12 +30,12 @@
   let pos-class = if position == "left" { "img-left" } else { "img-right" }
   let ratio-class = "ratio-" + ratio
   let combined-class = base-class + " " + pos-class + " " + ratio-class
-  
+
   html.div(
     class: combined-class,
     {
       html.div(class: "side-by-side-img", image-content)
       html.div(class: "side-by-side-text", text-content)
-    }
+    },
   )
 }

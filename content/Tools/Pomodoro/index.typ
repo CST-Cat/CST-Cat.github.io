@@ -11,7 +11,7 @@
   #html.span(id: "countdown-app")[]
 ]
 
-#tufted.margin-note[
+#tufted.margin-note(class: "todo-margin-note")[
   *待办事项* \
   #html.span(id: "todo-app")[]
 ]

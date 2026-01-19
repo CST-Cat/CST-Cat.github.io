@@ -96,7 +96,7 @@
                 if (!state) return false;
 
                 currentMode = state.currentMode || 25;
-                
+
                 // 更新模式按钮UI
                 modeBtns.forEach(btn => {
                     btn.classList.remove('active');
@@ -182,7 +182,7 @@
             startBtn.textContent = '⏸';
             container.classList.add('running');
             timerLabel.textContent = currentMode === 25 ? '专注中...' : '休息中...';
-            
+
             // 保存运行状态
             saveTimerState();
 
@@ -448,7 +448,7 @@
             if (groups.length === 0) {
                 groups = [{ id: 'default', name: '默认', checked: true }];
             }
-        } catch (e) { 
+        } catch (e) {
             groups = [{ id: 'default', name: '默认', checked: true }];
         }
 
@@ -481,7 +481,7 @@
             groups.forEach((group, index) => {
                 const item = document.createElement('span');
                 item.className = 'todo-group-item';
-                
+
                 const checkbox = document.createElement('span');
                 checkbox.className = 'todo-group-checkbox' + (group.checked ? ' checked' : '');
                 checkbox.onclick = () => {
@@ -578,7 +578,7 @@
                     const menuItem = document.createElement('span');
                     menuItem.className = 'todo-context-item has-submenu';
                     menuItem.innerHTML = `<span class="todo-context-icon">${item.icon || ''}</span>${item.label}<span class="todo-context-arrow">›</span>`;
-                    
+
                     const submenu = document.createElement('span');
                     submenu.className = 'todo-context-submenu';
                     item.submenu.forEach(subItem => {
@@ -657,7 +657,7 @@
             const textSpan = document.createElement('span');
             textSpan.className = 'todo-text';
             textSpan.textContent = subTodo.text;
-            
+
             // 截止时间显示
             const dueDateSpan = document.createElement('span');
             dueDateSpan.className = 'todo-due-date';
@@ -673,11 +673,11 @@
                     editInput.type = 'text';
                     editInput.value = subTodo.text;
                     editInput.className = 'todo-edit-input';
-                    
+
                     textSpan.replaceWith(editInput);
                     editInput.focus();
                     editInput.select();
-                    
+
                     const save = () => {
                         const newText = editInput.value.trim();
                         if (newText) {
@@ -686,7 +686,7 @@
                         }
                         renderTodos();
                     };
-                    
+
                     editInput.onblur = save;
                     editInput.onkeydown = (ev) => {
                         if (ev.key === 'Enter') save();
@@ -701,16 +701,18 @@
                     const menuItems = [
                         { icon: '⏰', label: subTodo.dueDate ? '修改截止时间' : '添加截止时间', action: () => showSubTodoDueDatePicker(parentIndex, subIndex, li) },
                     ];
-                    
+
                     // 如果有截止时间，添加移除选项
                     if (subTodo.dueDate) {
-                        menuItems.push({ icon: '✕', label: '移除截止时间', action: () => {
-                            todos[parentIndex].children[subIndex].dueDate = null;
-                            saveTodos();
-                            renderTodos();
-                        }});
+                        menuItems.push({
+                            icon: '✕', label: '移除截止时间', action: () => {
+                                todos[parentIndex].children[subIndex].dueDate = null;
+                                saveTodos();
+                                renderTodos();
+                            }
+                        });
                     }
-                    
+
                     menuItems.push(
                         { divider: true },
                         { icon: '↑', label: '取消缩进', action: () => promoteSubTodo(parentIndex, subIndex) },
@@ -734,7 +736,7 @@
             li.appendChild(deleteBtn);
             return li;
         }
-        
+
         // 显示子待办截止时间选择器
         function showSubTodoDueDatePicker(parentIndex, subIndex, liElement) {
             // 移除已有的选择器
@@ -743,13 +745,13 @@
                 existingPicker.remove();
                 return;
             }
-            
+
             const parentDueDate = todos[parentIndex].dueDate;
-            
+
             const pickerWrapper = document.createElement('span');
             pickerWrapper.className = 'todo-due-picker todo-sub-due-picker';
             pickerWrapper.style.position = 'relative';
-            
+
             const picker = createDateTimePicker(
                 todos[parentIndex].children[subIndex].dueDate,
                 new Date().toISOString().slice(0, 16),
@@ -766,9 +768,9 @@
                 },
                 () => pickerWrapper.remove()
             );
-            
+
             pickerWrapper.appendChild(picker);
-            
+
             // 插入到子待办项后面
             liElement.after(pickerWrapper);
         }
@@ -835,15 +837,15 @@
                 li.ondragover = (e) => {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = 'move';
-                    
+
                     if (draggedElement === li) return;
-                    
+
                     const rect = li.getBoundingClientRect();
                     const midY = rect.top + rect.height / 2;
-                    
+
                     li.classList.remove('drag-over-top', 'drag-over-bottom');
                     li.classList.add('drag-over');
-                    
+
                     if (e.clientY < midY) {
                         li.classList.add('drag-over-top');
                     } else {
@@ -861,13 +863,13 @@
                 li.ondrop = (e) => {
                     e.preventDefault();
                     li.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
-                    
+
                     if (draggedIndex === null || draggedIndex === localIndex) return;
-                    
+
                     const rect = li.getBoundingClientRect();
                     const midY = rect.top + rect.height / 2;
                     const insertBefore = e.clientY < midY;
-                    
+
                     // 重新排序
                     reorderTodos(draggedIndex, localIndex, insertBefore);
                 };
@@ -876,7 +878,7 @@
                 li.oncontextmenu = (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     // 构建分组子菜单
                     const groupSubmenu = groups.map(g => ({
                         label: g.name,
@@ -896,16 +898,18 @@
                         { divider: true },
                         { icon: '', label: '移动到分组', submenu: groupSubmenu }
                     ];
-                    
+
                     // 如果有截止时间，添加移除选项
                     if (todo.dueDate) {
-                        menuItems.splice(1, 0, { icon: '✕', label: '移除截止时间', action: () => {
-                            todo.dueDate = null;
-                            saveTodos();
-                            renderTodos();
-                        }});
+                        menuItems.splice(1, 0, {
+                            icon: '✕', label: '移除截止时间', action: () => {
+                                todo.dueDate = null;
+                                saveTodos();
+                                renderTodos();
+                            }
+                        });
                     }
-                    
+
                     showContextMenu(e, menuItems);
                 };
             }
@@ -918,7 +922,7 @@
             const textSpan = document.createElement('span');
             textSpan.className = 'todo-text';
             textSpan.textContent = todo.text;
-            
+
             // 截止时间显示
             const dueDateSpan = document.createElement('span');
             dueDateSpan.className = 'todo-due-date';
@@ -932,11 +936,11 @@
                 editInput.type = 'text';
                 editInput.value = todo.text;
                 editInput.className = 'todo-edit-input';
-                
+
                 textSpan.replaceWith(editInput);
                 editInput.focus();
                 editInput.select();
-                
+
                 const save = () => {
                     const newText = editInput.value.trim();
                     if (newText) {
@@ -945,7 +949,7 @@
                     }
                     renderTodos();
                 };
-                
+
                 editInput.onblur = save;
                 editInput.onkeydown = (e) => {
                     if (e.key === 'Enter') save();
@@ -1000,18 +1004,18 @@
             const now = new Date();
             const target = new Date(dueDate);
             const diff = target - now;
-            
+
             if (diff <= 0) {
                 return { text: '已过期', className: 'overdue' };
             }
-            
+
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
+
             let text = '';
             let className = '';
-            
+
             if (days > 7) {
                 // 超过7天显示日期
                 const options = { month: 'short', day: 'numeric' };
@@ -1027,48 +1031,48 @@
                 text = `${minutes}分钟`;
                 className = 'urgent';
             }
-            
+
             return { text, className };
         }
-        
+
         // 更新截止时间显示
         function updateDueDateDisplay(element, dueDate) {
             const { text, className } = formatCountdown(dueDate);
             element.textContent = text;
             element.className = 'todo-due-date ' + className;
         }
-        
+
         // 自定义日期时间选择器
         function createDateTimePicker(currentValue, minDate, maxDate, onConfirm, onCancel) {
             const picker = document.createElement('span');
             picker.className = 'todo-datetime-picker';
-            
+
             // 解析当前值或使用默认值
             let selectedDate = currentValue ? new Date(currentValue) : new Date();
             if (!currentValue) {
                 selectedDate.setDate(selectedDate.getDate() + 1); // 默认明天
             }
             let displayMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-            
+
             const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-            
+
             function render() {
                 const minDateTime = minDate ? new Date(minDate) : new Date();
                 const maxDateTime = maxDate ? new Date(maxDate) : null;
-                
+
                 picker.innerHTML = '';
-                
+
                 // 快捷选项
                 const shortcuts = document.createElement('span');
                 shortcuts.className = 'todo-datetime-shortcuts';
-                
+
                 const shortcutOptions = [
                     { label: '今天', days: 0 },
                     { label: '明天', days: 1 },
                     { label: '3天后', days: 3 },
                     { label: '一周后', days: 7 }
                 ];
-                
+
                 shortcutOptions.forEach(opt => {
                     const btn = document.createElement('span');
                     btn.className = 'todo-datetime-shortcut';
@@ -1086,18 +1090,18 @@
                     shortcuts.appendChild(btn);
                 });
                 picker.appendChild(shortcuts);
-                
+
                 // 头部导航
                 const header = document.createElement('span');
                 header.className = 'todo-datetime-header';
-                
+
                 const title = document.createElement('span');
                 title.className = 'todo-datetime-title';
                 title.textContent = `${displayMonth.getFullYear()}年${displayMonth.getMonth() + 1}月`;
-                
+
                 const nav = document.createElement('span');
                 nav.className = 'todo-datetime-nav';
-                
+
                 const prevBtn = document.createElement('span');
                 prevBtn.className = 'todo-datetime-nav-btn';
                 prevBtn.textContent = '‹';
@@ -1105,7 +1109,7 @@
                     displayMonth.setMonth(displayMonth.getMonth() - 1);
                     render();
                 };
-                
+
                 const nextBtn = document.createElement('span');
                 nextBtn.className = 'todo-datetime-nav-btn';
                 nextBtn.textContent = '›';
@@ -1113,13 +1117,13 @@
                     displayMonth.setMonth(displayMonth.getMonth() + 1);
                     render();
                 };
-                
+
                 nav.appendChild(prevBtn);
                 nav.appendChild(nextBtn);
                 header.appendChild(title);
                 header.appendChild(nav);
                 picker.appendChild(header);
-                
+
                 // 星期标题
                 const weekdaysRow = document.createElement('span');
                 weekdaysRow.className = 'todo-datetime-weekdays';
@@ -1130,18 +1134,18 @@
                     weekdaysRow.appendChild(wd);
                 });
                 picker.appendChild(weekdaysRow);
-                
+
                 // 日期网格
                 const daysGrid = document.createElement('span');
                 daysGrid.className = 'todo-datetime-days';
-                
+
                 const firstDay = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1);
                 let startDay = firstDay.getDay() - 1; // 周一开始
                 if (startDay < 0) startDay = 6;
-                
+
                 const lastDay = new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1, 0);
                 const daysInMonth = lastDay.getDate();
-                
+
                 // 上月日期
                 const prevMonthLast = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 0);
                 for (let i = startDay - 1; i >= 0; i--) {
@@ -1150,39 +1154,39 @@
                     day.textContent = prevMonthLast.getDate() - i;
                     daysGrid.appendChild(day);
                 }
-                
+
                 // 本月日期
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                
+
                 for (let d = 1; d <= daysInMonth; d++) {
                     const day = document.createElement('span');
                     day.className = 'todo-datetime-day';
                     day.textContent = d;
-                    
+
                     const thisDate = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), d);
                     thisDate.setHours(23, 59, 59); // 用于比较
-                    
+
                     const thisDayStart = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), d);
                     thisDayStart.setHours(0, 0, 0, 0);
-                    
+
                     // 今天标记
                     if (thisDayStart.getTime() === today.getTime()) {
                         day.classList.add('today');
                     }
-                    
+
                     // 选中标记
-                    if (selectedDate && 
+                    if (selectedDate &&
                         thisDayStart.getDate() === selectedDate.getDate() &&
                         thisDayStart.getMonth() === selectedDate.getMonth() &&
                         thisDayStart.getFullYear() === selectedDate.getFullYear()) {
                         day.classList.add('selected');
                     }
-                    
+
                     // 禁用过去的日期
                     const compareDate = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), d);
                     compareDate.setHours(selectedDate.getHours(), selectedDate.getMinutes());
-                    
+
                     if (compareDate < minDateTime || (maxDateTime && compareDate > maxDateTime)) {
                         day.classList.add('disabled');
                     } else {
@@ -1192,10 +1196,10 @@
                             render();
                         };
                     }
-                    
+
                     daysGrid.appendChild(day);
                 }
-                
+
                 // 下月日期
                 const totalCells = startDay + daysInMonth;
                 const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
@@ -1205,13 +1209,13 @@
                     day.textContent = d;
                     daysGrid.appendChild(day);
                 }
-                
+
                 picker.appendChild(daysGrid);
-                
+
                 // 时间选择
                 const timeRow = document.createElement('span');
                 timeRow.className = 'todo-datetime-time';
-                
+
                 const hourInput = document.createElement('input');
                 hourInput.type = 'number';
                 hourInput.className = 'todo-datetime-time-input';
@@ -1224,11 +1228,11 @@
                     selectedDate.setHours(h);
                     hourInput.value = h.toString().padStart(2, '0');
                 };
-                
+
                 const sep = document.createElement('span');
                 sep.className = 'todo-datetime-time-sep';
                 sep.textContent = ':';
-                
+
                 const minInput = document.createElement('input');
                 minInput.type = 'number';
                 minInput.className = 'todo-datetime-time-input';
@@ -1241,21 +1245,21 @@
                     selectedDate.setMinutes(m);
                     minInput.value = m.toString().padStart(2, '0');
                 };
-                
+
                 timeRow.appendChild(hourInput);
                 timeRow.appendChild(sep);
                 timeRow.appendChild(minInput);
                 picker.appendChild(timeRow);
-                
+
                 // 操作按钮
                 const actions = document.createElement('span');
                 actions.className = 'todo-datetime-actions';
-                
+
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'todo-datetime-btn';
                 cancelBtn.textContent = '取消';
                 cancelBtn.onclick = onCancel;
-                
+
                 const confirmBtn = document.createElement('button');
                 confirmBtn.className = 'todo-datetime-btn primary';
                 confirmBtn.textContent = '确定';
@@ -1269,16 +1273,16 @@
                     const value = `${year}-${month}-${day}T${hour}:${min}`;
                     onConfirm(value);
                 };
-                
+
                 actions.appendChild(cancelBtn);
                 actions.appendChild(confirmBtn);
                 picker.appendChild(actions);
             }
-            
+
             render();
             return picker;
         }
-        
+
         // 显示截止时间选择器
         function showDueDatePicker(todoIndex, wrapper) {
             // 移除已有的选择器
@@ -1287,11 +1291,11 @@
                 existingPicker.remove();
                 return;
             }
-            
+
             const pickerWrapper = document.createElement('span');
             pickerWrapper.className = 'todo-due-picker';
             pickerWrapper.style.position = 'relative';
-            
+
             const picker = createDateTimePicker(
                 todos[todoIndex].dueDate,
                 new Date().toISOString().slice(0, 16),
@@ -1303,14 +1307,14 @@
                 },
                 () => pickerWrapper.remove()
             );
-            
+
             pickerWrapper.appendChild(picker);
-            
+
             // 插入到待办项后面
             const todoItem = wrapper.querySelector('.todo-parent-item');
             todoItem.after(pickerWrapper);
         }
-        
+
         // 定时更新所有截止时间显示
         let dueDateUpdateInterval = null;
         function startDueDateUpdates() {
@@ -1412,7 +1416,7 @@
             todos.forEach((todo, index) => {
                 // 只显示选中分组的待办
                 if (!checkedGroupIds.includes(todo.groupId)) return;
-                
+
                 if (todo.completed) {
                     completedTodos.push({ todo, index });
                 } else {
@@ -1450,11 +1454,11 @@
                 if (!completedCollapsed) {
                     const completedList = document.createElement('span');
                     completedList.className = 'todo-completed-list';
-                    
+
                     completedTodos.forEach(({ todo, index: actualIndex }, localIndex) => {
                         completedList.appendChild(createTodoItem(todo, localIndex, actualIndex, true));
                     });
-                    
+
                     completedSection.appendChild(completedList);
                 }
             }
@@ -1469,14 +1473,14 @@
                     pendingIndices.push(i);
                 }
             });
-            
+
             // 转换为在todos数组中的实际索引
             const actualFromIndex = pendingIndices[fromIndex] !== undefined ? pendingIndices[fromIndex] : fromIndex;
             const actualToIndex = pendingIndices[toIndex] !== undefined ? pendingIndices[toIndex] : toIndex;
-            
+
             // 从原位置移除
             const [movedTodo] = todos.splice(actualFromIndex, 1);
-            
+
             // 计算新的插入位置
             let newToIndex = actualToIndex;
             if (actualFromIndex < actualToIndex) {
@@ -1485,20 +1489,20 @@
             if (!insertBefore) {
                 newToIndex++;
             }
-            
+
             // 插入到新位置
             todos.splice(newToIndex, 0, movedTodo);
-            
+
             saveTodos();
             renderTodos();
         }
 
         function toggleTodo(index) {
             todos[index].completed = !todos[index].completed;
-            // 当父待办完成时，所有子待办也标记为完成
-            if (todos[index].completed && todos[index].children) {
+            // 同步子待办状态：父待办完成则子待办全完成，父待办取消完成则子待办全取消
+            if (todos[index].children) {
                 todos[index].children.forEach(child => {
-                    child.completed = true;
+                    child.completed = todos[index].completed;
                 });
             }
             saveTodos();
