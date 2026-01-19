@@ -5,6 +5,107 @@ Add your custom CSS styles here to override or extend the default styles.
 *******************************************************************************/
 
 /*******************************************************************************
+SIDE-BY-SIDE LAYOUT - 图文并排布局
+支持图片在左/右，文字在另一侧
+*******************************************************************************/
+
+.side-by-side {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    margin: 1.5rem 0;
+    max-width: 90%;
+}
+
+.side-by-side-img {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+.side-by-side-img img,
+.side-by-side-img svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.side-by-side-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.side-by-side-text p {
+    margin-top: 0;
+}
+
+/* 图片占比变体 */
+.side-by-side.ratio-xs .side-by-side-img {
+    flex: 0 0 10%;
+    max-width: 10%;
+}
+
+.side-by-side.ratio-tiny .side-by-side-img {
+    flex: 0 0 15%;
+    max-width: 15%;
+}
+
+.side-by-side.ratio-mini .side-by-side-img {
+    flex: 0 0 20%;
+    max-width: 20%;
+}
+
+.side-by-side.ratio-small .side-by-side-img {
+    flex: 0 0 30%;
+    max-width: 30%;
+}
+
+.side-by-side.ratio-medium .side-by-side-img {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+.side-by-side.ratio-large .side-by-side-img,
+.side-by-side.ratio-half .side-by-side-img {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+/* 图片在左时的顺序（默认） */
+.side-by-side.img-left .side-by-side-img {
+    order: 1;
+}
+.side-by-side.img-left .side-by-side-text {
+    order: 2;
+}
+
+/* 图片在右时的顺序 */
+.side-by-side.img-right .side-by-side-img {
+    order: 2;
+}
+.side-by-side.img-right .side-by-side-text {
+    order: 1;
+}
+
+/* 移动端响应式：小屏幕时垂直堆叠 */
+@media (max-width: 760px) {
+    .side-by-side {
+        flex-direction: column;
+    }
+    
+    .side-by-side-img,
+    .side-by-side-text {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
+        order: unset !important;
+    }
+    
+    .side-by-side-img {
+        margin-bottom: 1rem;
+    }
+}
+
+/*******************************************************************************
 SCROLLBAR STYLING - 全局滚动条重构
 完美融入背景，纤细优雅
 *******************************************************************************/

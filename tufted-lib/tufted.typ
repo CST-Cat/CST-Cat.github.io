@@ -2,7 +2,7 @@
 #import "refs.typ": template-refs
 #import "notes.typ": template-notes
 #import "figures.typ": template-figures
-#import "layout.typ": full-width, margin-note
+#import "layout.typ": full-width, margin-note, side-by-side
 
 #let make-header(links) = html.header(
   if links != none {

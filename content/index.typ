@@ -1,13 +1,16 @@
 #import "../config.typ": template, tufted
+#import "../tufted-lib/layout.typ": side-by-side
 #show: template
 
-#figure[#image("imgs/cat.png", width: 20%)]
+#side-by-side(
+  image("imgs/cat.png"),
+  [
+    = 你好，我是工仔小猫！
 
-= 你好，我是工仔小猫！
-
-欢迎来到我的小角落！这里是我的*考研日记*，记录着备考之旅。
-
-#figure[#image("imgs/atri2.jpg")]
+    欢迎来到我的小角落！这里是我的*考研日记*，记录着备考之旅。
+  ],
+  ratio: "xs"
+)
 
 == About
 
@@ -26,6 +29,3 @@
 
 无论你是同为考研人，还是偶然路过的朋友，都欢迎你的到来。让我们一起努力，向着目标前进！
 
-#quote[
-  千里之行，始于足下。
-]
