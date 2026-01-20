@@ -5,9 +5,17 @@ CUSTOM FONTS - 自定义字体
 
 /* 字体切片引用 */
 @import url('/assets/fonts/STKaiti/result.css');
-@import url('/assets/fonts/STZhongsong/result.css');
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
+
+/* 朱雀仿宋 - 中文仿宋（用于正文） */
+@font-face {
+    font-family: 'ZhuqueFangsong';
+    src: url('/assets/fonts/ZhuqueFangsong-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
 /* Anthropic Sans - 英文无衬线（用于标题） */
 @font-face {
@@ -26,21 +34,23 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* Anthropic Serif - 英文衬线（用于正文） */
+/* Crimson Pro - 英文衬线（用于正文，可变字体支持 200-900 字重） */
 @font-face {
-    font-family: 'AnthropicSerif';
-    src: url('/assets/fonts/AnthropicSerif-Roman-Web.woff2') format('woff2');
-    font-weight: normal;
+    font-family: 'CrimsonPro';
+    src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');
+    font-weight: 200 900;
     font-style: normal;
     font-display: swap;
+    size-adjust: 115%; 
 }
 
 @font-face {
-    font-family: 'AnthropicSerif';
-    src: url('/assets/fonts/AnthropicSerif-Italic-Web.woff2') format('woff2');
-    font-weight: normal;
+    font-family: 'CrimsonPro';
+    src: url('/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2') format('woff2-variations');
+    font-weight: 200 900;
     font-style: italic;
     font-display: swap;
+    size-adjust: 115%;  
 }
 
 /* JetBrains Mono - 代码字体 */
