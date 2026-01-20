@@ -8,7 +8,7 @@ CUSTOM FONTS - 自定义字体
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
 
-/* 朱雀仿宋 - 中文仿宋（用于正文） */
+/* 朱雀仿宋 - 中文仿宋字体（用于正文） */
 @font-face {
     font-family: 'ZhuqueFangsong';
     src: url('/assets/fonts/ZhuqueFangsong-Regular.woff2') format('woff2');
@@ -17,7 +17,7 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* Anthropic Sans - 英文无衬线（用于标题） */
+/* Anthropic Sans - 英文无衬线字体（用于标题） */
 @font-face {
     font-family: 'AnthropicSans';
     src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');
@@ -34,7 +34,7 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* Crimson Pro - 英文衬线（用于正文，可变字体支持 200-900 字重） */
+/* Crimson Pro - 英文衬线字体（用于正文，可变字体支持 200-900 字重） */
 @font-face {
     font-family: 'CrimsonPro';
     src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');
@@ -53,7 +53,7 @@ CUSTOM FONTS - 自定义字体
     size-adjust: 115%;  
 }
 
-/* JetBrains Mono - 代码字体 */
+/* JetBrains Mono - 等宽代码字体 */
 @font-face {
     font-family: 'JetBrainsMono';
     src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');
@@ -62,5 +62,5 @@ CUSTOM FONTS - 自定义字体
     font-display: swap;
 }
 
-/* Noto Sans SC - 思源黑体（用于侧栏，通过切片引用） */
+/* Noto Sans SC - 思源黑体（用于侧栏和界面元素，通过切片引用） */
 /* 切片文件已在顶部 @import 引用 */
