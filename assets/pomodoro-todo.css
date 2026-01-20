@@ -1,442 +1,499 @@
 /*******************************************************************************
- * 番茄钟样式 - 与 Tufted 主题风格一致
+ * 番茄钟和待办清单样式
+ * 
+ * 本文件包含：
+ * 1. 番茄钟计时器样式
+ * 2. 考研倒计时样式
+ * 3. 待办清单（Todo List）样式
+ * 4. 分组管理样式
+ * 5. 右键菜单样式
+ * 6. 截止时间选择器样式
+ * 
+ * 设计理念：与 Tufted 主题风格一致，简洁优雅
  ******************************************************************************/
 
-/* Define Pomodoro variables based on Theme variables */
+/* 定义番茄钟变量，基于主题变量 */
 :root {
-    --fg: var(--theme-text);
-    --bg: var(--theme-bg);
-    --fg-muted: var(--theme-copy-btn-text);
-    --bg-offset: var(--theme-code-bg);
+    --fg: var(--theme-text);              /* 前景色（文字颜色）*/
+    --bg: var(--theme-bg);                /* 背景色 */
+    --fg-muted: var(--theme-copy-btn-text);  /* 弱化的前景色 */
+    --bg-offset: var(--theme-code-bg);    /* 偏移背景色（用于悬停等）*/
 }
 
-/* 番茄钟容器 - 限制在正文区域内（与 Tufted 主题一致） */
+/* ==================== 番茄钟样式 ==================== */
+
+/* 番茄钟容器 - 限制在正文区域内（与 Tufted 主题一致）*/
 #pomodoro-app {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 55%;
-    margin: 2rem 0;
-    padding: 2rem 0;
-    box-sizing: border-box;
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
+    text-align: center;           /* 文字居中 */
+    width: 55%;                   /* 宽度为正文宽度的 55% */
+    margin: 2rem 0;               /* 上下外边距 */
+    padding: 2rem 0;              /* 上下内边距 */
+    box-sizing: border-box;       /* 边框盒模型 */
 }
 
-/* 计时器模式按钮 */
+/* 计时器模式按钮组 */
 .timer-modes {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex;                /* 弹性布局 */
+    gap: 0.5rem;                  /* 按钮间距 */
+    margin-bottom: 1.5rem;        /* 底部外边距 */
+    flex-wrap: wrap;              /* 允许换行 */
+    justify-content: center;      /* 水平居中 */
 }
 
+/* 模式按钮（专注、短休、长休）*/
 .mode-btn {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--fg);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--fg);
-    cursor: pointer;
-    font-family: 'AnthropicSans', 'ZhuqueFangsong', serif;
-    font-style: normal;
-    font-size: 1.1rem;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;                                   /* 内边距 */
+    border: 1px solid var(--fg);                            /* 边框 */
+    border-radius: 4px;                                     /* 圆角 */
+    background: transparent;                                /* 透明背景 */
+    color: var(--fg);                                       /* 文字颜色 */
+    cursor: pointer;                                        /* 鼠标指针 */
+    font-family: 'AnthropicSans', 'ZhuqueFangsong', serif;  /* 字体 */
+    font-style: normal;                                     /* 正常样式 */
+    font-size: 1.1rem;                                      /* 字体大小 */
+    font-variant-numeric: tabular-nums;                     /* 等宽数字 */
+    letter-spacing: 0.02em;                                 /* 字母间距 */
+    transition: all 0.2s ease;                              /* 过渡动画 */
 }
 
+/* 模式按钮悬停效果 */
 .mode-btn:hover {
-    background: var(--fg);
-    color: var(--bg);
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
 }
 
+/* 激活状态的模式按钮 */
 .mode-btn.active {
-    background: var(--fg);
-    color: var(--bg);
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
 }
 
+/* 按钮中的数字（微调位置）*/
 .btn-number {
-    position: relative;
-    top: 2px;
+    position: relative;           /* 相对定位 */
+    top: 2px;                     /* 向下偏移 2px */
 }
 
-/* 计时器显示 */
+/* 计时器显示（大号时间）*/
 .timer-display {
-    font-size: 5rem;
-    font-weight: 300;
-    font-family: 'CrimsonPro', serif;
-    letter-spacing: 0.05em;
-    margin: 1.5rem 0;
-    color: var(--fg);
-    user-select: none;
+    font-size: 5rem;                      /* 超大字体 */
+    font-weight: 300;                     /* 细字重 */
+    font-family: 'CrimsonPro', serif;     /* 衬线字体 */
+    letter-spacing: 0.05em;               /* 字母间距 */
+    margin: 1.5rem 0;                     /* 上下外边距 */
+    color: var(--fg);                     /* 文字颜色 */
+    user-select: none;                    /* 禁止选择文字 */
 }
 
+/* 计时器标签（状态提示）*/
 .timer-label {
-    color: var(--fg-muted);
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-    font-style: normal !important;
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-size: 1.1rem;                                    /* 字体大小 */
+    margin-bottom: 1.5rem;                                /* 底部外边距 */
+    font-style: normal !important;                        /* 强制正常样式 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
 }
 
-/* 控制按钮 */
+/* 控制按钮组（开始/暂停、重置）*/
 .timer-controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    display: flex;                /* 弹性布局 */
+    gap: 1rem;                    /* 按钮间距 */
+    margin-bottom: 1.5rem;        /* 底部外边距 */
 }
 
+/* 控制按钮（圆形按钮）*/
 .control-btn {
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 50%;
-    border: 1px solid var(--fg);
-    background: transparent;
-    color: var(--fg);
-    font-size: 1.4rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 3.5rem;                /* 宽度 */
+    height: 3.5rem;               /* 高度 */
+    border-radius: 50%;           /* 圆形 */
+    border: 1px solid var(--fg);  /* 边框 */
+    background: transparent;      /* 透明背景 */
+    color: var(--fg);             /* 文字颜色 */
+    font-size: 1.4rem;            /* 字体大小 */
+    cursor: pointer;              /* 鼠标指针 */
+    transition: all 0.2s ease;    /* 过渡动画 */
+    display: flex;                /* 弹性布局 */
+    align-items: center;          /* 垂直居中 */
+    justify-content: center;      /* 水平居中 */
 }
 
+/* 控制按钮悬停效果 */
 .control-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.1);        /* 放大 10% */
 }
 
+/* 主要按钮（开始/暂停）*/
 .control-btn.primary {
-    background: var(--fg);
-    color: var(--bg);
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
 }
 
+/* 主要按钮悬停效果 */
 .control-btn.primary:hover {
-    opacity: 0.9;
+    opacity: 0.9;                 /* 略微透明 */
 }
 
-/* 统计信息 */
+/* 统计信息区域 */
 .timer-stats {
-    display: flex;
-    gap: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--fg-muted);
-    justify-content: center;
-    width: 100%;
+    display: flex;                        /* 弹性布局 */
+    gap: 2rem;                            /* 统计项间距 */
+    padding-top: 1rem;                    /* 顶部内边距 */
+    border-top: 1px solid var(--fg-muted);  /* 顶部边框 */
+    justify-content: center;              /* 水平居中 */
+    width: 100%;                          /* 占满宽度 */
 }
 
+/* 单个统计项 */
 .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
 }
 
+/* 统计数值 */
 .stat-value {
-    font-size: 2.2rem;
-    font-weight: 600;
-    font-family: 'CrimsonPro', serif;
+    font-size: 2.2rem;            /* 大字体 */
+    font-weight: 600;             /* 半粗体 */
+    font-family: 'CrimsonPro', serif;  /* 衬线字体 */
 }
 
+/* 统计标签 */
 .stat-label {
-    font-size: 1rem;
-    color: var(--fg-muted);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-size: 1rem;                                      /* 字体大小 */
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
 }
 
-/* 倒计时显示 */
+/* ==================== 考研倒计时样式 ==================== */
+
+/* 倒计时显示（完整版 - 用于页面主体）*/
 .countdown-display {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-    flex-wrap: wrap;
+    display: flex;                /* 弹性布局 */
+    gap: 1rem;                    /* 项目间距 */
+    margin: 1rem 0;               /* 上下外边距 */
+    flex-wrap: wrap;              /* 允许换行 */
 }
 
+/* 单个倒计时项（天、时、分、秒）*/
 .countdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 4rem;
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
+    min-width: 4rem;              /* 最小宽度 */
 }
 
+/* 倒计时数值 */
 .countdown-value {
-    font-size: 3rem;
-    font-weight: 300;
-    font-family: 'CrimsonPro', serif;
+    font-size: 3rem;              /* 大字体 */
+    font-weight: 300;             /* 细字重 */
+    font-family: 'CrimsonPro', serif;  /* 衬线字体 */
 }
 
+/* 倒计时单位（天、时、分、秒）*/
 .countdown-unit {
-    font-size: 1rem;
-    color: var(--fg-muted);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-size: 1rem;                                      /* 字体大小 */
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
 }
 
+/* 考试信息提示框 */
 .exam-info {
-    margin-top: 1rem;
-    padding: 0.8rem 1rem;
-    border-left: 3px solid var(--fg);
-    background: var(--bg-offset);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    margin-top: 1rem;                     /* 顶部外边距 */
+    padding: 0.8rem 1rem;                 /* 内边距 */
+    border-left: 3px solid var(--fg);     /* 左边框 */
+    background: var(--bg-offset);         /* 背景色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;  /* 字体 */
 }
 
+/* 考试日期文字 */
 .exam-date {
-    color: var(--fg-muted);
+    color: var(--fg-muted);               /* 弱化颜色 */
 }
 
-/* 运行中动画 */
+/* 运行中的脉动动画 */
 @keyframes pulse {
-
     0%,
     100% {
-        opacity: 1;
+        opacity: 1;               /* 完全不透明 */
     }
 
     50% {
-        opacity: 0.6;
+        opacity: 0.6;             /* 60% 不透明度 */
     }
 }
 
+/* 计时器运行时应用脉动动画 */
 .running .timer-display {
-    animation: pulse 2s ease-in-out infinite;
+    animation: pulse 2s ease-in-out infinite;  /* 2秒循环，缓入缓出 */
 }
 
-/* 边栏内的紧凑倒计时样式 */
+/* 边栏内的紧凑倒计时样式（用于 marginnote）*/
 .countdown-compact {
-    display: block;
-    margin-top: 0.5rem;
-    line-height: 1.8;
+    display: block;               /* 块级显示 */
+    margin-top: 0.5rem;           /* 顶部外边距 */
+    line-height: 1.8;             /* 行高 */
 }
 
+/* 紧凑倒计时的数值 */
 .countdown-compact .countdown-value {
-    font-size: 1.3rem;
-    font-weight: 500;
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
-    color: var(--theme-margin-text);
+    font-size: 1.3rem;                                    /* 较小字体 */
+    font-weight: 500;                                     /* 中等字重 */
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
+    color: var(--theme-margin-text);                      /* 边注颜色 */
 }
 
+/* 紧凑倒计时的单位 */
 .countdown-compact .countdown-unit {
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
-    font-size: 0.9rem;
-    color: var(--theme-margin-text);
-    margin-right: 0.5rem;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
+    font-size: 0.9rem;                                    /* 较小字体 */
+    color: var(--theme-margin-text);                      /* 边注颜色 */
+    margin-right: 0.5rem;                                 /* 右外边距 */
 }
 
-/* 待办清单样式 */
+/* ==================== 待办清单样式 ==================== */
+
+/* 待办清单包装器 */
 .todo-wrapper {
-    display: block;
-    /* Ensure it behaves like a block even as a span */
-    text-align: left;
-    margin-top: 0.6rem;
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
-    color: var(--theme-margin-text);
-    width: 100%;
+    display: block;                                       /* 块级显示（即使是 span 元素）*/
+    text-align: left;                                     /* 左对齐 */
+    margin-top: 0.6rem;                                   /* 顶部外边距 */
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
+    color: var(--theme-margin-text);                      /* 边注颜色 */
+    width: 100%;                                          /* 占满宽度 */
 }
 
+/* 输入框组（新建待办）*/
 .todo-input-group {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.6rem;
+    display: flex;                /* 弹性布局 */
+    gap: 0.5rem;                  /* 元素间距 */
+    margin-bottom: 0.6rem;        /* 底部外边距 */
 }
 
+/* 新建待办输入框 */
 #new-todo {
-    flex: 1;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--fg-muted);
-    font-family: inherit;
-    font-size: 0.9rem;
-    color: var(--fg);
-    padding: 0.2rem 0;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1;                              /* 占据剩余空间 */
+    background: transparent;              /* 透明背景 */
+    border: none;                         /* 无边框 */
+    border-bottom: 1px solid var(--fg-muted);  /* 底部边框 */
+    font-family: inherit;                 /* 继承字体 */
+    font-size: 0.9rem;                    /* 字体大小 */
+    color: var(--fg);                     /* 文字颜色 */
+    padding: 0.2rem 0;                    /* 上下内边距 */
+    outline: none;                        /* 无轮廓线 */
+    transition: border-color 0.2s;        /* 边框颜色过渡 */
 }
 
+/* 输入框聚焦时 */
 #new-todo:focus {
-    border-bottom-color: var(--fg);
+    border-bottom-color: var(--fg);       /* 边框变为前景色 */
 }
 
+/* 添加按钮 */
 #add-todo-btn {
-    background: transparent;
-    border: 1px solid var(--fg-muted);
-    color: var(--fg-muted);
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    padding: 0 0.4rem;
-    transition: all 0.2s;
-    user-select: none;
+    background: transparent;              /* 透明背景 */
+    border: 1px solid var(--fg-muted);    /* 边框 */
+    color: var(--fg-muted);               /* 文字颜色 */
+    border-radius: 4px;                   /* 圆角 */
+    cursor: pointer;                      /* 鼠标指针 */
+    font-size: 1rem;                      /* 字体大小 */
+    line-height: 1;                       /* 行高 */
+    padding: 0 0.4rem;                    /* 左右内边距 */
+    transition: all 0.2s;                 /* 过渡动画 */
+    user-select: none;                    /* 禁止选择文字 */
 }
 
+/* 添加按钮悬停效果 */
 #add-todo-btn:hover {
-    color: var(--fg);
-    border-color: var(--fg);
+    color: var(--fg);                     /* 文字变为前景色 */
+    border-color: var(--fg);              /* 边框变为前景色 */
 }
 
+/* 待办列表容器 */
 #todo-list {
-    display: block;
-    /* Create block formatting context for list items */
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    display: block;                       /* 块级显示 */
+    list-style: none;                     /* 无列表样式 */
+    padding: 0;                           /* 无内边距 */
+    margin: 0;                            /* 无外边距 */
 }
 
+/* 待办项 */
 .todo-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: var(--theme-margin-text);
-    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
-    padding: 0.2rem 0.3rem;
-    margin-left: -0.3rem;
-    border-radius: 4px;
-    position: relative;
+    display: flex;                        /* 弹性布局 */
+    align-items: flex-start;              /* 顶部对齐 */
+    gap: 0.5rem;                          /* 元素间距 */
+    margin-bottom: 0.5rem;                /* 底部外边距 */
+    font-size: 0.95rem;                   /* 字体大小 */
+    line-height: 1.4;                     /* 行高 */
+    color: var(--theme-margin-text);      /* 文字颜色 */
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;  /* 过渡动画 */
+    padding: 0.2rem 0.3rem;               /* 内边距 */
+    margin-left: -0.3rem;                 /* 左外边距（负值，扩展点击区域）*/
+    border-radius: 4px;                   /* 圆角 */
+    position: relative;                   /* 相对定位（用于拖拽指示器）*/
 }
 
+/* 可拖拽的待办项 */
 .todo-item[draggable="true"] {
-    cursor: grab;
+    cursor: grab;                         /* 抓手光标 */
 }
 
+/* 拖拽中的光标 */
 .todo-item[draggable="true"]:active {
-    cursor: grabbing;
+    cursor: grabbing;                     /* 抓取中光标 */
 }
 
+/* 正在被拖拽的待办项 */
 .todo-item.dragging {
-    opacity: 0.4;
-    background: var(--bg-offset);
+    opacity: 0.4;                         /* 半透明 */
+    background: var(--bg-offset);         /* 背景色 */
 }
 
+/* 拖拽悬停目标 */
 .todo-item.drag-over {
-    background: var(--bg-offset);
+    background: var(--bg-offset);         /* 背景色 */
 }
 
+/* 拖拽到顶部时的指示器 */
 .todo-item.drag-over-top::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--fg);
-    border-radius: 1px;
+    content: '';                          /* 伪元素 */
+    position: absolute;                   /* 绝对定位 */
+    top: -1px;                            /* 顶部 */
+    left: 0;                              /* 左侧 */
+    right: 0;                             /* 右侧 */
+    height: 2px;                          /* 高度 */
+    background: var(--fg);                /* 前景色 */
+    border-radius: 1px;                   /* 圆角 */
 }
 
+/* 拖拽到底部时的指示器 */
 .todo-item.drag-over-bottom::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--fg);
-    border-radius: 1px;
+    content: '';                          /* 伪元素 */
+    position: absolute;                   /* 绝对定位 */
+    bottom: -1px;                         /* 底部 */
+    left: 0;                              /* 左侧 */
+    right: 0;                             /* 右侧 */
+    height: 2px;                          /* 高度 */
+    background: var(--fg);                /* 前景色 */
+    border-radius: 1px;                   /* 圆角 */
 }
 
-/* 拖拽手柄样式 */
+/* 拖拽手柄样式（⋮⋮ 图标）*/
 .todo-drag-handle {
-    cursor: grab;
-    color: var(--fg-muted);
-    font-size: 0.7rem;
-    line-height: 1.4;
-    letter-spacing: -0.15em;
-    opacity: 0;
-    transition: opacity 0.2s;
-    user-select: none;
-    flex-shrink: 0;
-    margin-right: -0.2rem;
+    cursor: grab;                         /* 抓手光标 */
+    color: var(--fg-muted);               /* 弱化颜色 */
+    font-size: 0.7rem;                    /* 字体大小 */
+    line-height: 1.4;                     /* 行高 */
+    letter-spacing: -0.15em;              /* 字母间距（负值，让点靠近）*/
+    opacity: 0;                           /* 默认隐藏 */
+    transition: opacity 0.2s;             /* 透明度过渡 */
+    user-select: none;                    /* 禁止选择文字 */
+    flex-shrink: 0;                       /* 不收缩 */
+    margin-right: -0.2rem;                /* 右外边距（负值）*/
 }
 
+/* 悬停在待办项上时显示拖拽手柄 */
 .todo-item:hover .todo-drag-handle {
-    opacity: 0.6;
+    opacity: 0.6;                         /* 半透明显示 */
 }
 
+/* 悬停在拖拽手柄上时 */
 .todo-drag-handle:hover {
-    opacity: 1 !important;
-    color: var(--fg);
+    opacity: 1 !important;                /* 完全不透明 */
+    color: var(--fg);                     /* 前景色 */
 }
 
+/* 拖拽中的光标 */
 .todo-drag-handle:active {
-    cursor: grabbing;
+    cursor: grabbing;                     /* 抓取中光标 */
 }
 
+/* 已完成的待办项文字样式 */
 .todo-item.completed .todo-text {
-    text-decoration: line-through;
-    color: var(--fg-muted);
+    text-decoration: line-through;        /* 删除线 */
+    color: var(--fg-muted);               /* 弱化颜色 */
 }
 
-/* 优化5: CSS 自绘复选框，替代 Unicode 字符 */
+/* CSS 自绘复选框（替代 Unicode 字符，更清晰）*/
 .todo-checkbox {
-    width: 1em;
-    height: 1em;
-    border: 1.5px solid var(--theme-margin-text);
-    border-radius: 2px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    user-select: none;
-    min-width: 1em;
-    flex-shrink: 0;
-    margin-top: 0.15em;
-    transition: all 0.15s ease;
+    width: 1em;                           /* 宽度 */
+    height: 1em;                          /* 高度 */
+    border: 1.5px solid var(--theme-margin-text);  /* 边框 */
+    border-radius: 2px;                   /* 圆角 */
+    display: inline-flex;                 /* 内联弹性布局 */
+    align-items: center;                  /* 垂直居中 */
+    justify-content: center;              /* 水平居中 */
+    cursor: pointer;                      /* 鼠标指针 */
+    user-select: none;                    /* 禁止选择 */
+    min-width: 1em;                       /* 最小宽度 */
+    flex-shrink: 0;                       /* 不收缩 */
+    margin-top: 0.15em;                   /* 顶部外边距（微调对齐）*/
+    transition: all 0.15s ease;           /* 过渡动画 */
 }
 
+/* 选中状态的复选框 */
 .todo-checkbox.checked {
-    background: var(--fg);
-    border-color: var(--fg);
+    background: var(--fg);                /* 前景色背景 */
+    border-color: var(--fg);              /* 前景色边框 */
 }
 
+/* 选中状态的勾号（使用伪元素绘制）*/
 .todo-checkbox.checked::after {
-    content: '';
-    width: 0.3em;
-    height: 0.55em;
-    border: solid var(--bg);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    margin-bottom: 0.1em;
+    content: '';                          /* 伪元素 */
+    width: 0.3em;                         /* 宽度 */
+    height: 0.55em;                       /* 高度 */
+    border: solid var(--bg);              /* 边框（背景色）*/
+    border-width: 0 2px 2px 0;            /* 只显示右边和底边 */
+    transform: rotate(45deg);             /* 旋转 45 度形成勾号 */
+    margin-bottom: 0.1em;                 /* 底部外边距（微调位置）*/
 }
 
+/* 复选框悬停效果 */
 .todo-checkbox:hover {
-    opacity: 0.7;
+    opacity: 0.7;                         /* 略微透明 */
 }
 
-/* 优化4: 待办编辑输入框样式 */
+/* 待办编辑输入框样式 */
 .todo-edit-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--fg);
-    font-family: inherit;
-    font-size: inherit;
-    color: var(--fg);
-    padding: 0;
-    outline: none;
+    flex: 1;                              /* 占据剩余空间 */
+    background: transparent;              /* 透明背景 */
+    border: none;                         /* 无边框 */
+    border-bottom: 1px solid var(--fg);   /* 底部边框 */
+    font-family: inherit;                 /* 继承字体 */
+    font-size: inherit;                   /* 继承字体大小 */
+    color: var(--fg);                     /* 文字颜色 */
+    padding: 0;                           /* 无内边距 */
+    outline: none;                        /* 无轮廓线 */
 }
 
+/* 待办文字 */
 .todo-text {
-    flex: 1;
-    word-break: break-word;
-    cursor: text;
-    color: var(--theme-margin-text);
+    flex: 1;                              /* 占据剩余空间 */
+    word-break: break-word;               /* 自动换行 */
+    cursor: text;                         /* 文本光标 */
+    color: var(--theme-margin-text);      /* 边注颜色 */
 }
 
+/* 删除按钮 */
 .todo-delete {
-    cursor: pointer;
-    color: var(--fg-muted);
-    font-size: 1.1rem;
-    line-height: 1.2;
-    opacity: 0;
-    transition: opacity 0.2s;
+    cursor: pointer;                      /* 鼠标指针 */
+    color: var(--fg-muted);               /* 弱化颜色 */
+    font-size: 1.1rem;                    /* 字体大小 */
+    line-height: 1.2;                     /* 行高 */
+    opacity: 0;                           /* 默认隐藏 */
+    transition: opacity 0.2s;             /* 透明度过渡 */
 }
 
+/* 悬停在待办项上时显示删除按钮 */
 .todo-item:hover .todo-delete {
-    opacity: 1;
+    opacity: 1;                           /* 完全显示 */
 }
 
+/* 删除按钮悬停效果 */
 .todo-delete:hover {
-    color: var(--fg);
+    color: var(--fg);                     /* 前景色 */
 }
 
 /* 已完成区域样式 */

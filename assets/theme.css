@@ -1,76 +1,80 @@
 /*******************************************************************************
-THEME CONFIGURATION
-主题配置 - 深色/浅色模式切换
+主题配置 (THEME CONFIGURATION)
+深色/浅色模式切换
 
-This file contains all styles related to light/dark theme switching.
+本文件包含所有与主题切换相关的样式
+支持三种模式：
+1. 浅色模式（默认）
+2. 深色模式（用户手动选择）
+3. 跟随系统（未设置时自动跟随系统偏好）
 *******************************************************************************/
 
 /*******************************************************************************
-CSS CUSTOM PROPERTIES (Theme Variables)
+CSS 自定义属性（主题变量）
+通过 CSS 变量实现主题切换，所有颜色统一管理
 *******************************************************************************/
 
 :root {
-    /* Light mode colors (default) */
-    --theme-bg: #e8e6dc;
-    --theme-text: #141413;
-    --theme-heading: #141413;
-    --theme-code-bg: #dcd9ce;
-    --theme-code-text: inherit;
-    --theme-code-border: #ccc9be;
-    --theme-pre-bg: #dcd9ce;
-    --theme-pre-border: #ccc9be;
-    --theme-line-numbers-border: #ddd;
-    --theme-line-numbers-text: #aaa;
-    --theme-copy-btn-bg: #fff;
-    --theme-copy-btn-text: #666;
-    --theme-copy-btn-border: #ccc;
-    --theme-copy-btn-hover-bg: #f0f0f0;
-    --theme-copy-btn-hover-text: #333;
-    --theme-copy-btn-copied-bg: #e6fffa;
-    --theme-copy-btn-copied-text: #008000;
-    --theme-copy-btn-copied-border: #008000;
-    --theme-table-border: #ccc;
-    --theme-table-header-bg: #f5f5f5;
-    --theme-table-row-even: #fafafa;
-    --theme-table-row-hover: #f0f0f0;
-    --theme-table-row-hover: #f0f0f0;
-    --theme-math-filter: none;
-    --theme-margin-text: #4a4a45;
+    /* 浅色模式颜色（默认）*/
+    --theme-bg: #e8e6dc;                        /* 背景色 - 米黄色 */
+    --theme-text: #141413;                      /* 正文颜色 - 深灰色 */
+    --theme-heading: #141413;                   /* 标题颜色 - 深灰色 */
+    --theme-code-bg: #dcd9ce;                   /* 行内代码背景 - 浅灰色 */
+    --theme-code-text: inherit;                 /* 行内代码文字 - 继承 */
+    --theme-code-border: #ccc9be;               /* 行内代码边框 */
+    --theme-pre-bg: #dcd9ce;                    /* 代码块背景 */
+    --theme-pre-border: #ccc9be;                /* 代码块边框 */
+    --theme-line-numbers-border: #ddd;          /* 行号边框 */
+    --theme-line-numbers-text: #aaa;            /* 行号文字颜色 */
+    --theme-copy-btn-bg: #fff;                  /* 复制按钮背景 */
+    --theme-copy-btn-text: #666;                /* 复制按钮文字 */
+    --theme-copy-btn-border: #ccc;              /* 复制按钮边框 */
+    --theme-copy-btn-hover-bg: #f0f0f0;         /* 复制按钮悬停背景 */
+    --theme-copy-btn-hover-text: #333;          /* 复制按钮悬停文字 */
+    --theme-copy-btn-copied-bg: #e6fffa;        /* 复制成功背景 - 浅青色 */
+    --theme-copy-btn-copied-text: #008000;      /* 复制成功文字 - 绿色 */
+    --theme-copy-btn-copied-border: #008000;    /* 复制成功边框 - 绿色 */
+    --theme-table-border: #ccc;                 /* 表格边框 */
+    --theme-table-header-bg: #f5f5f5;           /* 表头背景 */
+    --theme-table-row-even: #fafafa;            /* 表格偶数行背景 */
+    --theme-table-row-hover: #f0f0f0;           /* 表格行悬停背景 */
+    --theme-math-filter: none;                  /* 数学公式滤镜 - 无 */
+    --theme-margin-text: #4a4a45;               /* 边注文字颜色 */
 }
 
-/* Dark mode variables - 低对比度柔和配色 */
+/* 深色模式变量 - 低对比度柔和配色，护眼舒适 */
 html[data-theme="dark"],
 html:not([data-theme]) {
-    --theme-bg: #1e1e1e;
-    --theme-text: #c5c5c5;
-    --theme-heading: #d8d8d8;
-    --theme-code-bg: #2a2a2a;
-    --theme-code-text: #c8c8c8;
-    --theme-code-border: #383838;
-    --theme-pre-bg: #2a2a2a;
-    --theme-pre-border: #383838;
-    --theme-line-numbers-border: #404040;
-    --theme-line-numbers-text: #606060;
-    --theme-copy-btn-bg: #2e2e2e;
-    --theme-copy-btn-text: #a0a0a0;
-    --theme-copy-btn-border: #454545;
-    --theme-copy-btn-hover-bg: #3a3a3a;
-    --theme-copy-btn-hover-text: #c8c8c8;
-    --theme-copy-btn-copied-bg: #1f3d2d;
-    --theme-copy-btn-copied-text: #6bc485;
-    --theme-copy-btn-copied-border: #6bc485;
-    --theme-table-border: #3a3a3a;
-    --theme-table-header-bg: #282828;
-    --theme-table-row-even: #252525;
-    --theme-table-row-hover: #303030;
-    --theme-table-row-hover: #303030;
-    --theme-math-filter: invert(0.88) hue-rotate(180deg);
-    --theme-margin-text: #8a8a8a;
+    --theme-bg: #1e1e1e;                        /* 背景色 - 深灰色 */
+    --theme-text: #c5c5c5;                      /* 正文颜色 - 浅灰色 */
+    --theme-heading: #d8d8d8;                   /* 标题颜色 - 更浅的灰色 */
+    --theme-code-bg: #2a2a2a;                   /* 行内代码背景 */
+    --theme-code-text: #c8c8c8;                 /* 行内代码文字 */
+    --theme-code-border: #383838;               /* 行内代码边框 */
+    --theme-pre-bg: #2a2a2a;                    /* 代码块背景 */
+    --theme-pre-border: #383838;                /* 代码块边框 */
+    --theme-line-numbers-border: #404040;       /* 行号边框 */
+    --theme-line-numbers-text: #606060;         /* 行号文字颜色 */
+    --theme-copy-btn-bg: #2e2e2e;               /* 复制按钮背景 */
+    --theme-copy-btn-text: #a0a0a0;             /* 复制按钮文字 */
+    --theme-copy-btn-border: #454545;           /* 复制按钮边框 */
+    --theme-copy-btn-hover-bg: #3a3a3a;         /* 复制按钮悬停背景 */
+    --theme-copy-btn-hover-text: #c8c8c8;       /* 复制按钮悬停文字 */
+    --theme-copy-btn-copied-bg: #1f3d2d;        /* 复制成功背景 - 深绿色 */
+    --theme-copy-btn-copied-text: #6bc485;      /* 复制成功文字 - 浅绿色 */
+    --theme-copy-btn-copied-border: #6bc485;    /* 复制成功边框 - 浅绿色 */
+    --theme-table-border: #3a3a3a;              /* 表格边框 */
+    --theme-table-header-bg: #282828;           /* 表头背景 */
+    --theme-table-row-even: #252525;            /* 表格偶数行背景 */
+    --theme-table-row-hover: #303030;           /* 表格行悬停背景 */
+    --theme-math-filter: invert(0.88) hue-rotate(180deg);  /* 数学公式反色滤镜 */
+    --theme-margin-text: #8a8a8a;               /* 边注文字颜色 */
 }
 
-/* System preference: only apply dark variables when no explicit theme is set */
+/* 系统偏好：当用户未手动设置主题时，跟随系统浅色模式 */
 @media (prefers-color-scheme: light) {
     html:not([data-theme]) {
+        /* 应用浅色模式变量 */
         --theme-bg: #e8e6dc;
         --theme-text: #141413;
         --theme-heading: #141413;
@@ -93,7 +97,6 @@ html:not([data-theme]) {
         --theme-table-header-bg: #f5f5f5;
         --theme-table-row-even: #fafafa;
         --theme-table-row-hover: #f0f0f0;
-        --theme-table-row-hover: #f0f0f0;
         --theme-math-filter: none;
         --theme-margin-text: #4a4a45;
     }
@@ -101,148 +104,170 @@ html:not([data-theme]) {
 
 
 /*******************************************************************************
-THEME STYLES (using CSS variables)
+主题样式应用（使用 CSS 变量）
+将定义的主题变量应用到各个元素上
 *******************************************************************************/
 
+/* HTML 根元素 */
 html {
-    background-color: var(--theme-bg) !important;
-    color: var(--theme-text) !important;
+    background-color: var(--theme-bg) !important;    /* 背景色 */
+    color: var(--theme-text) !important;             /* 文字颜色 */
 }
 
+/* Body 元素 */
 body {
-    background-color: var(--theme-bg) !important;
-    color: var(--theme-text) !important;
+    background-color: var(--theme-bg) !important;    /* 背景色 */
+    color: var(--theme-text) !important;             /* 文字颜色 */
 }
 
+/* 所有标题 */
 h1,
 h2,
 h3,
 h4,
 h5 {
-    color: var(--theme-heading) !important;
+    color: var(--theme-heading) !important;          /* 标题颜色 */
 }
 
+/* 链接样式 - 所有状态 */
 a,
 a:link,
 a:visited {
-    color: inherit !important;
-    background-color: transparent !important;
-    text-shadow: none !important;
-    background-image: none !important;
-    text-decoration: underline !important;
-    text-underline-offset: 0.3em;
-    text-decoration-thickness: 1px;
-    text-decoration-skip-ink: auto;
+    color: inherit !important;                       /* 继承文字颜色 */
+    background-color: transparent !important;        /* 透明背景 */
+    text-shadow: none !important;                    /* 无文字阴影 */
+    background-image: none !important;               /* 无背景图片 */
+    text-decoration: underline !important;           /* 下划线 */
+    text-underline-offset: 0.3em;                    /* 下划线偏移 */
+    text-decoration-thickness: 1px;                  /* 下划线粗细 */
+    text-decoration-skip-ink: auto;                  /* 下划线跳过字母下沿 */
 }
 
+/* 行内代码 */
 code {
-    background-color: var(--theme-code-bg) !important;
-    color: var(--theme-code-text) !important;
-    border-color: var(--theme-code-border) !important;
+    background-color: var(--theme-code-bg) !important;      /* 背景色 */
+    color: var(--theme-code-text) !important;               /* 文字颜色 */
+    border-color: var(--theme-code-border) !important;      /* 边框颜色 */
 }
 
+/* 代码块容器 */
 pre {
-    background-color: var(--theme-pre-bg) !important;
-    border-color: var(--theme-pre-border) !important;
+    background-color: var(--theme-pre-bg) !important;       /* 背景色 */
+    border-color: var(--theme-pre-border) !important;       /* 边框颜色 */
 }
 
+/* 代码块内的代码 */
 pre>code {
-    color: var(--theme-code-text) !important;
+    color: var(--theme-code-text) !important;               /* 文字颜色 */
 }
 
+/* 行号列 */
 .line-numbers-rows {
-    border-right-color: var(--theme-line-numbers-border) !important;
-    color: var(--theme-line-numbers-text) !important;
+    border-right-color: var(--theme-line-numbers-border) !important;  /* 右边框颜色 */
+    color: var(--theme-line-numbers-text) !important;                 /* 文字颜色 */
 }
 
+/* 复制按钮 - 默认状态 */
 .copy-button {
-    background-color: var(--theme-copy-btn-bg) !important;
-    color: var(--theme-copy-btn-text) !important;
-    border-color: var(--theme-copy-btn-border) !important;
+    background-color: var(--theme-copy-btn-bg) !important;      /* 背景色 */
+    color: var(--theme-copy-btn-text) !important;               /* 文字颜色 */
+    border-color: var(--theme-copy-btn-border) !important;      /* 边框颜色 */
 }
 
+/* 复制按钮 - 悬停状态 */
 .copy-button:hover {
-    background-color: var(--theme-copy-btn-hover-bg) !important;
-    color: var(--theme-copy-btn-hover-text) !important;
+    background-color: var(--theme-copy-btn-hover-bg) !important;    /* 悬停背景色 */
+    color: var(--theme-copy-btn-hover-text) !important;             /* 悬停文字颜色 */
 }
 
+/* 复制按钮 - 复制成功状态 */
 .copy-button.copied {
-    background-color: var(--theme-copy-btn-copied-bg) !important;
-    color: var(--theme-copy-btn-copied-text) !important;
-    border-color: var(--theme-copy-btn-copied-border) !important;
+    background-color: var(--theme-copy-btn-copied-bg) !important;   /* 成功背景色 */
+    color: var(--theme-copy-btn-copied-text) !important;            /* 成功文字颜色 */
+    border-color: var(--theme-copy-btn-copied-border) !important;   /* 成功边框颜色 */
 }
 
+/* 边注文字 */
 .marginnote {
-    color: var(--theme-margin-text) !important;
+    color: var(--theme-margin-text) !important;                     /* 边注颜色 */
 }
 
+/* 引用块内的脚注和边注 */
 div[style*="border-inline-start"] .footnote-ref,
 div[style*="border-inline-start"] .marginnote,
 div[style*="border-inline-start"] .footnote-ref a {
-    color: var(--theme-heading) !important;
+    color: var(--theme-heading) !important;                         /* 使用标题颜色 */
 }
 
+/* 表格单元格边框 */
 table th,
 table td {
-    border-color: var(--theme-table-border) !important;
+    border-color: var(--theme-table-border) !important;             /* 边框颜色 */
 }
 
+/* 表头背景 */
 table th,
 table thead td {
-    background-color: var(--theme-table-header-bg) !important;
+    background-color: var(--theme-table-header-bg) !important;      /* 表头背景色 */
 }
 
+/* 表格偶数行背景（斑马纹）*/
 table tbody tr:nth-child(even) {
-    background-color: var(--theme-table-row-even) !important;
+    background-color: var(--theme-table-row-even) !important;       /* 偶数行背景色 */
 }
 
+/* 表格行悬停效果 */
 table tbody tr:hover {
-    background-color: var(--theme-table-row-hover) !important;
+    background-color: var(--theme-table-row-hover) !important;      /* 悬停背景色 */
 }
 
+/* 数学公式滤镜（深色模式下反色）*/
 [role="math"] {
-    filter: var(--theme-math-filter) !important;
+    filter: var(--theme-math-filter) !important;                    /* 滤镜效果 */
 }
 
 
 /*******************************************************************************
-THEME TOGGLE BUTTON (DeepWiki Style)
+主题切换按钮（DeepWiki 风格）
+单图标按钮，浅色模式显示月亮，深色模式显示太阳
 *******************************************************************************/
 
 .theme-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    margin-left: auto;
-    margin-right: 3em;
-    margin-top: 1.6em;
-    transition: background-color 0.15s ease;
-    color: #374151;
-    /* 浅色模式下月亮图标颜色 */
+    display: flex;                          /* 弹性布局 */
+    align-items: center;                    /* 垂直居中 */
+    justify-content: center;                /* 水平居中 */
+    width: 2.4rem;                          /* 宽度 */
+    height: 2.4rem;                         /* 高度 */
+    padding: 0;                             /* 无内边距 */
+    background: transparent;                /* 透明背景 */
+    border: none;                           /* 无边框 */
+    border-radius: 0.375rem;                /* 圆角 */
+    cursor: pointer;                        /* 鼠标指针 */
+    margin-left: auto;                      /* 左侧自动边距（推到右侧）*/
+    margin-right: 3em;                      /* 右外边距 */
+    margin-top: 1.6em;                      /* 上外边距 */
+    transition: background-color 0.15s ease;  /* 背景色过渡动画 */
+    color: #374151;                         /* 浅色模式下月亮图标颜色 */
 }
 
+/* 悬停效果 */
 .theme-toggle-btn:hover {
-    background: var(--highlight-weak, rgba(128, 128, 128, 0.2));
+    background: var(--highlight-weak, rgba(128, 128, 128, 0.2));  /* 弱高亮背景 */
 }
 
+/* 键盘聚焦时的轮廓 */
 .theme-toggle-btn:focus-visible {
-    outline: 2px solid var(--highlight-strong, rgba(128, 128, 128, 0.4));
-    outline-offset: 2px;
+    outline: 2px solid var(--highlight-strong, rgba(128, 128, 128, 0.4));  /* 轮廓线 */
+    outline-offset: 2px;                    /* 轮廓偏移 */
 }
 
+/* SVG 图标尺寸 */
 .theme-toggle-btn svg {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 1.8rem;                          /* 图标宽度 */
+    height: 1.8rem;                         /* 图标高度 */
 }
 
-/* 深色模式下太阳图标颜色 */
+/* 深色模式下的按钮样式 */
 .theme-toggle-btn.is-dark {
-    color: #d1d5db;
+    color: #d1d5db;                         /* 深色模式下太阳图标颜色 */
 }

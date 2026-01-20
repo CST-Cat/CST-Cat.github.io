@@ -1,28 +1,63 @@
 /*******************************************************************************
- * 番茄钟 JavaScript - 动态生成界面
+ * 番茄钟和待办清单 JavaScript
+ * 
+ * 功能模块：
+ * 1. 番茄钟计时器（Pomodoro Timer）
+ *    - 25分钟专注、5分钟短休、15分钟长休
+ *    - 支持暂停/继续/重置
+ *    - 统计今日番茄数和总专注分钟数
+ *    - 页面刷新后恢复计时状态
+ * 
+ * 2. 考研倒计时（Countdown）
+ *    - 显示距离考试的天、时、分、秒
+ *    - 支持自定义目标日期
+ *    - 页面不可见时暂停更新（节省资源）
+ * 
+ * 3. 待办清单（Todo List）
+ *    - 支持添加、编辑、删除、完成待办
+ *    - 支持子待办（嵌套任务）
+ *    - 支持分组管理
+ *    - 支持拖拽排序
+ *    - 支持截止时间设置
+ *    - 右键菜单快捷操作
+ *    - 数据持久化到 localStorage
  ******************************************************************************/
 
 (function () {
     'use strict';
 
+    // 根据 DOM 加载状态决定何时初始化
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
-        init();
+        init();  // DOM 已加载完成，直接初始化
     }
 
+    /**
+     * 初始化所有功能模块
+     */
     function init() {
-        initPomodoro();
-        initCountdown();
-        initTodo();
+        initPomodoro();    // 初始化番茄钟
+        initCountdown();   // 初始化倒计时
+        initTodo();        // 初始化待办清单
     }
 
-    // ==================== 番茄钟 ====================
+    // ==================== 番茄钟模块 ====================
+    /**
+     * 初始化番茄钟计时器
+     * 
+     * 功能：
+     * - 三种模式：25分钟专注、5分钟短休、15分钟长休
+     * - 开始/暂停/重置控制
+     * - 统计今日番茄数和总专注分钟数
+     * - 页面刷新后恢复计时状态
+     * - 支持空格键开始/暂停，R键重置
+     */
     function initPomodoro() {
         const container = document.getElementById('pomodoro-app');
-        if (!container) return;
+        if (!container) return;  // 如果页面没有番茄钟容器，直接返回
 
-        // 生成界面
+        // 生成番茄钟界面 HTML
         container.innerHTML = `
             <div class="timer-modes">
                 <button class="mode-btn active" data-minutes="25">专注<span class="btn-number">25</span>分</button>
@@ -47,46 +82,62 @@
             </div>
         `;
 
-        let timerInterval = null;
-        let timeLeft = 25 * 60;
-        let isRunning = false;
-        let currentMode = 25;
-        let startTimestamp = null;  // 记录开始时间戳
+        // 计时器状态变量
+        let timerInterval = null;      // 定时器 ID
+        let timeLeft = 25 * 60;        // 剩余时间（秒）
+        let isRunning = false;         // 是否正在运行
+        let currentMode = 25;          // 当前模式（分钟数）
+        let startTimestamp = null;     // 开始时间戳（用于精确计时）
 
+        // 获取 DOM 元素
         const timerDisplay = document.getElementById('timer');
         const timerLabel = document.getElementById('timer-label');
         const startBtn = document.getElementById('start-btn');
         const resetBtn = document.getElementById('reset-btn');
         const modeBtns = container.querySelectorAll('.mode-btn');
 
-        // 统计数据
+        // 从 localStorage 加载统计数据
         let todayCount = parseInt(localStorage.getItem('pomodoro_todayCount') || '0');
         let totalMinutes = parseInt(localStorage.getItem('pomodoro_totalMinutes') || '0');
         let lastDate = localStorage.getItem('pomodoro_lastDate');
 
+        // 检查日期，如果是新的一天，重置今日番茄数
         const today = new Date().toDateString();
         if (lastDate !== today) {
             todayCount = 0;
             localStorage.setItem('pomodoro_lastDate', today);
         }
 
-        updateStats();
+        updateStats();  // 更新统计显示
 
         // ===== 计时状态存储函数 =====
+        
+        /**
+         * 保存计时器状态到 localStorage
+         * 用于页面刷新后恢复状态
+         */
         function saveTimerState() {
             const state = {
-                startTimestamp: startTimestamp,
-                currentMode: currentMode,
-                isRunning: isRunning,
-                timeLeftWhenPaused: isRunning ? null : timeLeft
+                startTimestamp: startTimestamp,           // 开始时间戳
+                currentMode: currentMode,                 // 当前模式
+                isRunning: isRunning,                     // 是否运行中
+                timeLeftWhenPaused: isRunning ? null : timeLeft  // 暂停时的剩余时间
             };
             localStorage.setItem('pomodoro_timerState', JSON.stringify(state));
         }
 
+        /**
+         * 清除保存的计时器状态
+         */
         function clearTimerState() {
             localStorage.removeItem('pomodoro_timerState');
         }
 
+        /**
+         * 恢复计时器状态
+         * 页面加载时调用，从 localStorage 恢复之前的状态
+         * @returns {boolean} 是否成功恢复状态
+         */
         function restoreTimerState() {
             try {
                 const saved = localStorage.getItem('pomodoro_timerState');
@@ -97,7 +148,7 @@
 
                 currentMode = state.currentMode || 25;
 
-                // 更新模式按钮UI
+                // 更新模式按钮 UI
                 modeBtns.forEach(btn => {
                     btn.classList.remove('active');
                     if (parseInt(btn.dataset.minutes) === currentMode) {
@@ -137,16 +188,27 @@
             return false;
         }
 
+        /**
+         * 格式化时间显示
+         * @param {number} seconds - 秒数
+         * @returns {string} 格式化的时间字符串（MM:SS）
+         */
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
         }
 
+        /**
+         * 更新计时器显示
+         */
         function updateDisplay() {
             timerDisplay.textContent = formatTime(Math.max(0, timeLeft));
         }
 
+        /**
+         * 更新统计信息显示
+         */
         function updateStats() {
             const todayEl = document.getElementById('today-count');
             const totalEl = document.getElementById('total-minutes');

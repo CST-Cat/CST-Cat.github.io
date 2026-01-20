@@ -1,66 +1,82 @@
 /*******************************************************************************
-CUSTOM FONTS - 自定义字体
-这个文件需要在其他 CSS 之前加载
+自定义字体配置
+这个文件需要在其他 CSS 之前加载，以确保字体在页面渲染前可用
 *******************************************************************************/
 
-/* 字体切片引用 */
+/* 字体切片引用 - 通过切片技术减小中文字体文件大小 */
+/* 华文楷体 - 用于标题中的中文 */
 @import url('/assets/fonts/STKaiti/result.css');
+/* 思源黑体常规体 - 用于界面元素 */
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
+/* 思源黑体半粗体 - 用于强调文本 */
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
 
-/* 朱雀仿宋 - 中文仿宋字体（用于正文） */
+/* 朱雀仿宋 - 中文仿宋字体（用于正文）
+   开源字体，优雅的仿宋风格，适合长文阅读 */
 @font-face {
-    font-family: 'ZhuqueFangsong';
-    src: url('/assets/fonts/ZhuqueFangsong-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+    font-family: 'ZhuqueFangsong';                                      /* 字体族名称 */
+    src: url('/assets/fonts/ZhuqueFangsong-Regular.woff2') format('woff2');  /* 字体文件路径和格式 */
+    font-weight: normal;                                                /* 字重：正常 */
+    font-style: normal;                                                 /* 样式：正常（非斜体）*/
+    font-display: swap;                                                 /* 字体加载策略：先显示后备字体，加载完成后切换 */
 }
 
-/* Anthropic Sans - 英文无衬线字体（用于标题） */
+/* Anthropic Sans - 英文无衬线字体（用于标题和界面元素）
+   现代简洁的无衬线字体，清晰易读 */
+
+/* 正常样式 */
 @font-face {
-    font-family: 'AnthropicSans';
-    src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+    font-family: 'AnthropicSans';                                       /* 字体族名称 */
+    src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');  /* 正常样式字体文件 */
+    font-weight: normal;                                                /* 字重：正常 */
+    font-style: normal;                                                 /* 样式：正常 */
+    font-display: swap;                                                 /* 字体加载策略 */
 }
 
+/* 斜体样式 */
 @font-face {
-    font-family: 'AnthropicSans';
-    src: url('/assets/fonts/AnthropicSans-Italic-Web.woff2') format('woff2');
-    font-weight: normal;
-    font-style: italic;
-    font-display: swap;
+    font-family: 'AnthropicSans';                                       /* 同一字体族 */
+    src: url('/assets/fonts/AnthropicSans-Italic-Web.woff2') format('woff2');  /* 斜体字体文件 */
+    font-weight: normal;                                                /* 字重：正常 */
+    font-style: italic;                                                 /* 样式：斜体 */
+    font-display: swap;                                                 /* 字体加载策略 */
 }
 
-/* Crimson Pro - 英文衬线字体（用于正文，可变字体支持 200-900 字重） */
+/* Crimson Pro - 英文衬线字体（用于正文）
+   优雅的衬线字体，可变字体技术支持 200-900 字重
+   适合长文阅读，与朱雀仿宋搭配使用 */
+
+/* 正常样式 - 可变字重 */
 @font-face {
-    font-family: 'CrimsonPro';
-    src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');
-    font-weight: 200 900;
-    font-style: normal;
-    font-display: swap;
-    size-adjust: 115%; 
+    font-family: 'CrimsonPro';                                          /* 字体族名称 */
+    src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');  /* 可变字体文件 */
+    font-weight: 200 900;                                               /* 支持的字重范围：从极细到极粗 */
+    font-style: normal;                                                 /* 样式：正常 */
+    font-display: swap;                                                 /* 字体加载策略 */
+    size-adjust: 115%;                                                  /* 字体大小调整：放大 15% 以匹配中文字体 */
 }
 
+/* 斜体样式 - 可变字重 */
 @font-face {
-    font-family: 'CrimsonPro';
-    src: url('/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2') format('woff2-variations');
-    font-weight: 200 900;
-    font-style: italic;
-    font-display: swap;
-    size-adjust: 115%;  
+    font-family: 'CrimsonPro';                                          /* 同一字体族 */
+    src: url('/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2') format('woff2-variations');  /* 斜体可变字体 */
+    font-weight: 200 900;                                               /* 支持的字重范围 */
+    font-style: italic;                                                 /* 样式：斜体 */
+    font-display: swap;                                                 /* 字体加载策略 */
+    size-adjust: 115%;                                                  /* 字体大小调整 */
 }
 
-/* JetBrains Mono - 等宽代码字体 */
+/* JetBrains Mono - 等宽代码字体
+   专为编程设计的等宽字体，字符清晰易辨，支持连字 */
 @font-face {
-    font-family: 'JetBrainsMono';
-    src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+    font-family: 'JetBrainsMono';                                       /* 字体族名称 */
+    src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');  /* 字体文件 */
+    font-weight: normal;                                                /* 字重：正常 */
+    font-style: normal;                                                 /* 样式：正常 */
+    font-display: swap;                                                 /* 字体加载策略 */
 }
 
-/* Noto Sans SC - 思源黑体（用于侧栏和界面元素，通过切片引用） */
-/* 切片文件已在顶部 @import 引用 */
+/* Noto Sans SC (思源黑体简体中文) - 用于侧栏和界面元素
+   Google 和 Adobe 联合开发的开源字体，覆盖广泛的中文字符
+   通过切片技术分割成多个小文件，按需加载，减少初始加载时间
+   切片文件已在顶部通过 @import 引用 */

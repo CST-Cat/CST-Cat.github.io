@@ -1,94 +1,95 @@
 /*******************************************************************************
-CSS VARIABLES
+CSS 变量定义
 *******************************************************************************/
 
 /* 字体定义已移至 fonts.css */
 
 :root {
-    --highlight-weak: rgba(128, 128, 128, 0.2);
-    --highlight-strong: rgba(128, 128, 128, 0.4);
-    --radius-sm: 0.2rem;
+    --highlight-weak: rgba(128, 128, 128, 0.2);      /* 弱高亮颜色（用于悬停效果）*/
+    --highlight-strong: rgba(128, 128, 128, 0.4);    /* 强高亮颜色（用于交互效果）*/
+    --radius-sm: 0.2rem;                             /* 小圆角半径 */
 }
 
 
 /*******************************************************************************
-BASE STYLES
+基础样式
 *******************************************************************************/
 
 html {
-    font-size: 12.5pt;
-    height: 100%;
+    font-size: 12.5pt;    /* 基础字体大小 */
+    height: 100%;         /* 高度占满整个视口 */
 }
 
-/* Sticky footer layout */
+/* 粘性页脚布局 - 确保页脚始终在底部 */
 body {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
+    min-height: 100%;              /* 最小高度占满视口 */
+    display: flex;                 /* 使用弹性布局 */
+    flex-direction: column;        /* 垂直方向排列 */
     /* 正文字体：英文用 CrimsonPro 衬线，中文用朱雀仿宋 */
     font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
     /* 禁用连字（fi, fl 等不会黏在一起） */
     font-variant-ligatures: none;
 }
 
-/* Main content fills remaining space */
+/* 主内容区域填充剩余空间 */
 body>article {
-    flex: 1 0 auto;
+    flex: 1 0 auto;    /* 自动增长，不收缩，基础大小为自动 */
 }
 
-/* Footer stays at bottom */
+/* 页脚固定在底部 */
 body>footer {
-    flex-shrink: 0;
+    flex-shrink: 0;    /* 不允许收缩 */
 }
 
+/* 图片和 SVG 的基础尺寸限制 */
 img,
 svg {
-    max-width: 100%;
-    max-height: 80vh;
+    max-width: 100%;     /* 最大宽度不超过容器 */
+    max-height: 80vh;    /* 最大高度不超过视口高度的 80% */
 }
 
-/* Constrain images within section to text width unless in fullwidth */
+/* section 中的图片（在 figure 内，非全宽）限制为容器宽度 */
 section>figure:not(.fullwidth)>img,
 section>figure:not(.fullwidth)>svg {
     max-width: 100%;
 }
 
-/* Images directly in section (not in figure) should be constrained */
+/* section 中直接放置的图片（不在 figure 内）限制为文本宽度的 55% */
 section>img,
 section>svg {
     max-width: 55%;
 }
 
-/* Fullwidth content */
+/* 全宽内容样式 */
 .fullwidth {
-    max-width: 90%;
-    clear: both;
+    max-width: 90%;    /* 最大宽度为容器的 90% */
+    clear: both;       /* 清除浮动 */
 }
 
 .fullwidth img,
 .fullwidth svg {
-    max-width: 100%;
+    max-width: 100%;   /* 全宽容器内的图片占满容器 */
 }
 
 
 /*******************************************************************************
-TYPOGRAPHY
+排版样式
 *******************************************************************************/
 
-/* Paragraph alignment and spacing */
+/* 段落对齐和行距 */
 p {
-    text-align: justify;
-    line-height: 2.2rem;
+    text-align: justify;    /* 两端对齐 */
+    line-height: 2.2rem;    /* 行高 */
 }
 
-/* List spacing */
+/* 列表行距 */
 ul,
 ol,
 dl {
-    line-height: 2.2rem;
+    line-height: 2.2rem;    /* 与段落保持一致的行高 */
 }
 
-/* Heading styles */
+/* 标题样式 - 统一所有标题的字体和样式 */
 h1,
 h2,
 h3,
@@ -104,122 +105,127 @@ section h2,
 section h3,
 section h4,
 section h5 {
-    font-family: 'AnthropicSans', 'STKaiti', sans-serif !important;
-    font-style: normal !important;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: #141413;
+    font-family: 'AnthropicSans', 'STKaiti', sans-serif !important;  /* 英文用 AnthropicSans，中文用楷体 */
+    font-style: normal !important;     /* 正常样式（非斜体）*/
+    font-weight: 600;                  /* 半粗体 */
+    letter-spacing: 0.05em;            /* 字母间距 */
+    color: #141413;                    /* 深灰色 */
 }
 
+/* 二级标题 */
 h2 {
-    font-size: 2.3rem;
-    line-height: 1.2;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.3rem;        /* 字体大小 */
+    line-height: 1.2;         /* 行高 */
+    margin-top: 2rem;         /* 上边距 */
+    margin-bottom: 1rem;      /* 下边距 */
 }
 
+/* 三级标题 */
 h3 {
-    font-size: 2rem;
-    line-height: 1.2;
-    margin-top: 1.5rem;
-    margin-bottom: 0.8rem;
+    font-size: 2rem;          /* 字体大小 */
+    line-height: 1.2;         /* 行高 */
+    margin-top: 1.5rem;       /* 上边距 */
+    margin-bottom: 0.8rem;    /* 下边距 */
 }
 
+/* 四级标题 */
 h4 {
-    font-size: 1.75rem;
-    line-height: 1.2;
-    margin-top: 1.2rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.75rem;       /* 字体大小 */
+    line-height: 1.2;         /* 行高 */
+    margin-top: 1.2rem;       /* 上边距 */
+    margin-bottom: 0.5rem;    /* 下边距 */
 }
 
+/* 五级标题 */
 h5 {
-    font-size: 1.5rem;
-    line-height: 1.2;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;        /* 字体大小 */
+    line-height: 1.2;         /* 行高 */
+    margin-top: 1rem;         /* 上边距 */
+    margin-bottom: 0.5rem;    /* 下边距 */
 }
 
-/* English/numeric text in headings */
+/* 标题中的英文/数字文本样式 */
 .heading-en,
 h1 .heading-en,
 h2 .heading-en,
 h3 .heading-en,
 h4 .heading-en,
 h5 .heading-en {
-    font-family: 'AnthropicSans', sans-serif !important;
-    font-style: normal !important;
-    letter-spacing: 0.05em;
+    font-family: 'AnthropicSans', sans-serif !important;  /* 强制使用 AnthropicSans 字体 */
+    font-style: normal !important;                        /* 正常样式 */
+    letter-spacing: 0.05em;                               /* 字母间距 */
 }
 
 
 /*******************************************************************************
-CODE BLOCKS AND INLINE CODE
+代码块和行内代码
 *******************************************************************************/
 
-/* Code block container */
+/* 代码块容器 */
 pre {
-    position: relative;
-    background-color: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    padding: 1em;
-    padding-bottom: 0.5em;
-    overflow-x: auto;
-    margin-bottom: 1.5em;
-    width: 55%;
-    margin-left: 0;
-    margin-right: 0;
-    float: none;
-    clear: none;
-    box-sizing: border-box;
-    left: 0;
+    position: relative;                /* 相对定位（用于放置复制按钮）*/
+    background-color: #f7f7f7;         /* 浅灰色背景 */
+    border: 1px solid #e0e0e0;         /* 边框 */
+    border-radius: 5px;                /* 圆角 */
+    padding: 1em;                      /* 内边距 */
+    padding-bottom: 0.5em;             /* 底部内边距 */
+    overflow-x: auto;                  /* 横向溢出时显示滚动条 */
+    margin-bottom: 1.5em;              /* 底部外边距 */
+    width: 55%;                        /* 宽度为文本宽度的 55% */
+    margin-left: 0;                    /* 左边距 */
+    margin-right: 0;                   /* 右边距 */
+    float: none;                       /* 不浮动 */
+    clear: none;                       /* 不清除浮动 */
+    box-sizing: border-box;            /* 边框盒模型 */
+    left: 0;                           /* 左侧位置 */
 }
 
-/* Code within pre */
+/* pre 标签内的 code 元素 */
 pre>code {
-    width: 95%;
-    font-size: 1.2rem;
-    line-height: 1.5;
-    margin-left: 0%;
-    background-color: transparent;
-    padding: 0;
-    padding-bottom: 0.7em;
-    border: none;
+    width: 95%;                        /* 宽度 */
+    font-size: 1.2rem;                 /* 字体大小 */
+    line-height: 1.5;                  /* 行高 */
+    margin-left: 0%;                   /* 左边距 */
+    background-color: transparent;     /* 透明背景（继承 pre 的背景）*/
+    padding: 0;                        /* 无内边距 */
+    padding-bottom: 0.7em;             /* 底部内边距 */
+    border: none;                      /* 无边框 */
 }
 
-/* Code blocks with line numbers */
+/* 带行号的代码块 */
 pre.has-line-numbers {
-    display: flex;
-    align-items: flex-start;
+    display: flex;              /* 使用弹性布局 */
+    align-items: flex-start;    /* 顶部对齐 */
 }
 
+/* 行号列 */
 .line-numbers-rows {
-    display: flex;
-    flex-direction: column;
-    padding-right: 0.4em;
-    margin-right: 0.4em;
-    border-right: 1px solid #ddd;
-    color: #aaa;
-    -webkit-user-select: none;
-    user-select: none;
-    text-align: right;
-    min-width: 1.2em;
-    font-size: 1.2rem;
-    line-height: 1.5;
-    font-family: 'JetBrainsMono', monospace;
+    display: flex;                              /* 使用弹性布局 */
+    flex-direction: column;                     /* 垂直排列 */
+    padding-right: 0.4em;                       /* 右内边距 */
+    margin-right: 0.4em;                        /* 右外边距 */
+    border-right: 1px solid #ddd;               /* 右边框 */
+    color: #aaa;                                /* 浅灰色文字 */
+    -webkit-user-select: none;                  /* 禁止选择（Safari）*/
+    user-select: none;                          /* 禁止选择 */
+    text-align: right;                          /* 右对齐 */
+    min-width: 1.2em;                           /* 最小宽度 */
+    font-size: 1.2rem;                          /* 字体大小 */
+    line-height: 1.5;                           /* 行高 */
+    font-family: 'JetBrainsMono', monospace;    /* 等宽字体 */
 }
 
-/* Inline code */
+/* 行内代码 */
 code {
-    font-family: 'JetBrainsMono', monospace;
-    font-size: 1.2rem;
-    background-color: #f7f7f7;
-    padding: 0.1em 0.3em;
-    border-radius: 3px;
-    border: 1px solid #e7e7e7;
+    font-family: 'JetBrainsMono', monospace;    /* 等宽字体 */
+    font-size: 1.2rem;                          /* 字体大小 */
+    background-color: #f7f7f7;                  /* 浅灰色背景 */
+    padding: 0.1em 0.3em;                       /* 内边距 */
+    border-radius: 3px;                         /* 圆角 */
+    border: 1px solid #e7e7e7;                  /* 边框 */
 }
 
-/* Code blocks in lists */
+/* 列表中的代码块 - 占满列表项宽度 */
 li pre,
 ul pre,
 ol pre,
@@ -227,170 +233,184 @@ dl pre {
     width: 100%;
 }
 
-/* Code blocks in figures */
+/* 图片容器中的代码块 - 占满容器宽度 */
 figure pre {
     width: 100%;
 }
 
-/* Copy button */
+/* 复制按钮 */
 .copy-button {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
-    padding: 0.3em 0.6em;
-    font-size: 0.8rem;
-    color: #666;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s, background-color 0.2s;
+    position: absolute;                                    /* 绝对定位 */
+    top: 0.5em;                                           /* 距顶部距离 */
+    right: 0.5em;                                         /* 距右侧距离 */
+    padding: 0.3em 0.6em;                                 /* 内边距 */
+    font-size: 0.8rem;                                    /* 字体大小 */
+    color: #666;                                          /* 文字颜色 */
+    background-color: #fff;                               /* 白色背景 */
+    border: 1px solid #ccc;                               /* 边框 */
+    border-radius: 4px;                                   /* 圆角 */
+    cursor: pointer;                                      /* 鼠标指针样式 */
+    opacity: 0;                                           /* 默认透明（隐藏）*/
+    transition: opacity 0.2s, background-color 0.2s;      /* 过渡动画 */
 }
 
+/* 鼠标悬停在代码块上时显示复制按钮 */
 pre:hover .copy-button {
-    opacity: 1;
+    opacity: 1;    /* 完全不透明（显示）*/
 }
 
+/* 鼠标悬停在复制按钮上时的样式 */
 .copy-button:hover {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #f0f0f0;    /* 浅灰色背景 */
+    color: #333;                  /* 深色文字 */
 }
 
+/* 复制成功后的样式 */
 .copy-button.copied {
-    background-color: #e6fffa;
-    color: #008000;
-    border-color: #008000;
+    background-color: #e6fffa;    /* 浅青色背景 */
+    color: #008000;               /* 绿色文字 */
+    border-color: #008000;        /* 绿色边框 */
 }
 
 
 /*******************************************************************************
-QUOTE BLOCKS
+引用块
 *******************************************************************************/
 
-/* Quote blocks with left border */
+/* 带左边框的引用块 */
 div[style*="border-inline-start"] {
-    width: 55%;
-    font-size: 1.4rem;
-    line-height: 2.2rem;
-    clear: none;
-    margin: 1.5em 0;
-    padding-right: 0;
-    box-sizing: border-box;
+    width: 55%;                /* 宽度为文本宽度的 55% */
+    font-size: 1.4rem;         /* 字体大小 */
+    line-height: 2.2rem;       /* 行高 */
+    clear: none;               /* 不清除浮动 */
+    margin: 1.5em 0;           /* 上下外边距 */
+    padding-right: 0;          /* 右内边距 */
+    box-sizing: border-box;    /* 边框盒模型 */
 }
 
+/* 引用块内的段落 */
 div[style*="border-inline-start"] p {
-    font-size: 1.4rem;
-    margin: 0.5em 0;
-    width: 100%;
+    font-size: 1.4rem;         /* 字体大小 */
+    margin: 0.5em 0;           /* 上下外边距 */
+    width: 100%;               /* 占满容器宽度 */
 }
 
+/* 引用块内的脚注引用和边注样式 */
 div[style*="border-inline-start"] .footnote-ref,
 div[style*="border-inline-start"] .marginnote,
 div[style*="border-inline-start"] .footnote-ref a {
-    color: #111 !important;
+    color: #111 !important;    /* 深色文字 */
 }
 
 
 /*******************************************************************************
-TABLES
+表格
 *******************************************************************************/
 
+/* 表格基础样式 */
 table {
-    width: auto;
-    margin: 1.5em 0;
-    border-collapse: collapse;
-    font-size: 1.4rem;
-    line-height: 1.6;
+    width: auto;                  /* 自动宽度 */
+    margin: 1.5em 0;              /* 上下外边距 */
+    border-collapse: collapse;    /* 合并边框 */
+    font-size: 1.4rem;            /* 字体大小 */
+    line-height: 1.6;             /* 行高 */
 }
 
+/* 图片容器中的表格 - 占满容器宽度 */
 figure table {
     width: 100%;
 }
 
+/* section 中的表格 - 宽度为文本宽度的 55% */
 section>table {
     width: 55%;
 }
 
+/* 表格单元格样式 */
 table th,
 table td {
-    padding: 0.5em 0.8em;
-    border: 1px solid #ccc;
-    text-align: left;
-    vertical-align: top;
+    padding: 0.5em 0.8em;         /* 内边距 */
+    border: 1px solid #ccc;       /* 边框 */
+    text-align: left;             /* 左对齐 */
+    vertical-align: top;          /* 顶部对齐 */
 }
 
+/* 表头样式 */
 table th,
 table thead td {
-    background-color: #f5f5f5;
-    font-weight: 600;
-    text-align: center;
+    background-color: #f5f5f5;    /* 浅灰色背景 */
+    font-weight: 600;             /* 半粗体 */
+    text-align: center;           /* 居中对齐 */
 }
 
+/* 表格偶数行背景色（斑马纹）*/
 table tbody tr:nth-child(even) {
-    background-color: #fafafa;
+    background-color: #fafafa;    /* 浅灰色背景 */
 }
 
+/* 鼠标悬停在表格行上时的样式 */
 table tbody tr:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0;    /* 稍深的灰色背景 */
 }
 
 
 /*******************************************************************************
-RESPONSIVE LAYOUT
+响应式布局（移动端适配）
 *******************************************************************************/
 
 @media (max-width: 760px) {
 
-    /* Display margin notes inline on narrow screens */
+    /* 在窄屏幕上将边注显示为内联块 */
     .marginnote {
-        display: block;
-        float: none;
-        position: static;
-        padding-left: 1.2rem;
-        width: 100%;
-        margin-top: 1em;
-        margin-bottom: 1em;
+        display: block;           /* 块级显示 */
+        float: none;              /* 不浮动 */
+        position: static;         /* 静态定位 */
+        padding-left: 1.2rem;     /* 左内边距 */
+        width: 100%;              /* 占满宽度 */
+        margin-top: 1em;          /* 上外边距 */
+        margin-bottom: 1em;       /* 下外边距 */
     }
 
-    /* Limit image width in margin notes */
+    /* 限制边注中图片的宽度 */
     .marginnote img,
     .marginnote svg {
-        max-width: calc(760px / 3);
-        margin: 0 auto;
-        display: block;
+        max-width: calc(760px / 3);    /* 最大宽度约为 253px */
+        margin: 0 auto;                /* 水平居中 */
+        display: block;                /* 块级显示 */
     }
 
-    /* Enable hyphenation on narrow screens */
+    /* 在窄屏幕上启用自动断字 */
     p {
-        hyphens: auto !important;
+        hyphens: auto !important;    /* 自动在单词间断行 */
     }
 
-    /* Full-width quote blocks on mobile */
+    /* 移动端引用块占满宽度 */
     div[style*="border-inline-start"] {
         width: 100%;
     }
 
-    /* Full-width code blocks on mobile */
+    /* 移动端代码块占满宽度 */
     pre {
         width: 100%;
     }
 
-    /* Full-width tables on mobile */
+    /* 移动端表格占满宽度 */
     section>table {
         width: 100%;
     }
 
+    /* 移动端表格字体缩小 */
     table {
         font-size: 1.2rem;
     }
 
+    /* 移动端表格单元格内边距缩小 */
     table th,
     table td {
         padding: 0.4em 0.6em;
     }
 
-    /* Math equations take full width on mobile */
+    /* 移动端数学公式占满宽度 */
     figure[role="math"] {
         width: 100%;
     }
@@ -398,174 +418,187 @@ RESPONSIVE LAYOUT
 
 
 /*******************************************************************************
-NAVBAR AND HEADER/FOOTER
+导航栏、页眉和页脚
 *******************************************************************************/
 
-/* Site header and footer should have consistent styling */
+/* 网站页眉和页脚的统一样式 */
 header.site-header,
 footer {
-    font-size: 1.1rem;
-    color: #666;
-    line-height: 1.6;
+    font-size: 1.1rem;      /* 字体大小 */
+    color: #666;            /* 灰色文字 */
+    line-height: 1.6;       /* 行高 */
 }
 
+/* 页眉样式 */
 header.site-header {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: 0.35em;
+    margin-top: 0.5em;      /* 上外边距（控制页眉与顶部的距离）*/
+    margin-bottom: 0.5em;   /* 下外边距（控制页眉与导航栏的距离）*/
+    margin-left: 0.35em;    /* 左外边距 */
 }
 
+/* 页脚样式 */
 footer {
-    margin-top: 2em;
-    margin-bottom: 1em;
+    margin-top: 2em;        /* 上外边距 */
+    margin-bottom: 1em;     /* 下外边距 */
 }
 
+/* 导航栏容器 */
 header nav {
-    display: flex;
-    gap: 1em;
+    display: flex;          /* 使用弹性布局 */
+    gap: 1em;               /* 导航项之间的间距 */
 }
 
+/* 导航链接样式 */
 header nav a,
 header nav a:link,
 header nav a:visited {
-    color: inherit;
-    text-decoration: none !important;
-    background-image: none !important;
-    border-bottom: 0 !important;
-    box-shadow: none !important;
-    text-shadow: none;
-    font-size: 1.5rem;
-    padding: 0.2em 0.4em;
-    margin-top: 1em;
-    border-radius: var(--radius-sm);
-    transition: background-color 120ms ease;
+    color: inherit;                              /* 继承父元素颜色 */
+    text-decoration: none !important;            /* 无下划线 */
+    background-image: none !important;           /* 无背景图片 */
+    border-bottom: 0 !important;                 /* 无底部边框 */
+    box-shadow: none !important;                 /* 无阴影 */
+    text-shadow: none;                           /* 无文字阴影 */
+    font-size: 1.5rem;                           /* 字体大小 */
+    padding: 0.2em 0.4em;                        /* 内边距（上下 0.2em，左右 0.4em）*/
+    margin-top: 1em;                             /* 上外边距（控制导航栏与内容的距离）*/
+    border-radius: var(--radius-sm);             /* 圆角 */
+    transition: background-color 120ms ease;     /* 背景色过渡动画 */
 }
 
+/* 导航链接悬停和聚焦样式 */
 header nav a:hover,
 header nav a:focus-visible {
-    background: var(--highlight-weak);
-    outline: none;
+    background: var(--highlight-weak);    /* 弱高亮背景 */
+    outline: none;                        /* 无轮廓线 */
 }
 
 
 /*******************************************************************************
-FOOTNOTES AND MARGIN NOTES
+脚注和边注
 *******************************************************************************/
 
-/* Fix footnote line-height inconsistency */
+/* 修复脚注上标的行高不一致问题 */
 sup.footnote-ref {
-    line-height: 0;
-    position: relative;
-    vertical-align: baseline;
-    top: -0.5em;
-    margin-left: 0.1em;
+    line-height: 0;              /* 行高为 0，避免影响段落行高 */
+    position: relative;          /* 相对定位 */
+    vertical-align: baseline;    /* 基线对齐 */
+    top: -0.5em;                 /* 向上偏移 */
+    margin-left: 0.1em;          /* 左外边距 */
 }
 
-/* Margin notes font */
+/* 边注字体 */
 .marginnote {
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;    /* 英文用 AnthropicSans，中文用思源黑体 */
 }
 
+/* 脚注引用和边注的高亮效果 */
 .footnote-ref,
 .footnote-ref+.marginnote {
-    --highlight: transparent;
-    background-color: var(--highlight);
-    box-shadow: 0 0 0 5px var(--highlight);
-    border-radius: var(--radius-sm);
-    transition: background-color 0.3s ease 1s, box-shadow 0.3s ease 1s;
+    --highlight: transparent;                                                /* 默认透明 */
+    background-color: var(--highlight);                                      /* 背景色 */
+    box-shadow: 0 0 0 5px var(--highlight);                                  /* 外阴影 */
+    border-radius: var(--radius-sm);                                         /* 圆角 */
+    transition: background-color 0.3s ease 1s, box-shadow 0.3s ease 1s;     /* 过渡动画，延迟 1 秒 */
 }
 
-/* Highlight margin note when footnote reference is hovered */
+/* 鼠标悬停在脚注引用上时高亮边注 */
 .footnote-ref:hover+.marginnote {
-    --highlight: var(--highlight-weak);
-    transition-delay: 0s;
+    --highlight: var(--highlight-weak);    /* 弱高亮 */
+    transition-delay: 0s;                  /* 立即触发，无延迟 */
 }
 
-/* Highlight footnote reference when margin note is hovered */
+/* 鼠标悬停在边注上时高亮脚注引用 */
 .footnote-ref:has(+ .marginnote:hover) {
-    --highlight: var(--highlight-strong);
-    transition-delay: 0s;
+    --highlight: var(--highlight-strong);    /* 强高亮 */
+    transition-delay: 0s;                    /* 立即触发，无延迟 */
 }
 
+/* 脚注引用链接样式 */
 a.footnote-ref-link {
-    background-image: none;
-    text-shadow: none !important;
+    background-image: none;           /* 无背景图片 */
+    text-shadow: none !important;     /* 无文字阴影 */
 }
 
 
 /*******************************************************************************
-MATH NOTATION
+数学公式
 *******************************************************************************/
 
-/* Block math equations - display as block, centered */
+/* 块级数学公式 - 块级显示，居中对齐 */
 figure[role="math"] {
-    display: block;
-    width: 55%;
-    text-align: center;
-    margin: 1em 0;
-    padding: 0.5em 0;
-    font-size: 1.4em;
-    line-height: 1.2;
-    overflow-x: auto;
-    overflow-y: hidden;
+    display: block;           /* 块级显示 */
+    width: 55%;               /* 宽度为文本宽度的 55% */
+    text-align: center;       /* 居中对齐 */
+    margin: 1em 0;            /* 上下外边距 */
+    padding: 0.5em 0;         /* 上下内边距 */
+    font-size: 1.4em;         /* 字体大小 */
+    line-height: 1.2;         /* 行高 */
+    overflow-x: auto;         /* 横向溢出时显示滚动条 */
+    overflow-y: hidden;       /* 纵向溢出时隐藏 */
 }
 
-/* Math content wrapper - prevent shrinking */
+/* 数学公式内容包装器 - 防止收缩 */
 figure[role="math"]>* {
-    display: inline-block;
-    min-width: max-content;
-    text-align: center;
+    display: inline-block;       /* 内联块显示 */
+    min-width: max-content;      /* 最小宽度为内容宽度 */
+    text-align: center;          /* 居中对齐 */
 }
 
+/* 嵌套在 figure 中的数学公式 */
 figure>figure[role="math"] {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 0 auto;
-    padding: 0.5em 0;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    display: block;           /* 块级显示 */
+    width: 100%;              /* 占满容器宽度 */
+    text-align: center;       /* 居中对齐 */
+    margin: 0 auto;           /* 水平居中 */
+    padding: 0.5em 0;         /* 上下内边距 */
+    max-width: 100%;          /* 最大宽度为容器宽度 */
+    overflow-x: auto;         /* 横向溢出时显示滚动条 */
+    overflow-y: hidden;       /* 纵向溢出时隐藏 */
 }
 
-/* Math content wrapper for nested figures */
+/* 嵌套数学公式的内容包装器 */
 figure>figure[role="math"]>* {
-    display: inline-block;
-    min-width: max-content;
-    text-align: center;
+    display: inline-block;       /* 内联块显示 */
+    min-width: max-content;      /* 最小宽度为内容宽度 */
+    text-align: center;          /* 居中对齐 */
 }
 
-/* Inline math - smaller size, aligned with text baseline */
+/* 行内数学公式 - 较小尺寸，与文本基线对齐 */
 span[role="math"] {
-    display: inline-block;
-    vertical-align: baseline;
-    margin: 0 0.1em;
+    display: inline-block;       /* 内联块显示 */
+    vertical-align: baseline;    /* 基线对齐 */
+    margin: 0 0.1em;             /* 左右外边距 */
 }
 
 /*******************************************************************************
-POST TILES
+文章卡片
 *******************************************************************************/
 
+/* 文章卡片容器 */
 .post-tile {
-    margin: 0 0 1rem;
+    margin: 0 0 1rem;    /* 底部外边距 */
 }
 
+/* 文章卡片链接 */
 .post-tile a {
-    display: inline-block;
-    padding: 0.1em 0.2em;
-    background-image: none !important;
+    display: inline-block;                /* 内联块显示 */
+    padding: 0.1em 0.2em;                 /* 内边距 */
+    background-image: none !important;    /* 无背景图片 */
 }
 
+/* 文章卡片链接悬停和聚焦样式 */
 .post-tile a:hover,
 .post-tile a:focus-visible {
-    background: var(--highlight-weak);
-    outline: none;
+    background: var(--highlight-weak);    /* 弱高亮背景 */
+    outline: none;                        /* 无轮廓线 */
 }
 
+/* 文章卡片标题 */
 .post-tile h3 {
-    margin: 0;
+    margin: 0;    /* 无外边距 */
 }
 
+/* 文章卡片段落 */
 .post-tile p {
-    margin: 0.25rem 0 0;
+    margin: 0.25rem 0 0;    /* 顶部外边距 */
 }

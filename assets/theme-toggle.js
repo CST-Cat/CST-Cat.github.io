@@ -2,60 +2,84 @@
  * 主题切换功能
  *
  * 支持三种状态：
- * 1. 用户未设置偏好 - 跟随系统
- * 2. 用户手动选择深色模式
- * 3. 用户手动选择浅色模式
+ * 1. 用户未设置偏好 - 自动跟随系统主题
+ * 2. 用户手动选择深色模式 - 始终使用深色
+ * 3. 用户手动选择浅色模式 - 始终使用浅色
+ * 
+ * 使用 localStorage 保存用户偏好
+ * 使用 data-theme 属性控制主题
  */
 (function () {
-    const STORAGE_KEY = "theme-preference";
+    const STORAGE_KEY = "theme-preference";  // localStorage 键名
 
-    // SVG 图标常量
+    // SVG 图标常量（太阳和月亮图标）
     const ICONS = {
+        // 太阳图标（深色模式下显示，点击切换到浅色）
         sun: `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm8,24a64,64,0,1,0,64,64A64.07,64.07,0,0,0,128,64ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"></path></svg>`,
+        // 月亮图标（浅色模式下显示，点击切换到深色）
         moon: `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 256 256"><path d="M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.88,57.48a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,10,10,88.08,88.08,0,0,0,109.8,109.8,8,8,0,0,1,10,10Z"></path></svg>`,
     };
 
-    // 获取用户保存的主题偏好
+    /**
+     * 获取用户保存的主题偏好
+     * @returns {string|null} 'light', 'dark', 或 null
+     */
     function getStoredTheme() {
         try {
             return localStorage.getItem(STORAGE_KEY);
         } catch (e) {
-            return null;
+            return null;  // localStorage 不可用时返回 null
         }
     }
 
-    // 保存用户主题偏好
+    /**
+     * 保存用户主题偏好到 localStorage
+     * @param {string} theme - 'light' 或 'dark'
+     */
     function setStoredTheme(theme) {
         try {
             localStorage.setItem(STORAGE_KEY, theme);
         } catch (e) {
-            // localStorage not available
+            // localStorage 不可用时静默失败
         }
     }
 
-    // 获取系统偏好的主题
+    /**
+     * 获取系统偏好的主题
+     * @returns {string} 'light' 或 'dark'
+     */
     function getSystemTheme() {
         return window.matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
             : "light";
     }
 
-    // 获取当前应该应用的主题
+    /**
+     * 获取当前应该应用的主题
+     * 优先级：用户设置 > 系统偏好
+     * @returns {string} 'light' 或 'dark'
+     */
     function getCurrentTheme() {
         const storedTheme = getStoredTheme();
         if (storedTheme) {
-            return storedTheme;
+            return storedTheme;  // 有用户设置，使用用户设置
         }
-        return getSystemTheme();
+        return getSystemTheme();  // 无用户设置，跟随系统
     }
 
-    // 应用主题到文档
+    /**
+     * 应用主题到文档
+     * @param {string} theme - 'light' 或 'dark'
+     */
     function applyTheme(theme) {
         document.documentElement.setAttribute("data-theme", theme);
         updateToggleButton(theme);
     }
 
-    // 更新切换按钮的状态
+    /**
+     * 更新切换按钮的状态
+     * @param {string} theme - 'light' 或 'dark'
+     */
     function updateToggleButton(theme) {
         const button = document.getElementById("theme-toggle");
         if (!button) return;
@@ -72,16 +96,22 @@
         }
     }
 
-    // 切换主题
+    /**
+     * 切换主题
+     * 在浅色和深色之间切换，并保存用户偏好
+     */
     function toggleTheme() {
         const currentTheme =
             document.documentElement.getAttribute("data-theme") || getSystemTheme();
         const newTheme = currentTheme === "dark" ? "light" : "dark";
-        setStoredTheme(newTheme);
+        setStoredTheme(newTheme);  // 保存用户偏好
         applyTheme(newTheme);
     }
 
-    // 创建切换按钮 (DeepWiki 风格 - 单图标按钮)
+    /**
+     * 创建切换按钮（DeepWiki 风格 - 单图标按钮）
+     * @returns {HTMLButtonElement} 切换按钮元素
+     */
     function createToggleButton() {
         const button = document.createElement("button");
         button.id = "theme-toggle";
@@ -94,7 +124,10 @@
         return button;
     }
 
-    // 初始化
+    /**
+     * 初始化主题系统
+     * 在 DOM 加载前应用主题，避免闪烁
+     */
     function init() {
         // 在 DOM 加载完成前先应用主题以防止闪烁
         const theme = getCurrentTheme();
@@ -108,6 +141,10 @@
         }
     }
 
+    /**
+     * DOM 加载完成后的处理
+     * 添加切换按钮并监听系统主题变化
+     */
     function onDOMReady() {
         const button = createToggleButton();
 
