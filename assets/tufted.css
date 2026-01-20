@@ -5,9 +5,12 @@ CSS 变量定义
 /* 字体定义已移至 fonts.css */
 
 :root {
-    --highlight-weak: rgba(128, 128, 128, 0.2);      /* 弱高亮颜色（用于悬停效果）*/
-    --highlight-strong: rgba(128, 128, 128, 0.4);    /* 强高亮颜色（用于交互效果）*/
-    --radius-sm: 0.2rem;                             /* 小圆角半径 */
+    --highlight-weak: rgba(128, 128, 128, 0.2);
+    /* 弱高亮颜色（用于悬停效果）*/
+    --highlight-strong: rgba(128, 128, 128, 0.4);
+    /* 强高亮颜色（用于交互效果）*/
+    --radius-sm: 0.2rem;
+    /* 小圆角半径 */
 }
 
 
@@ -16,15 +19,20 @@ CSS 变量定义
 *******************************************************************************/
 
 html {
-    font-size: 12.5pt;    /* 基础字体大小 */
-    height: 100%;         /* 高度占满整个视口 */
+    font-size: 12.5pt;
+    /* 基础字体大小 */
+    height: 100%;
+    /* 高度占满整个视口 */
 }
 
 /* 粘性页脚布局 - 确保页脚始终在底部 */
 body {
-    min-height: 100%;              /* 最小高度占满视口 */
-    display: flex;                 /* 使用弹性布局 */
-    flex-direction: column;        /* 垂直方向排列 */
+    min-height: 100%;
+    /* 最小高度占满视口 */
+    display: flex;
+    /* 使用弹性布局 */
+    flex-direction: column;
+    /* 垂直方向排列 */
     /* 正文字体：英文用 CrimsonPro 衬线，中文用朱雀仿宋 */
     font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
     /* 禁用连字（fi, fl 等不会黏在一起） */
@@ -33,19 +41,23 @@ body {
 
 /* 主内容区域填充剩余空间 */
 body>article {
-    flex: 1 0 auto;    /* 自动增长，不收缩，基础大小为自动 */
+    flex: 1 0 auto;
+    /* 自动增长，不收缩，基础大小为自动 */
 }
 
 /* 页脚固定在底部 */
 body>footer {
-    flex-shrink: 0;    /* 不允许收缩 */
+    flex-shrink: 0;
+    /* 不允许收缩 */
 }
 
 /* 图片和 SVG 的基础尺寸限制 */
 img,
 svg {
-    max-width: 100%;     /* 最大宽度不超过容器 */
-    max-height: 80vh;    /* 最大高度不超过视口高度的 80% */
+    max-width: 100%;
+    /* 最大宽度不超过容器 */
+    max-height: 80vh;
+    /* 最大高度不超过视口高度的 80% */
 }
 
 /* section 中的图片（在 figure 内，非全宽）限制为容器宽度 */
@@ -62,13 +74,16 @@ section>svg {
 
 /* 全宽内容样式 */
 .fullwidth {
-    max-width: 90%;    /* 最大宽度为容器的 90% */
-    clear: both;       /* 清除浮动 */
+    max-width: 90%;
+    /* 最大宽度为容器的 90% */
+    clear: both;
+    /* 清除浮动 */
 }
 
 .fullwidth img,
 .fullwidth svg {
-    max-width: 100%;   /* 全宽容器内的图片占满容器 */
+    max-width: 100%;
+    /* 全宽容器内的图片占满容器 */
 }
 
 
@@ -78,15 +93,18 @@ section>svg {
 
 /* 段落对齐和行距 */
 p {
-    text-align: justify;    /* 两端对齐 */
-    line-height: 2.2rem;    /* 行高 */
+    text-align: justify;
+    /* 两端对齐 */
+    line-height: 2.2rem;
+    /* 行高 */
 }
 
 /* 列表行距 */
 ul,
 ol,
 dl {
-    line-height: 2.2rem;    /* 与段落保持一致的行高 */
+    line-height: 2.2rem;
+    /* 与段落保持一致的行高 */
 }
 
 /* 标题样式 - 统一所有标题的字体和样式 */
@@ -105,43 +123,64 @@ section h2,
 section h3,
 section h4,
 section h5 {
-    font-family: 'AnthropicSans', 'STKaiti', sans-serif !important;  /* 英文用 AnthropicSans，中文用楷体 */
-    font-style: normal !important;     /* 正常样式（非斜体）*/
-    font-weight: 600;                  /* 半粗体 */
-    letter-spacing: 0.05em;            /* 字母间距 */
-    color: #141413;                    /* 深灰色 */
+    font-family: 'AnthropicSans', 'STKaiti', sans-serif !important;
+    /* 英文用 AnthropicSans，中文用楷体 */
+    font-style: normal !important;
+    /* 正常样式（非斜体）*/
+    font-weight: 600;
+    /* 半粗体 */
+    letter-spacing: 0.05em;
+    /* 字母间距 */
+    color: #141413;
+    /* 深灰色 */
 }
 
 /* 二级标题 */
 h2 {
-    font-size: 2.3rem;        /* 字体大小 */
-    line-height: 1.2;         /* 行高 */
-    margin-top: 2rem;         /* 上边距 */
-    margin-bottom: 1rem;      /* 下边距 */
+    font-size: 2.3rem;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    margin-top: 2rem;
+    /* 上边距 */
+    margin-bottom: 1rem;
+    /* 下边距 */
 }
 
 /* 三级标题 */
 h3 {
-    font-size: 2rem;          /* 字体大小 */
-    line-height: 1.2;         /* 行高 */
-    margin-top: 1.5rem;       /* 上边距 */
-    margin-bottom: 0.8rem;    /* 下边距 */
+    font-size: 2rem;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    margin-top: 1.5rem;
+    /* 上边距 */
+    margin-bottom: 0.8rem;
+    /* 下边距 */
 }
 
 /* 四级标题 */
 h4 {
-    font-size: 1.75rem;       /* 字体大小 */
-    line-height: 1.2;         /* 行高 */
-    margin-top: 1.2rem;       /* 上边距 */
-    margin-bottom: 0.5rem;    /* 下边距 */
+    font-size: 1.75rem;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    margin-top: 1.2rem;
+    /* 上边距 */
+    margin-bottom: 0.5rem;
+    /* 下边距 */
 }
 
 /* 五级标题 */
 h5 {
-    font-size: 1.5rem;        /* 字体大小 */
-    line-height: 1.2;         /* 行高 */
-    margin-top: 1rem;         /* 上边距 */
-    margin-bottom: 0.5rem;    /* 下边距 */
+    font-size: 1.5rem;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    margin-top: 1rem;
+    /* 上边距 */
+    margin-bottom: 0.5rem;
+    /* 下边距 */
 }
 
 /* 标题中的英文/数字文本样式 */
@@ -151,9 +190,12 @@ h2 .heading-en,
 h3 .heading-en,
 h4 .heading-en,
 h5 .heading-en {
-    font-family: 'AnthropicSans', sans-serif !important;  /* 强制使用 AnthropicSans 字体 */
-    font-style: normal !important;                        /* 正常样式 */
-    letter-spacing: 0.05em;                               /* 字母间距 */
+    font-family: 'AnthropicSans', sans-serif !important;
+    /* 强制使用 AnthropicSans 字体 */
+    font-style: normal !important;
+    /* 正常样式 */
+    letter-spacing: 0.05em;
+    /* 字母间距 */
 }
 
 
@@ -163,66 +205,110 @@ h5 .heading-en {
 
 /* 代码块容器 */
 pre {
-    position: relative;                /* 相对定位（用于放置复制按钮）*/
-    background-color: #f7f7f7;         /* 浅灰色背景 */
-    border: 1px solid #e0e0e0;         /* 边框 */
-    border-radius: 5px;                /* 圆角 */
-    padding: 1em;                      /* 内边距 */
-    padding-bottom: 0.5em;             /* 底部内边距 */
-    overflow-x: auto;                  /* 横向溢出时显示滚动条 */
-    margin-bottom: 1.5em;              /* 底部外边距 */
-    width: 55%;                        /* 宽度为文本宽度的 55% */
-    margin-left: 0;                    /* 左边距 */
-    margin-right: 0;                   /* 右边距 */
-    float: none;                       /* 不浮动 */
-    clear: none;                       /* 不清除浮动 */
-    box-sizing: border-box;            /* 边框盒模型 */
-    left: 0;                           /* 左侧位置 */
+    position: relative;
+    /* 相对定位（用于放置复制按钮）*/
+    background-color: #f7f7f7;
+    /* 浅灰色背景 */
+    border: 1px solid #e0e0e0;
+    /* 边框 */
+    border-radius: 5px;
+    /* 圆角 */
+    padding: 1em;
+    /* 内边距 */
+    padding-bottom: 0.5em;
+    /* 底部内边距 */
+    overflow-x: auto;
+    /* 横向溢出时显示滚动条 */
+    margin-bottom: 1.5em;
+    /* 底部外边距 */
+    width: 55%;
+    /* 宽度为文本宽度的 55% */
+    margin-left: 0;
+    /* 左边距 */
+    margin-right: 0;
+    /* 右边距 */
+    float: none;
+    /* 不浮动 */
+    clear: none;
+    /* 不清除浮动 */
+    box-sizing: border-box;
+    /* 边框盒模型 */
+    left: 0;
+    /* 左侧位置 */
 }
 
 /* pre 标签内的 code 元素 */
 pre>code {
-    width: 95%;                        /* 宽度 */
-    font-size: 1.2rem;                 /* 字体大小 */
-    line-height: 1.5;                  /* 行高 */
-    margin-left: 0%;                   /* 左边距 */
-    background-color: transparent;     /* 透明背景（继承 pre 的背景）*/
-    padding: 0;                        /* 无内边距 */
-    padding-bottom: 0.7em;             /* 底部内边距 */
-    border: none;                      /* 无边框 */
+    width: 95%;
+    /* 宽度 */
+    font-size: 1.2rem;
+    /* 字体大小 */
+    line-height: 1.5;
+    /* 行高 */
+    margin-left: 0%;
+    /* 左边距 */
+    background-color: transparent;
+    /* 透明背景（继承 pre 的背景）*/
+    padding: 0;
+    /* 无内边距 */
+    padding-bottom: 0.7em;
+    /* 底部内边距 */
+    border: none;
+    /* 无边框 */
 }
 
 /* 带行号的代码块 */
 pre.has-line-numbers {
-    display: flex;              /* 使用弹性布局 */
-    align-items: flex-start;    /* 顶部对齐 */
+    display: flex;
+    /* 使用弹性布局 */
+    align-items: flex-start;
+    /* 顶部对齐 */
 }
 
 /* 行号列 */
 .line-numbers-rows {
-    display: flex;                              /* 使用弹性布局 */
-    flex-direction: column;                     /* 垂直排列 */
-    padding-right: 0.4em;                       /* 右内边距 */
-    margin-right: 0.4em;                        /* 右外边距 */
-    border-right: 1px solid #ddd;               /* 右边框 */
-    color: #aaa;                                /* 浅灰色文字 */
-    -webkit-user-select: none;                  /* 禁止选择（Safari）*/
-    user-select: none;                          /* 禁止选择 */
-    text-align: right;                          /* 右对齐 */
-    min-width: 1.2em;                           /* 最小宽度 */
-    font-size: 1.2rem;                          /* 字体大小 */
-    line-height: 1.5;                           /* 行高 */
-    font-family: 'JetBrainsMono', monospace;    /* 等宽字体 */
+    display: flex;
+    /* 使用弹性布局 */
+    flex-direction: column;
+    /* 垂直排列 */
+    padding-right: 0.4em;
+    /* 右内边距 */
+    margin-right: 0.4em;
+    /* 右外边距 */
+    border-right: 1px solid #ddd;
+    /* 右边框 */
+    color: #aaa;
+    /* 浅灰色文字 */
+    -webkit-user-select: none;
+    /* 禁止选择（Safari）*/
+    user-select: none;
+    /* 禁止选择 */
+    text-align: right;
+    /* 右对齐 */
+    min-width: 1.2em;
+    /* 最小宽度 */
+    font-size: 1.2rem;
+    /* 字体大小 */
+    line-height: 1.5;
+    /* 行高 */
+    font-family: 'JetBrainsMono', monospace;
+    /* 等宽字体 */
 }
 
 /* 行内代码 */
 code {
-    font-family: 'JetBrainsMono', monospace;    /* 等宽字体 */
-    font-size: 1.2rem;                          /* 字体大小 */
-    background-color: #f7f7f7;                  /* 浅灰色背景 */
-    padding: 0.1em 0.3em;                       /* 内边距 */
-    border-radius: 3px;                         /* 圆角 */
-    border: 1px solid #e7e7e7;                  /* 边框 */
+    font-family: 'JetBrainsMono', monospace;
+    /* 等宽字体 */
+    font-size: 1.2rem;
+    /* 字体大小 */
+    background-color: #f7f7f7;
+    /* 浅灰色背景 */
+    padding: 0.1em 0.3em;
+    /* 内边距 */
+    border-radius: 3px;
+    /* 圆角 */
+    border: 1px solid #e7e7e7;
+    /* 边框 */
 }
 
 /* 列表中的代码块 - 占满列表项宽度 */
@@ -240,36 +326,54 @@ figure pre {
 
 /* 复制按钮 */
 .copy-button {
-    position: absolute;                                    /* 绝对定位 */
-    top: 0.5em;                                           /* 距顶部距离 */
-    right: 0.5em;                                         /* 距右侧距离 */
-    padding: 0.3em 0.6em;                                 /* 内边距 */
-    font-size: 0.8rem;                                    /* 字体大小 */
-    color: #666;                                          /* 文字颜色 */
-    background-color: #fff;                               /* 白色背景 */
-    border: 1px solid #ccc;                               /* 边框 */
-    border-radius: 4px;                                   /* 圆角 */
-    cursor: pointer;                                      /* 鼠标指针样式 */
-    opacity: 0;                                           /* 默认透明（隐藏）*/
-    transition: opacity 0.2s, background-color 0.2s;      /* 过渡动画 */
+    position: absolute;
+    /* 绝对定位 */
+    top: 0.5em;
+    /* 距顶部距离 */
+    right: 0.5em;
+    /* 距右侧距离 */
+    padding: 0.3em 0.6em;
+    /* 内边距 */
+    font-size: 0.8rem;
+    /* 字体大小 */
+    color: #666;
+    /* 文字颜色 */
+    background-color: #fff;
+    /* 白色背景 */
+    border: 1px solid #ccc;
+    /* 边框 */
+    border-radius: 4px;
+    /* 圆角 */
+    cursor: pointer;
+    /* 鼠标指针样式 */
+    opacity: 0;
+    /* 默认透明（隐藏）*/
+    transition: opacity 0.2s, background-color 0.2s;
+    /* 过渡动画 */
 }
 
 /* 鼠标悬停在代码块上时显示复制按钮 */
 pre:hover .copy-button {
-    opacity: 1;    /* 完全不透明（显示）*/
+    opacity: 1;
+    /* 完全不透明（显示）*/
 }
 
 /* 鼠标悬停在复制按钮上时的样式 */
 .copy-button:hover {
-    background-color: #f0f0f0;    /* 浅灰色背景 */
-    color: #333;                  /* 深色文字 */
+    background-color: #f0f0f0;
+    /* 浅灰色背景 */
+    color: #333;
+    /* 深色文字 */
 }
 
 /* 复制成功后的样式 */
 .copy-button.copied {
-    background-color: #e6fffa;    /* 浅青色背景 */
-    color: #008000;               /* 绿色文字 */
-    border-color: #008000;        /* 绿色边框 */
+    background-color: #e6fffa;
+    /* 浅青色背景 */
+    color: #008000;
+    /* 绿色文字 */
+    border-color: #008000;
+    /* 绿色边框 */
 }
 
 
@@ -279,27 +383,38 @@ pre:hover .copy-button {
 
 /* 带左边框的引用块 */
 div[style*="border-inline-start"] {
-    width: 55%;                /* 宽度为文本宽度的 55% */
-    font-size: 1.4rem;         /* 字体大小 */
-    line-height: 2.2rem;       /* 行高 */
-    clear: none;               /* 不清除浮动 */
-    margin: 1.5em 0;           /* 上下外边距 */
-    padding-right: 0;          /* 右内边距 */
-    box-sizing: border-box;    /* 边框盒模型 */
+    width: 55%;
+    /* 宽度为文本宽度的 55% */
+    font-size: 1.4rem;
+    /* 字体大小 */
+    line-height: 2.2rem;
+    /* 行高 */
+    clear: none;
+    /* 不清除浮动 */
+    margin: 1.5em 0;
+    /* 上下外边距 */
+    padding-right: 0;
+    /* 右内边距 */
+    box-sizing: border-box;
+    /* 边框盒模型 */
 }
 
 /* 引用块内的段落 */
 div[style*="border-inline-start"] p {
-    font-size: 1.4rem;         /* 字体大小 */
-    margin: 0.5em 0;           /* 上下外边距 */
-    width: 100%;               /* 占满容器宽度 */
+    font-size: 1.4rem;
+    /* 字体大小 */
+    margin: 0.5em 0;
+    /* 上下外边距 */
+    width: 100%;
+    /* 占满容器宽度 */
 }
 
 /* 引用块内的脚注引用和边注样式 */
 div[style*="border-inline-start"] .footnote-ref,
 div[style*="border-inline-start"] .marginnote,
 div[style*="border-inline-start"] .footnote-ref a {
-    color: #111 !important;    /* 深色文字 */
+    color: #111 !important;
+    /* 深色文字 */
 }
 
 
@@ -309,11 +424,16 @@ div[style*="border-inline-start"] .footnote-ref a {
 
 /* 表格基础样式 */
 table {
-    width: auto;                  /* 自动宽度 */
-    margin: 1.5em 0;              /* 上下外边距 */
-    border-collapse: collapse;    /* 合并边框 */
-    font-size: 1.4rem;            /* 字体大小 */
-    line-height: 1.6;             /* 行高 */
+    width: auto;
+    /* 自动宽度 */
+    margin: 1.5em 0;
+    /* 上下外边距 */
+    border-collapse: collapse;
+    /* 合并边框 */
+    font-size: 1.4rem;
+    /* 字体大小 */
+    line-height: 1.6;
+    /* 行高 */
 }
 
 /* 图片容器中的表格 - 占满容器宽度 */
@@ -329,28 +449,37 @@ section>table {
 /* 表格单元格样式 */
 table th,
 table td {
-    padding: 0.5em 0.8em;         /* 内边距 */
-    border: 1px solid #ccc;       /* 边框 */
-    text-align: left;             /* 左对齐 */
-    vertical-align: top;          /* 顶部对齐 */
+    padding: 0.5em 0.8em;
+    /* 内边距 */
+    border: 1px solid #ccc;
+    /* 边框 */
+    text-align: left;
+    /* 左对齐 */
+    vertical-align: top;
+    /* 顶部对齐 */
 }
 
 /* 表头样式 */
 table th,
 table thead td {
-    background-color: #f5f5f5;    /* 浅灰色背景 */
-    font-weight: 600;             /* 半粗体 */
-    text-align: center;           /* 居中对齐 */
+    background-color: #f5f5f5;
+    /* 浅灰色背景 */
+    font-weight: 600;
+    /* 半粗体 */
+    text-align: center;
+    /* 居中对齐 */
 }
 
 /* 表格偶数行背景色（斑马纹）*/
 table tbody tr:nth-child(even) {
-    background-color: #fafafa;    /* 浅灰色背景 */
+    background-color: #fafafa;
+    /* 浅灰色背景 */
 }
 
 /* 鼠标悬停在表格行上时的样式 */
 table tbody tr:hover {
-    background-color: #f0f0f0;    /* 稍深的灰色背景 */
+    background-color: #f0f0f0;
+    /* 稍深的灰色背景 */
 }
 
 
@@ -362,26 +491,37 @@ table tbody tr:hover {
 
     /* 在窄屏幕上将边注显示为内联块 */
     .marginnote {
-        display: block;           /* 块级显示 */
-        float: none;              /* 不浮动 */
-        position: static;         /* 静态定位 */
-        padding-left: 1.2rem;     /* 左内边距 */
-        width: 100%;              /* 占满宽度 */
-        margin-top: 1em;          /* 上外边距 */
-        margin-bottom: 1em;       /* 下外边距 */
+        display: block;
+        /* 块级显示 */
+        float: none;
+        /* 不浮动 */
+        position: static;
+        /* 静态定位 */
+        padding-left: 1.2rem;
+        /* 左内边距 */
+        width: 100%;
+        /* 占满宽度 */
+        margin-top: 1em;
+        /* 上外边距 */
+        margin-bottom: 1em;
+        /* 下外边距 */
     }
 
     /* 限制边注中图片的宽度 */
     .marginnote img,
     .marginnote svg {
-        max-width: calc(760px / 3);    /* 最大宽度约为 253px */
-        margin: 0 auto;                /* 水平居中 */
-        display: block;                /* 块级显示 */
+        max-width: calc(760px / 3);
+        /* 最大宽度约为 253px */
+        margin: 0 auto;
+        /* 水平居中 */
+        display: block;
+        /* 块级显示 */
     }
 
     /* 在窄屏幕上启用自动断字 */
     p {
-        hyphens: auto !important;    /* 自动在单词间断行 */
+        hyphens: auto !important;
+        /* 自动在单词间断行 */
     }
 
     /* 移动端引用块占满宽度 */
@@ -424,52 +564,75 @@ table tbody tr:hover {
 /* 网站页眉和页脚的统一样式 */
 header.site-header,
 footer {
-    font-size: 1.1rem;      /* 字体大小 */
-    color: #666;            /* 灰色文字 */
-    line-height: 1.6;       /* 行高 */
+    font-size: 1.1rem;
+    /* 字体大小 */
+    color: #666;
+    /* 灰色文字 */
+    line-height: 1.6;
+    /* 行高 */
 }
 
 /* 页眉样式 */
 header.site-header {
-    margin-top: 0.5em;      /* 上外边距（控制页眉与顶部的距离）*/
-    margin-bottom: 0.5em;   /* 下外边距（控制页眉与导航栏的距离）*/
-    margin-left: 0.35em;    /* 左外边距 */
+    margin-top: 0em;
+    /* 上外边距（控制页眉与顶部的距离）*/
+    margin-bottom: 0.2em;
+    /* 下外边距（控制页眉到下方内容的距离）*/
+    margin-left: 0.35em;
+    /* 左外边距 */
 }
 
 /* 页脚样式 */
 footer {
-    margin-top: 2em;        /* 上外边距 */
-    margin-bottom: 1em;     /* 下外边距 */
+    margin-top: 2em;
+    /* 上外边距 */
+    margin-bottom: 1em;
+    /* 下外边距 */
 }
 
 /* 导航栏容器 */
 header nav {
-    display: flex;          /* 使用弹性布局 */
-    gap: 1em;               /* 导航项之间的间距 */
+    display: flex;
+    /* 使用弹性布局 */
+    gap: 0.8em;
+    /* 导航项之间的间距 */
 }
 
 /* 导航链接样式 */
 header nav a,
 header nav a:link,
 header nav a:visited {
-    color: inherit;                              /* 继承父元素颜色 */
-    text-decoration: none !important;            /* 无下划线 */
-    background-image: none !important;           /* 无背景图片 */
-    border-bottom: 0 !important;                 /* 无底部边框 */
-    box-shadow: none !important;                 /* 无阴影 */
-    text-shadow: none;                           /* 无文字阴影 */
-    font-size: 1.5rem;                           /* 字体大小 */
-    padding: 0.2em 0.4em;                        /* 内边距（上下 0.2em，左右 0.4em）*/
-    margin-top: 1em;                             /* 上外边距（控制导航栏与内容的距离）*/
-    border-radius: var(--radius-sm);             /* 圆角 */
-    transition: background-color 120ms ease;     /* 背景色过渡动画 */
+    color: inherit;
+    /* 继承父元素颜色 */
+    text-decoration: none !important;
+    /* 无下划线 */
+    background-image: none !important;
+    /* 无背景图片 */
+    border-bottom: 0 !important;
+    /* 无底部边框 */
+    box-shadow: none !important;
+    /* 无阴影 */
+    text-shadow: none;
+    /* 无文字阴影 */
+    font-size: 1.5rem;
+    /* 字体大小 */
+    padding: 0.2em 0.4em;
+    /* 内边距（上下 0.2em，左右 0.4em）*/
+    margin-top: 1em;
+    /* 上外边距（控制导航栏与内容的距离）*/
+    border-radius: var(--radius-sm);
+    /* 圆角 */
+    transition: background-color 120ms ease;
+    /* 背景色过渡动画 */
 }
 
 /* 导航链接悬停和聚焦样式 */
 header nav a:hover,
 header nav a:focus-visible {
-    background: var(--highlight-weak);    /* 弱高亮背景 */
-    outline: none;                        /* 无轮廓线 */
+    background: var(--highlight-weak);
+    /* 弱高亮背景 */
+    outline: none;
+    /* 无轮廓线 */
 }
 
 
@@ -479,44 +642,61 @@ header nav a:focus-visible {
 
 /* 修复脚注上标的行高不一致问题 */
 sup.footnote-ref {
-    line-height: 0;              /* 行高为 0，避免影响段落行高 */
-    position: relative;          /* 相对定位 */
-    vertical-align: baseline;    /* 基线对齐 */
-    top: -0.5em;                 /* 向上偏移 */
-    margin-left: 0.1em;          /* 左外边距 */
+    line-height: 0;
+    /* 行高为 0，避免影响段落行高 */
+    position: relative;
+    /* 相对定位 */
+    vertical-align: baseline;
+    /* 基线对齐 */
+    top: -0.5em;
+    /* 向上偏移 */
+    margin-left: 0.1em;
+    /* 左外边距 */
 }
 
 /* 边注字体 */
 .marginnote {
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;    /* 英文用 AnthropicSans，中文用思源黑体 */
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    /* 英文用 AnthropicSans，中文用思源黑体 */
 }
 
 /* 脚注引用和边注的高亮效果 */
 .footnote-ref,
 .footnote-ref+.marginnote {
-    --highlight: transparent;                                                /* 默认透明 */
-    background-color: var(--highlight);                                      /* 背景色 */
-    box-shadow: 0 0 0 5px var(--highlight);                                  /* 外阴影 */
-    border-radius: var(--radius-sm);                                         /* 圆角 */
-    transition: background-color 0.3s ease 1s, box-shadow 0.3s ease 1s;     /* 过渡动画，延迟 1 秒 */
+    --highlight: transparent;
+    /* 默认透明 */
+    background-color: var(--highlight);
+    /* 背景色 */
+    box-shadow: 0 0 0 5px var(--highlight);
+    /* 外阴影 */
+    border-radius: var(--radius-sm);
+    /* 圆角 */
+    transition: background-color 0.3s ease 1s, box-shadow 0.3s ease 1s;
+    /* 过渡动画，延迟 1 秒 */
 }
 
 /* 鼠标悬停在脚注引用上时高亮边注 */
 .footnote-ref:hover+.marginnote {
-    --highlight: var(--highlight-weak);    /* 弱高亮 */
-    transition-delay: 0s;                  /* 立即触发，无延迟 */
+    --highlight: var(--highlight-weak);
+    /* 弱高亮 */
+    transition-delay: 0s;
+    /* 立即触发，无延迟 */
 }
 
 /* 鼠标悬停在边注上时高亮脚注引用 */
 .footnote-ref:has(+ .marginnote:hover) {
-    --highlight: var(--highlight-strong);    /* 强高亮 */
-    transition-delay: 0s;                    /* 立即触发，无延迟 */
+    --highlight: var(--highlight-strong);
+    /* 强高亮 */
+    transition-delay: 0s;
+    /* 立即触发，无延迟 */
 }
 
 /* 脚注引用链接样式 */
 a.footnote-ref-link {
-    background-image: none;           /* 无背景图片 */
-    text-shadow: none !important;     /* 无文字阴影 */
+    background-image: none;
+    /* 无背景图片 */
+    text-shadow: none !important;
+    /* 无文字阴影 */
 }
 
 
@@ -526,48 +706,74 @@ a.footnote-ref-link {
 
 /* 块级数学公式 - 块级显示，居中对齐 */
 figure[role="math"] {
-    display: block;           /* 块级显示 */
-    width: 55%;               /* 宽度为文本宽度的 55% */
-    text-align: center;       /* 居中对齐 */
-    margin: 1em 0;            /* 上下外边距 */
-    padding: 0.5em 0;         /* 上下内边距 */
-    font-size: 1.4em;         /* 字体大小 */
-    line-height: 1.2;         /* 行高 */
-    overflow-x: auto;         /* 横向溢出时显示滚动条 */
-    overflow-y: hidden;       /* 纵向溢出时隐藏 */
+    display: block;
+    /* 块级显示 */
+    width: 55%;
+    /* 宽度为文本宽度的 55% */
+    text-align: center;
+    /* 居中对齐 */
+    margin: 1em 0;
+    /* 上下外边距 */
+    padding: 0.5em 0;
+    /* 上下内边距 */
+    font-size: 1.4em;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    overflow-x: auto;
+    /* 横向溢出时显示滚动条 */
+    overflow-y: hidden;
+    /* 纵向溢出时隐藏 */
 }
 
 /* 数学公式内容包装器 - 防止收缩 */
 figure[role="math"]>* {
-    display: inline-block;       /* 内联块显示 */
-    min-width: max-content;      /* 最小宽度为内容宽度 */
-    text-align: center;          /* 居中对齐 */
+    display: inline-block;
+    /* 内联块显示 */
+    min-width: max-content;
+    /* 最小宽度为内容宽度 */
+    text-align: center;
+    /* 居中对齐 */
 }
 
 /* 嵌套在 figure 中的数学公式 */
 figure>figure[role="math"] {
-    display: block;           /* 块级显示 */
-    width: 100%;              /* 占满容器宽度 */
-    text-align: center;       /* 居中对齐 */
-    margin: 0 auto;           /* 水平居中 */
-    padding: 0.5em 0;         /* 上下内边距 */
-    max-width: 100%;          /* 最大宽度为容器宽度 */
-    overflow-x: auto;         /* 横向溢出时显示滚动条 */
-    overflow-y: hidden;       /* 纵向溢出时隐藏 */
+    display: block;
+    /* 块级显示 */
+    width: 100%;
+    /* 占满容器宽度 */
+    text-align: center;
+    /* 居中对齐 */
+    margin: 0 auto;
+    /* 水平居中 */
+    padding: 0.5em 0;
+    /* 上下内边距 */
+    max-width: 100%;
+    /* 最大宽度为容器宽度 */
+    overflow-x: auto;
+    /* 横向溢出时显示滚动条 */
+    overflow-y: hidden;
+    /* 纵向溢出时隐藏 */
 }
 
 /* 嵌套数学公式的内容包装器 */
 figure>figure[role="math"]>* {
-    display: inline-block;       /* 内联块显示 */
-    min-width: max-content;      /* 最小宽度为内容宽度 */
-    text-align: center;          /* 居中对齐 */
+    display: inline-block;
+    /* 内联块显示 */
+    min-width: max-content;
+    /* 最小宽度为内容宽度 */
+    text-align: center;
+    /* 居中对齐 */
 }
 
 /* 行内数学公式 - 较小尺寸，与文本基线对齐 */
 span[role="math"] {
-    display: inline-block;       /* 内联块显示 */
-    vertical-align: baseline;    /* 基线对齐 */
-    margin: 0 0.1em;             /* 左右外边距 */
+    display: inline-block;
+    /* 内联块显示 */
+    vertical-align: baseline;
+    /* 基线对齐 */
+    margin: 0 0.1em;
+    /* 左右外边距 */
 }
 
 /*******************************************************************************
@@ -576,29 +782,37 @@ span[role="math"] {
 
 /* 文章卡片容器 */
 .post-tile {
-    margin: 0 0 1rem;    /* 底部外边距 */
+    margin: 0 0 1rem;
+    /* 底部外边距 */
 }
 
 /* 文章卡片链接 */
 .post-tile a {
-    display: inline-block;                /* 内联块显示 */
-    padding: 0.1em 0.2em;                 /* 内边距 */
-    background-image: none !important;    /* 无背景图片 */
+    display: inline-block;
+    /* 内联块显示 */
+    padding: 0.1em 0.2em;
+    /* 内边距 */
+    background-image: none !important;
+    /* 无背景图片 */
 }
 
 /* 文章卡片链接悬停和聚焦样式 */
 .post-tile a:hover,
 .post-tile a:focus-visible {
-    background: var(--highlight-weak);    /* 弱高亮背景 */
-    outline: none;                        /* 无轮廓线 */
+    background: var(--highlight-weak);
+    /* 弱高亮背景 */
+    outline: none;
+    /* 无轮廓线 */
 }
 
 /* 文章卡片标题 */
 .post-tile h3 {
-    margin: 0;    /* 无外边距 */
+    margin: 0;
+    /* 无外边距 */
 }
 
 /* 文章卡片段落 */
 .post-tile p {
-    margin: 0.25rem 0 0;    /* 顶部外边距 */
+    margin: 0.25rem 0 0;
+    /* 顶部外边距 */
 }
