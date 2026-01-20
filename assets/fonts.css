@@ -6,14 +6,13 @@ CUSTOM FONTS - 自定义字体
 /* 字体切片引用 */
 @import url('/assets/fonts/STKaiti/result.css');
 @import url('/assets/fonts/STZhongsong/result.css');
-@import url('/assets/fonts/STHeiti/result.css');
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
 
 /* Anthropic Sans - 英文无衬线（用于标题） */
 @font-face {
     font-family: 'AnthropicSans';
-    src: url('/assets/AnthropicSans-Roman-Web.woff2') format('woff2');
+    src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -21,7 +20,7 @@ CUSTOM FONTS - 自定义字体
 
 @font-face {
     font-family: 'AnthropicSans';
-    src: url('/assets/AnthropicSans-Italic-Web.woff2') format('woff2');
+    src: url('/assets/fonts/AnthropicSans-Italic-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
@@ -30,7 +29,7 @@ CUSTOM FONTS - 自定义字体
 /* Anthropic Serif - 英文衬线（用于正文） */
 @font-face {
     font-family: 'AnthropicSerif';
-    src: url('/assets/AnthropicSerif-Roman-Web.woff2') format('woff2');
+    src: url('/assets/fonts/AnthropicSerif-Roman-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -38,7 +37,7 @@ CUSTOM FONTS - 自定义字体
 
 @font-face {
     font-family: 'AnthropicSerif';
-    src: url('/assets/AnthropicSerif-Italic-Web.woff2') format('woff2');
+    src: url('/assets/fonts/AnthropicSerif-Italic-Web.woff2') format('woff2');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
@@ -47,7 +46,7 @@ CUSTOM FONTS - 自定义字体
 /* JetBrains Mono - 代码字体 */
 @font-face {
     font-family: 'JetBrainsMono';
-    src: url('/assets/JetBrainsMono-Regular.woff2') format('woff2');
+    src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;

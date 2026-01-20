@@ -9,3 +9,4 @@
 - #link("github-deploy/", "GitHub 网站部署")
 - #link("custom-styling/", "自定义样式")
 - #link("scrollbar-demo/", "滚动条优化演示")
+- #link("front-test/", "字体渲染测试")
