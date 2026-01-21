@@ -165,13 +165,13 @@
     display: inline-block;
     padding: 0.5rem 0.8rem;
     background: transparent;
-    border: 1px solid var(--fg-muted);
+    border: 1px solid var(--theme-margin-text);
     border-radius: 4px;
-    color: var(--fg-muted);
+    color: var(--theme-margin-text) !important;
     font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
     font-size: 0.85rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     text-align: center;
     white-space: nowrap;
 }
@@ -185,20 +185,23 @@
     text-decoration: none !important;
 }
 
+/* 按钮悬停效果 - 参考数据管理模块 */
 .vocab-action-btn:hover {
-    background: var(--fg-muted);
-    color: var(--bg);
-    border-color: var(--fg-muted);
+    background: var(--theme-margin-text) !important;
+    color: var(--theme-bg) !important;
+    border-color: var(--theme-margin-text);
 }
 
-/* 新学习按钮 - 使用默认样式 */
-.vocab-btn-new {
-    /* 继承默认样式 */
+/* 按钮激活效果 */
+.vocab-action-btn:active {
+    /* 无额外效果 */
 }
 
-/* 复习按钮 - 使用相同样式 */
-.vocab-btn-review {
-    /* 继承默认样式，不再特殊处理 */
+/* 按钮选中状态 - 保持悬停颜色 */
+.vocab-action-btn.selected {
+    background: var(--theme-margin-text) !important;
+    color: var(--theme-bg) !important;
+    border-color: var(--theme-margin-text);
 }
 
 /* 开始学习按钮 */

@@ -619,11 +619,11 @@
                     
                     <div class="vocab-action-buttons">
                         <a href="/Tools/Vocabulary/" class="vocab-action-btn vocab-btn-new">
-                            开始新的学习
+                            学习新词
                         </a>
                         ${reviewCount > 0 ? `
                         <a href="/Tools/Vocabulary/" class="vocab-action-btn vocab-btn-review">
-                            开始复习
+                            温习旧词
                         </a>
                         ` : ''}
                     </div>
@@ -646,6 +646,38 @@
                 </div>
             `;
             console.log('Vocabulary: Sidebar HTML generated successfully');
+            
+            // 添加按钮点击事件 - 保存选中状态
+            setTimeout(() => {
+                const buttons = container.querySelectorAll('.vocab-action-btn');
+                
+                // 恢复之前的选中状态
+                const selectedMode = localStorage.getItem('vocab_selectedMode');
+                buttons.forEach(btn => {
+                    if (btn.classList.contains('vocab-btn-new') && selectedMode === 'new') {
+                        btn.classList.add('selected');
+                    } else if (btn.classList.contains('vocab-btn-review') && selectedMode === 'review') {
+                        btn.classList.add('selected');
+                    }
+                });
+                
+                // 监听点击事件
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        // 保存选中状态
+                        if (this.classList.contains('vocab-btn-new')) {
+                            localStorage.setItem('vocab_selectedMode', 'new');
+                        } else if (this.classList.contains('vocab-btn-review')) {
+                            localStorage.setItem('vocab_selectedMode', 'review');
+                        }
+                        
+                        // 移除所有按钮的选中状态
+                        buttons.forEach(b => b.classList.remove('selected'));
+                        // 添加当前按钮的选中状态
+                        this.classList.add('selected');
+                    });
+                });
+            }, 0);
         } catch (error) {
             console.error('Vocabulary: Error in initVocabSidebar:', error);
         }
@@ -723,7 +755,11 @@
 
             console.log('Vocabulary: Getting words to learn...');
             
-            // 🔄 获取需要复习的单词（优先级最高）
+            // 获取用户选择的学习模式
+            const selectedMode = localStorage.getItem('vocab_selectedMode') || 'new';
+            console.log('Vocabulary: Selected mode =', selectedMode);
+            
+            // 🔄 获取需要复习的单词
             const reviewWords = bank.words.filter(w => shouldReview(bankId, w.id));
             
             // 📖 获取新单词（未学过的）
@@ -732,11 +768,12 @@
                 return status.status === 'unknown';
             });
 
-            // 🎯 组合学习队列：先复习，再学新词
+            // 🎯 根据用户选择的模式组合学习队列
             let todayWords = [];
+            let learningMode = selectedMode; // 'new' 或 'review'
             
-            if (reviewWords.length > 0) {
-                // 有待复习的单词，优先复习
+            if (selectedMode === 'review' && reviewWords.length > 0) {
+                // 用户选择复习模式，且有待复习的单词
                 todayWords = [...shuffleArray(reviewWords)];
                 
                 // 如果复习词不够20个，补充新词
@@ -745,10 +782,12 @@
                     todayWords.push(...shuffleArray(newWords).slice(0, remainingSlots));
                 }
             } else {
-                // 没有待复习的，直接学新词
+                // 用户选择新学习模式，或没有待复习的单词
                 todayWords = shuffleArray(newWords).slice(0, 20);
+                learningMode = 'new';
             }
 
+            console.log('Vocabulary: Learning mode =', learningMode);
             console.log('Vocabulary: Review words =', reviewWords.length);
             console.log('Vocabulary: New words =', newWords.length);
             console.log('Vocabulary: Today words =', todayWords.length);
@@ -765,11 +804,11 @@
 
             // 生成主界面
             console.log('Vocabulary: Rendering main app...');
-            renderMainApp(container, bankId, bank, todayWords, currentIndex, isFlipped, reviewWords.length);
+            renderMainApp(container, bankId, bank, todayWords, currentIndex, isFlipped, learningMode);
 
             // 绑定事件
             console.log('Vocabulary: Setting up events...');
-            setupMainAppEvents(container, bankId, todayWords, currentIndex, isFlipped);
+            setupMainAppEvents(container, bankId, todayWords, currentIndex, isFlipped, learningMode);
 
             console.log('Vocabulary: Main app initialized successfully');
         } catch (error) {
@@ -780,13 +819,14 @@
     /**
      * 渲染主应用界面
      */
-    function renderMainApp(container, bankId, bank, wordsToLearn, currentIndex, isFlipped, reviewCount = 0) {
+    function renderMainApp(container, bankId, bank, wordsToLearn, currentIndex, isFlipped, learningMode = 'new') {
         const currentWord = wordsToLearn[currentIndex];
         const wordStatus = getWordStatus(bankId, currentWord.id);
         const isReviewWord = wordStatus.status !== 'unknown';
         
         console.log('Vocabulary: Rendering word:', currentWord.word);
         console.log('Vocabulary: Word status:', wordStatus);
+        console.log('Vocabulary: Learning mode:', learningMode);
         console.log('Vocabulary: Is review word:', isReviewWord);
         
         const stats = getTodayStats();
@@ -937,7 +977,7 @@
                     </select>
                 </div>
                 <div class="vocab-progress-indicator">
-                    ${isReviewWord ? '<span class="vocab-review-badge">复习</span>' : '<span class="vocab-new-badge">新词</span>'}
+                    ${learningMode === 'review' ? '<span class="vocab-review-badge">复习</span>' : '<span class="vocab-new-badge">新词</span>'}
                     第 ${currentIndex + 1}/${wordsToLearn.length} 词
                 </div>
             </div>
@@ -999,7 +1039,7 @@
     /**
      * 设置主应用事件
      */
-    function setupMainAppEvents(container, bankId, wordsToLearn, currentIndex, isFlipped) {
+    function setupMainAppEvents(container, bankId, wordsToLearn, currentIndex, isFlipped, learningMode = 'new') {
         const card = document.getElementById('vocab-card');
         const unknownBtn = document.getElementById('vocab-unknown-btn');
         const fuzzyBtn = document.getElementById('vocab-fuzzy-btn');
@@ -1146,9 +1186,8 @@
                 // 显示下一个单词
                 isFlipped = false;
                 const bank = loadedWordBanks[bankId];
-                const reviewWords = bank.words.filter(w => shouldReview(bankId, w.id));
-                renderMainApp(container, bankId, bank, wordsToLearn, currentIndex, isFlipped, reviewWords.length);
-                setupMainAppEvents(container, bankId, wordsToLearn, currentIndex, isFlipped);
+                renderMainApp(container, bankId, bank, wordsToLearn, currentIndex, isFlipped, learningMode);
+                setupMainAppEvents(container, bankId, wordsToLearn, currentIndex, isFlipped, learningMode);
             }
         }
 

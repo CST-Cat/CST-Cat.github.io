@@ -4,10 +4,12 @@
 #html.elem("link", attrs: (rel: "stylesheet", href: "/assets/pomodoro.css"))
 #html.elem("link", attrs: (rel: "stylesheet", href: "/assets/countdown.css"))
 #html.elem("link", attrs: (rel: "stylesheet", href: "/assets/todo.css"))
+#html.elem("link", attrs: (rel: "stylesheet", href: "/assets/data-manager.css"))
 #html.elem("script", attrs: (src: "/assets/timer-manager.js"))[]
 #html.elem("script", attrs: (src: "/assets/pomodoro.js", defer: "true"))[]
 #html.elem("script", attrs: (src: "/assets/countdown.js", defer: "true"))[]
 #html.elem("script", attrs: (src: "/assets/todo.js", defer: "true"))[]
+#html.elem("script", attrs: (src: "/assets/data-manager.js", defer: "true"))[]
 
 = Pomodoro-Todo
 
@@ -19,6 +21,11 @@
 #tufted.margin-note(class: "todo-margin-note")[
   *待办事项* \
   #html.span(id: "todo-app")[]
+]
+
+#tufted.margin-note(class: "data-management-margin-note")[
+  *数据管理* \
+  #html.span(id: "data-management-app")[]
 ]
 
 #html.div(id: "pomodoro-app")[]
