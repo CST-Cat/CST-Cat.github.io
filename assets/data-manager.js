@@ -148,7 +148,8 @@
                 exportDate: new Date().toISOString(),
                 vocabulary: this.collectVocabularyData(),
                 pomodoro: this.collectPomodoroData(),
-                todos: this.collectTodoData()
+                todos: this.collectTodoData(),
+                settings: this.collectSettingsData()
             };
 
             return data;
@@ -161,7 +162,8 @@
             return {
                 progress: this.getLocalStorageItem('vocab_progress', {}),
                 todayStats: this.getLocalStorageItem('vocab_todayStats', {}),
-                currentBank: localStorage.getItem('vocab_currentBank') || 'kaoyan'
+                currentBank: localStorage.getItem('vocab_currentBank') || 'kaoyan',
+                selectedMode: localStorage.getItem('vocab_selectedMode') || 'new'
             };
         }
 
@@ -184,6 +186,15 @@
             return {
                 todos: localStorage.getItem('pomodoro_todos'),
                 groups: localStorage.getItem('pomodoro_groups')
+            };
+        }
+
+        /**
+         * 收集用户设置数据
+         */
+        collectSettingsData() {
+            return {
+                themePreference: localStorage.getItem('theme-preference')
             };
         }
 
@@ -215,6 +226,11 @@
                 // 导入待办清单数据
                 if (data.todos) {
                     this.importTodoData(data.todos);
+                }
+
+                // 导入用户设置
+                if (data.settings) {
+                    this.importSettingsData(data.settings);
                 }
 
                 this.showNotification(`数据导入成功！已更新 ${importedCount} 条学习记录`, 'success');
@@ -258,9 +274,35 @@
                 this.setLocalStorageItem('vocab_progress', currentProgress);
             }
 
+            // 合并今日统计（保留今天的数据，累加历史数据）
+            if (vocabData.todayStats) {
+                const today = new Date().toDateString();
+                const currentStats = this.getLocalStorageItem('vocab_todayStats', {
+                    date: today,
+                    learned: 0,
+                    reviewed: 0,
+                    target: 20
+                });
+                const importedStats = vocabData.todayStats;
+                
+                // 如果导入的是今天的数据，取最大值
+                if (importedStats.date === today) {
+                    currentStats.learned = Math.max(currentStats.learned, importedStats.learned || 0);
+                    currentStats.reviewed = Math.max(currentStats.reviewed, importedStats.reviewed || 0);
+                    currentStats.target = importedStats.target || currentStats.target;
+                }
+                // 如果导入的是历史数据，保留当前数据
+                
+                this.setLocalStorageItem('vocab_todayStats', currentStats);
+            }
+
             // 导入其他单词数据
             if (vocabData.currentBank) {
                 localStorage.setItem('vocab_currentBank', vocabData.currentBank);
+            }
+            
+            if (vocabData.selectedMode) {
+                localStorage.setItem('vocab_selectedMode', vocabData.selectedMode);
             }
 
             return importedCount;
@@ -335,6 +377,15 @@
             }
         }
 
+        /**
+         * 导入用户设置数据
+         */
+        importSettingsData(settingsData) {
+            if (settingsData.themePreference) {
+                localStorage.setItem('theme-preference', settingsData.themePreference);
+            }
+        }
+
         // ==================== 数据清除 ====================
 
         /**
@@ -354,6 +405,7 @@
                 localStorage.removeItem('vocab_progress');
                 localStorage.removeItem('vocab_todayStats');
                 localStorage.removeItem('vocab_currentBank');
+                localStorage.removeItem('vocab_selectedMode');
 
                 // 清除番茄钟数据
                 localStorage.removeItem('pomodoro_todayCount');
@@ -364,6 +416,9 @@
                 // 清除待办清单数据
                 localStorage.removeItem('pomodoro_todos');
                 localStorage.removeItem('pomodoro_groups');
+
+                // 清除用户设置
+                localStorage.removeItem('theme-preference');
 
                 // 清除 IndexedDB 缓存
                 if (window.indexedDBHelper) {
@@ -446,10 +501,30 @@
          * 获取数据统计信息
          */
         getDataStats() {
+            const progress = this.getLocalStorageItem('vocab_progress', {});
+            const todayStats = this.getLocalStorageItem('vocab_todayStats', {});
+            
+            // 计算需要复习的单词数量
+            const today = new Date();
+            let reviewDueCount = 0;
+            
+            Object.values(progress).forEach(item => {
+                if (item.status !== 'unknown' && item.nextReview) {
+                    const nextReview = new Date(item.nextReview);
+                    if (today >= nextReview) {
+                        reviewDueCount++;
+                    }
+                }
+            });
+            
             const stats = {
                 vocabulary: {
-                    progressCount: Object.keys(this.getLocalStorageItem('vocab_progress', {})).length,
-                    currentBank: localStorage.getItem('vocab_currentBank') || 'kaoyan'
+                    progressCount: Object.keys(progress).length,
+                    reviewDueCount: reviewDueCount,
+                    todayLearned: todayStats.learned || 0,
+                    todayReviewed: todayStats.reviewed || 0,
+                    currentBank: localStorage.getItem('vocab_currentBank') || 'kaoyan',
+                    selectedMode: localStorage.getItem('vocab_selectedMode') || 'new'
                 },
                 pomodoro: {
                     todayCount: parseInt(localStorage.getItem('pomodoro_todayCount') || '0'),
@@ -458,6 +533,9 @@
                 todos: {
                     todoCount: this.getLocalStorageItem('pomodoro_todos', []).length,
                     groupCount: this.getLocalStorageItem('pomodoro_groups', []).length
+                },
+                settings: {
+                    themePreference: localStorage.getItem('theme-preference') || 'auto'
                 }
             };
 
