@@ -8,7 +8,7 @@
 
 #html.hr()
 
-== 📚 核心概念：Tufted 侧栏工作原理
+== 核心概念：Tufted 侧栏工作原理
 
 === 什么是 `margin-note`？
 
@@ -24,13 +24,13 @@
 这会在页面右侧创建一个浮动的侧边栏区域。
 
 #tufted.margin-note[
-  💡 *提示* \
+  *提示* \
   侧栏内容会自动跟随正文位置显示。
 ]
 
 #html.hr()
 
-== 🎯 插入动态组件的完整流程
+== 插入动态组件的完整流程
 
 === 数据流向图
 
@@ -51,7 +51,7 @@ JavaScript 执行
 ```
 
 #tufted.margin-note[
-  🔄 *工作流程* \
+  *工作流程* \
   Typst 创建容器 → JavaScript 填充内容 → CSS 定义样式
 ]
 
@@ -74,7 +74,7 @@ JavaScript 执行
 
 #html.hr()
 
-== 🔧 详细实现步骤
+== 详细实现步骤
 
 === 步骤 1：在 Typst 中创建容器
 
@@ -94,14 +94,14 @@ JavaScript 执行
 ```
 
 #tufted.margin-note[
-  📦 *资源引入* \
+  *资源引入* \
   CSS 使用 `html.elem("link")`，JS 使用 `html.elem("script")`。
 ]
 
 ==== 1.2 创建侧栏容器
 
 #tip-box[
-  *✅ 正确做法：每个功能使用独立的 `margin-note`*
+  *正确做法：每个功能使用独立的 `margin-note`*
 ]
 
 ```typst
@@ -125,7 +125,7 @@ JavaScript 执行
 ```
 
 #warning-box[
-  *❌ 错误做法：把多个组件塞进一个 `margin-note`*
+  *错误做法：把多个组件塞进一个 `margin-note`*
   
   不要这样做：
   ```typst
@@ -138,7 +138,7 @@ JavaScript 执行
 ]
 
 #important-box[
-  *⚠️ 重要说明：*
+  *重要说明：*
   - 每个功能使用 *独立的 `margin-note`*
   - 不要把多个组件塞进同一个 `margin-note`
   - 使用 `html.span()` 而非 `html.div()`（保持有效 HTML 嵌套）
@@ -196,14 +196,14 @@ JavaScript 执行
 ```
 
 #tufted.margin-note[
-  🎯 *关键点* \
+  *关键点* \
   使用 IIFE 包裹代码，避免全局变量污染。
 ]
 
 ==== 2.2 关键点说明
 
 #tip-box[
-  *✅ 正确做法：每个函数管理自己的容器*
+  *正确做法：每个函数管理自己的容器*
 ]
 
 ```javascript
@@ -234,15 +234,15 @@ function init() {
 ```
 
 #warning-box[
-  *❌ 错误做法：把所有内容塞进一个容器*
+  *错误做法：把所有内容塞进一个容器*
   
   ```javascript
   function initVocabSidebar() {
       const container = document.getElementById('vocab-sidebar');
       container.innerHTML = `
           <span>单词学习内容</span>
-          <span id="countdown-app">倒计时内容</span>  // ❌ 破坏布局
-          <span id="todo-app">待办清单内容</span>     // ❌ 破坏布局
+          <span id="countdown-app">倒计时内容</span>  // 破坏布局
+          <span id="todo-app">待办清单内容</span>     // 破坏布局
       `;
   }
   ```
@@ -293,7 +293,7 @@ function init() {
 ```
 
 #tufted.margin-note[
-  🎨 *主题变量* \
+  *主题变量* \
   使用 CSS 变量确保深色/浅色主题兼容。
 ]
 
@@ -313,7 +313,7 @@ function init() {
 
 #html.hr()
 
-== 📋 完整示例：Vocabulary 页面
+== 完整示例：Vocabulary 页面
 
 === 文件结构
 
@@ -329,7 +329,7 @@ assets/
 ```
 
 #tufted.margin-note[
-  📁 *目录结构* \
+  *目录结构* \
   模板文件在 `content/`，资源文件在 `assets/`。
 ]
 
@@ -456,7 +456,7 @@ assets/
 
 #html.hr()
 
-== 🔍 常见问题
+== 常见问题
 
 === Q1: 为什么要用 `span` 而不是 `div`？
 
@@ -471,7 +471,7 @@ assets/
 ```
 
 #tufted.margin-note[
-  📝 *HTML 规范* \
+  *HTML 规范* \
   行内元素不能包含块级元素。
 ]
 
@@ -494,8 +494,8 @@ assets/
   ```javascript
   container.innerHTML = `
       <span>单词学习...</span>
-      <span id="countdown-app">倒计时...</span>  // ❌ 破坏布局
-      <span id="todo-app">待办...</span>         // ❌ 破坏布局
+      <span id="countdown-app">倒计时...</span>  // 破坏布局
+      <span id="todo-app">待办...</span>         // 破坏布局
   `;
   ```
 ]
@@ -536,7 +536,7 @@ assets/
 两个页面共享同一个 JavaScript 文件，数据也会同步（通过 `localStorage`）。
 
 #tufted.margin-note[
-  🔄 *数据同步* \
+  *数据同步* \
   使用 `localStorage` 实现跨页面数据共享。
 ]
 
@@ -570,7 +570,7 @@ console.log(todos);  // [{ text: '学习单词', completed: false }]
 
 #html.hr()
 
-== 📚 现有组件参考
+== 现有组件参考
 
 === 1. 考研倒计时 (`countdown-app`)
 
@@ -645,7 +645,7 @@ const examDate = new Date('2026-12-19T08:30:00');
 
 #html.hr()
 
-== 🚀 添加新组件的快速模板
+== 添加新组件的快速模板
 
 === 1. 创建 JavaScript 文件
 
@@ -734,21 +734,21 @@ python build.py preview
 ```
 
 #tufted.margin-note[
-  🛠️ *开发流程* \
+  *开发流程* \
   修改后重新构建，使用 preview 模式实时查看效果。
 ]
 
 #html.hr()
 
-== ⚠️ 注意事项
+== 注意事项
 
 === 1. HTML 嵌套有效性
 - `margin-note` 内部是 `<span>`，子元素必须是行内元素
 - 使用 `span` + `display: block` CSS 模拟块级元素
 
 === 2. 独立的 margin-note
-- ✅ 每个功能使用独立的 `margin-note`
-- ❌ 不要把多个组件塞进同一个 `margin-note`
+- 每个功能使用独立的 `margin-note`
+- 不要把多个组件塞进同一个 `margin-note`
 
 === 3. JavaScript 初始化顺序
 - 确保 DOM 加载完成后再初始化
@@ -768,7 +768,7 @@ python build.py preview
 
 #html.hr()
 
-== 📖 相关文档
+== 相关文档
 
 - #link("../side-by-side/")[图文并排布局指南]
 - #link("../typst-syntax-demo/")[Typst 语法演示模板]
