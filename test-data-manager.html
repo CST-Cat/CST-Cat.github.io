@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据管理模块测试</title>
+    <link rel="stylesheet" href="assets/data-manager.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 2rem;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+
+        .section {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: #2563eb;
+        }
+
+        .test-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-btn {
+            padding: 0.75rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .test-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .test-btn:active {
+            transform: translateY(0);
+        }
+
+        .test-btn.secondary {
+            background: #6b7280;
+        }
+
+        .test-btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .test-btn.danger {
+            background: #ef4444;
+        }
+
+        .test-btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            margin-bottom: 0.5rem;
+            color: #1e40af;
+            font-size: 1rem;
+        }
+
+        .info-box p {
+            margin: 0.25rem 0;
+            font-size: 0.875rem;
+            color: #1e3a8a;
+        }
+
+        .console-output {
+            background: #1f2937;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .console-output .log {
+            margin: 0.25rem 0;
+        }
+
+        .console-output .error {
+            color: #ef4444;
+        }
+
+        .console-output .success {
+            color: #10b981;
+        }
+
+        .console-output .info {
+            color: #60a5fa;
+        }
+
+        @media (max-width: 768px) {
+            .test-area {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 数据管理模块测试</h1>
+
+        <!-- 数据管理UI测试 -->
+        <div class="section">
+            <h2>1. 数据管理UI</h2>
+            <p>这是独立的数据管理模块UI，可以导入/导出/清除数据：</p>
+            <div id="data-management-app"></div>
+        </div>
+
+        <!-- 功能测试 -->
+        <div class="section">
+            <h2>2. 功能测试</h2>
+            <div class="test-area">
+                <button class="test-btn" onclick="testExport()">测试导出</button>
+                <button class="test-btn" onclick="testStats()">查看统计</button>
+                <button class="test-btn secondary" onclick="testNotification('success')">成功通知</button>
+                <button class="test-btn secondary" onclick="testNotification('error')">错误通知</button>
+                <button class="test-btn secondary" onclick="testNotification('info')">信息通知</button>
+                <button class="test-btn secondary" onclick="testNotification('warning')">警告通知</button>
+                <button class="test-btn" onclick="generateMockData()">生成模拟数据</button>
+                <button class="test-btn danger" onclick="clearMockData()">清除模拟数据</button>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div class="section">
+            <h2>3. 当前数据统计</h2>
+            <div class="info-box" id="stats-display">
+                <h3>📊 数据统计</h3>
+                <p>点击"查看统计"按钮更新数据</p>
+            </div>
+        </div>
+
+        <!-- 控制台输出 -->
+        <div class="section">
+            <h2>4. 控制台输出</h2>
+            <div class="console-output" id="console-output">
+                <div class="log info">等待测试...</div>
+            </div>
+        </div>
+
+        <!-- 说明 -->
+        <div class="section">
+            <h2>5. 使用说明</h2>
+            <div class="info-box">
+                <h3>💡 测试步骤</h3>
+                <p>1. 点击"生成模拟数据"创建测试数据</p>
+                <p>2. 点击"查看统计"查看数据统计</p>
+                <p>3. 点击"测试导出"导出数据文件</p>
+                <p>4. 使用"导入数据"按钮导入之前导出的文件</p>
+                <p>5. 测试完成后可以"清除模拟数据"</p>
+            </div>
+            <div class="info-box" style="margin-top: 1rem; background: #fef3c7; border-color: #f59e0b;">
+                <h3>⚠️ 注意事项</h3>
+                <p>• 此模块完全独立，不影响现有 vocabulary.js 和 pomodoro-todo.js</p>
+                <p>• 可以与现有模块共存，也可以单独使用</p>
+                <p>• 数据格式完全兼容现有系统</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载数据管理模块 -->
+    <script src="assets/data-manager.js"></script>
+
+    <!-- 测试脚本 -->
+    <script>
+        // 控制台输出辅助函数
+        function log(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(logEntry);
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        // 测试导出功能
+        function testExport() {
+            log('测试导出功能...', 'info');
+            try {
+                window.dataManager.exportAllData();
+                log('✅ 导出功能正常', 'success');
+            } catch (error) {
+                log('❌ 导出失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试统计功能
+        function testStats() {
+            log('获取数据统计...', 'info');
+            try {
+                const stats = window.dataManager.getDataStats();
+                log('✅ 统计获取成功', 'success');
+                
+                // 更新显示
+                const display = document.getElementById('stats-display');
+                display.innerHTML = `
+                    <h3>📊 数据统计</h3>
+                    <p><strong>单词学习：</strong>${stats.vocabulary.progressCount} 条记录</p>
+                    <p><strong>当前词库：</strong>${stats.vocabulary.currentBank}</p>
+                    <p><strong>番茄钟：</strong>今日 ${stats.pomodoro.todayCount} 个，累计 ${stats.pomodoro.totalMinutes} 分钟</p>
+                    <p><strong>待办清单：</strong>${stats.todos.todoCount} 个待办，${stats.todos.groupCount} 个分组</p>
+                `;
+                
+                log(JSON.stringify(stats, null, 2), 'info');
+            } catch (error) {
+                log('❌ 统计失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试通知功能
+        function testNotification(type) {
+            const messages = {
+                success: '✅ 操作成功！',
+                error: '❌ 操作失败！',
+                info: 'ℹ️ 这是一条信息',
+                warning: '⚠️ 这是一条警告'
+            };
+            
+            log(`显示${type}通知`, 'info');
+            window.dataManager.showNotification(messages[type], type);
+        }
+
+        // 生成模拟数据
+        function generateMockData() {
+            log('生成模拟数据...', 'info');
+            try {
+                // 模拟单词学习数据
+                const vocabProgress = {};
+                for (let i = 0; i < 10; i++) {
+                    vocabProgress[`kaoyan_test_${i}`] = {
+                        status: 'learning',
+                        reviewCount: Math.floor(Math.random() * 5),
+                        lastReview: new Date().toDateString(),
+                        nextReview: new Date(Date.now() + 86400000).toDateString(),
+                        lastResult: 'learning'
+                    };
+                }
+                localStorage.setItem('vocab_progress', JSON.stringify(vocabProgress));
+                localStorage.setItem('vocab_currentBank', 'kaoyan');
+                
+                // 模拟番茄钟数据
+                localStorage.setItem('pomodoro_todayCount', '3');
+                localStorage.setItem('pomodoro_totalMinutes', '75');
+                localStorage.setItem('pomodoro_lastDate', new Date().toDateString());
+                
+                // 模拟待办数据
+                const todos = [
+                    { id: 1, text: '测试待办1', completed: false, groupId: 'default' },
+                    { id: 2, text: '测试待办2', completed: true, groupId: 'default' }
+                ];
+                localStorage.setItem('pomodoro_todos', JSON.stringify(todos));
+                
+                const groups = [
+                    { id: 'default', name: '默认', checked: true }
+                ];
+                localStorage.setItem('pomodoro_groups', JSON.stringify(groups));
+                
+                log('✅ 模拟数据生成成功', 'success');
+                testStats(); // 自动更新统计
+            } catch (error) {
+                log('❌ 生成失败: ' + error.message, 'error');
+            }
+        }
+
+        // 清除模拟数据
+        function clearMockData() {
+            if (!confirm('确定要清除模拟数据吗？')) return;
+            
+            log('清除模拟数据...', 'info');
+            try {
+                localStorage.removeItem('vocab_progress');
+                localStorage.removeItem('vocab_currentBank');
+                localStorage.removeItem('pomodoro_todayCount');
+                localStorage.removeItem('pomodoro_totalMinutes');
+                localStorage.removeItem('pomodoro_lastDate');
+                localStorage.removeItem('pomodoro_todos');
+                localStorage.removeItem('pomodoro_groups');
+                
+                log('✅ 模拟数据已清除', 'success');
+                testStats(); // 自动更新统计
+            } catch (error) {
+                log('❌ 清除失败: ' + error.message, 'error');
+            }
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            log('✅ 数据管理模块加载完成', 'success');
+            log('💡 可以在控制台使用 dataManagerDevTools.help() 查看开发者工具', 'info');
+            testStats(); // 自动显示统计
+        });
+    </script>
+</body>
+</html>

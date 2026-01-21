@@ -21,7 +21,8 @@ const CONFIG = {
         { filename: 'STZhongsong.woff2', family: 'STZhongsong', weight: 400 },
         { filename: 'STHeiti.woff2', family: 'STHeiti', weight: 400 },
         { filename: 'NotoSansSC-Regular.woff2', family: 'NotoSansSC', weight: 400, outputName: 'NotoSansSC-Regular' },
-        { filename: 'NotoSansSC-SemiBold.woff2', family: 'NotoSansSC', weight: 600, outputName: 'NotoSansSC-SemiBold' }
+        { filename: 'NotoSansSC-SemiBold.woff2', family: 'NotoSansSC', weight: 600, outputName: 'NotoSansSC-SemiBold' },
+        { filename: 'ZhuqueFangsong-Regular.woff2', family: 'ZhuqueFangsong', weight: 400 }
     ]
 };
 

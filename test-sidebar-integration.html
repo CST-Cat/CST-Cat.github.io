@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侧边栏集成测试</title>
+    
+    <link rel="stylesheet" href="/assets/vocabulary.css">
+    <link rel="stylesheet" href="/assets/pomodoro-todo.css">
+    <link rel="stylesheet" href="/assets/css-optimizations.css">
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .sidebar {
+            float: right;
+            width: 300px;
+            background: #f5f5f5;
+            padding: 20px;
+            margin-left: 20px;
+            border-radius: 8px;
+        }
+        .main-content {
+            margin-right: 340px;
+        }
+    </style>
+</head>
+<body>
+    <h1>侧边栏集成测试</h1>
+    
+    <div class="sidebar">
+        <h2>侧边栏</h2>
+        <div id="vocab-sidebar"></div>
+    </div>
+    
+    <div class="main-content">
+        <h2>主内容区域</h2>
+        <p>这是一个测试页面，用于验证倒计时和待办清单是否能正确显示在侧边栏中。</p>
+        
+        <h3>预期效果：</h3>
+        <ul>
+            <li>✅ 侧边栏应该显示"单词学习"统计</li>
+            <li>✅ 下方应该显示考研倒计时</li>
+            <li>✅ 再下方应该显示待办清单</li>
+            <li>✅ 最后是数据管理按钮</li>
+        </ul>
+        
+        <h3>调试信息：</h3>
+        <button onclick="checkStatus()">检查状态</button>
+        <pre id="debug-info"></pre>
+    </div>
+    
+    <!-- 性能优化脚本 -->
+    <script src="/assets/timer-manager.js"></script>
+    <script src="/assets/indexeddb-helper.js"></script>
+    <script src="/assets/performance-monitor.js"></script>
+    
+    <!-- 功能脚本 -->
+    <script src="/assets/pomodoro-todo.js"></script>
+    <script src="/assets/vocabulary.js"></script>
+    
+    <script>
+        function checkStatus() {
+            const info = {
+                'vocab-sidebar 存在': !!document.getElementById('vocab-sidebar'),
+                'vocab-sidebar 有内容': document.getElementById('vocab-sidebar')?.innerHTML.length > 0,
+                'countdown-app 存在': !!document.getElementById('countdown-app'),
+                'countdown-app 有内容': document.getElementById('countdown-app')?.innerHTML.length > 0,
+                'todo-app 存在': !!document.getElementById('todo-app'),
+                'todo-app 有内容': document.getElementById('todo-app')?.innerHTML.length > 0,
+                '定时器管理器': !!window.timerManager,
+                '定时器状态': window.timerManager?.getStatus(),
+            };
+            
+            document.getElementById('debug-info').textContent = JSON.stringify(info, null, 2);
+            console.log('状态检查：', info);
+        }
+        
+        // 页面加载后自动检查
+        window.addEventListener('load', () => {
+            setTimeout(checkStatus, 2000);
+        });
+    </script>
+</body>
+</html>

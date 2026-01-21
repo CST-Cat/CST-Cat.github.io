@@ -1,0 +1,188 @@
+/*******************************************************************************
+ * 番茄钟样式
+ * 
+ * 本文件包含：
+ * - 番茄钟计时器样式
+ * 
+ * 设计理念：与 Tufted 主题风格一致，简洁优雅
+ ******************************************************************************/
+
+/* 定义番茄钟变量，基于主题变量 */
+:root {
+    --fg: var(--theme-text);              /* 前景色（文字颜色）*/
+    --bg: var(--theme-bg);                /* 背景色 */
+    --fg-muted: var(--theme-copy-btn-text);  /* 弱化的前景色 */
+    --bg-offset: var(--theme-code-bg);    /* 偏移背景色（用于悬停等）*/
+    
+    /* 优化：统一字体变量 */
+    --font-sans: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    --font-serif: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    --font-mono: 'CrimsonPro', serif;
+    
+    /* 优化：统一过渡时间 */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.2s ease;
+}
+
+/* ==================== 番茄钟样式 ==================== */
+
+/* 番茄钟容器 - 限制在正文区域内（与 Tufted 主题一致）*/
+#pomodoro-app {
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
+    text-align: center;           /* 文字居中 */
+    width: 55%;                   /* 宽度为正文宽度的 55% */
+    margin: 2rem 0;               /* 上下外边距 */
+    padding: 2rem 0;              /* 上下内边距 */
+    box-sizing: border-box;       /* 边框盒模型 */
+}
+
+/* 计时器模式按钮组 */
+.timer-modes {
+    display: flex;                /* 弹性布局 */
+    gap: 0.5rem;                  /* 按钮间距 */
+    margin-bottom: 1.5rem;        /* 底部外边距 */
+    flex-wrap: wrap;              /* 允许换行 */
+    justify-content: center;      /* 水平居中 */
+}
+
+/* 模式按钮（专注、短休、长休）*/
+.mode-btn {
+    padding: 0.5rem 1rem;                                   /* 内边距 */
+    border: 1px solid var(--fg);                            /* 边框 */
+    border-radius: 4px;                                     /* 圆角 */
+    background: transparent;                                /* 透明背景 */
+    color: var(--fg);                                       /* 文字颜色 */
+    cursor: pointer;                                        /* 鼠标指针 */
+    font-family: 'AnthropicSans', 'ZhuqueFangsong', serif;  /* 字体 */
+    font-style: normal;                                     /* 正常样式 */
+    font-size: 1.1rem;                                      /* 字体大小 */
+    font-variant-numeric: tabular-nums;                     /* 等宽数字 */
+    letter-spacing: 0.02em;                                 /* 字母间距 */
+    transition: all 0.2s ease;                              /* 过渡动画 */
+}
+
+/* 模式按钮悬停效果 */
+.mode-btn:hover {
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
+}
+
+/* 激活状态的模式按钮 */
+.mode-btn.active {
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
+}
+
+/* 按钮中的数字 */
+.btn-number {
+    /* 不再需要位置调整 */
+}
+
+/* 计时器显示（大号时间）*/
+.timer-display {
+    font-size: 5rem;                      /* 超大字体 */
+    font-weight: 300;                     /* 细字重 */
+    font-family: 'CrimsonPro', serif;     /* 衬线字体 */
+    letter-spacing: 0.05em;               /* 字母间距 */
+    margin: 1.5rem 0;                     /* 上下外边距 */
+    color: var(--fg);                     /* 文字颜色 */
+    user-select: none;                    /* 禁止选择文字 */
+}
+
+/* 计时器标签（状态提示）*/
+.timer-label {
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-size: 1.1rem;                                    /* 字体大小 */
+    margin-bottom: 1.5rem;                                /* 底部外边距 */
+    font-style: normal !important;                        /* 强制正常样式 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
+}
+
+/* 控制按钮组（开始/暂停、重置）*/
+.timer-controls {
+    display: flex;                /* 弹性布局 */
+    gap: 1rem;                    /* 按钮间距 */
+    margin-bottom: 1.5rem;        /* 底部外边距 */
+}
+
+/* 控制按钮（圆形按钮）*/
+.control-btn {
+    width: 3.5rem;                /* 宽度 */
+    height: 3.5rem;               /* 高度 */
+    border-radius: 50%;           /* 圆形 */
+    border: 1px solid var(--fg);  /* 边框 */
+    background: transparent;      /* 透明背景 */
+    color: var(--fg);             /* 文字颜色 */
+    font-size: 1.4rem;            /* 字体大小 */
+    cursor: pointer;              /* 鼠标指针 */
+    transition: all 0.2s ease;    /* 过渡动画 */
+    display: flex;                /* 弹性布局 */
+    align-items: center;          /* 垂直居中 */
+    justify-content: center;      /* 水平居中 */
+}
+
+/* 控制按钮悬停效果 */
+.control-btn:hover {
+    transform: scale(1.1);        /* 放大 10% */
+}
+
+/* 主要按钮（开始/暂停）*/
+.control-btn.primary {
+    background: var(--fg);        /* 反色背景 */
+    color: var(--bg);             /* 反色文字 */
+}
+
+/* 主要按钮悬停效果 */
+.control-btn.primary:hover {
+    opacity: 0.9;                 /* 略微透明 */
+}
+
+/* 统计信息区域 */
+.timer-stats {
+    display: flex;                        /* 弹性布局 */
+    gap: 2rem;                            /* 统计项间距 */
+    padding-top: 1rem;                    /* 顶部内边距 */
+    border-top: 1px solid var(--fg-muted);  /* 顶部边框 */
+    justify-content: center;              /* 水平居中 */
+    width: 100%;                          /* 占满宽度 */
+}
+
+/* 单个统计项 */
+.stat-item {
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
+}
+
+/* 统计数值 */
+.stat-value {
+    font-size: 2.2rem;            /* 大字体 */
+    font-weight: 600;             /* 半粗体 */
+    font-family: 'CrimsonPro', serif;  /* 衬线字体 */
+}
+
+/* 统计标签 */
+.stat-label {
+    font-size: 1rem;                                      /* 字体大小 */
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
+}
+
+/* 运行中的脉动动画 */
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;               /* 完全不透明 */
+    }
+
+    50% {
+        opacity: 0.6;             /* 60% 不透明度 */
+    }
+}
+
+/* 计时器运行时应用脉动动画 */
+.running .timer-display {
+    animation: pulse 2s ease-in-out infinite;  /* 2秒循环，缓入缓出 */
+}

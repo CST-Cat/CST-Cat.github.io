@@ -576,7 +576,7 @@ footer {
 header.site-header {
     margin-top: 0em;
     /* 上外边距（控制页眉与顶部的距离）*/
-    margin-bottom: 0.2em;
+    margin-bottom: 0em;
     /* 下外边距（控制页眉到下方内容的距离）*/
     margin-left: 0.35em;
     /* 左外边距 */

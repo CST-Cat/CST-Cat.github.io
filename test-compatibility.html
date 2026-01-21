@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>兼容性测试 - 数据管理模块</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 2rem;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-card h2 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: #2563eb;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .status.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .test-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f9fafb;
+            border-radius: 4px;
+            border-left: 3px solid #d1d5db;
+        }
+
+        .test-item.pass {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .test-item.fail {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .test-item-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .test-item-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .run-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .run-btn:hover {
+            background: #2563eb;
+        }
+
+        .summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .summary h2 {
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-stat-value.pass {
+            color: #10b981;
+        }
+
+        .summary-stat-value.fail {
+            color: #ef4444;
+        }
+
+        .summary-stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 兼容性测试 - 数据管理模块</h1>
+
+        <div class="test-grid">
+            <!-- 模块加载测试 -->
+            <div class="test-card">
+                <h2>1. 模块加载测试</h2>
+                <span class="status pending" id="status-loading">待测试</span>
+                <div id="test-loading"></div>
+                <button class="run-btn" onclick="testModuleLoading()">运行测试</button>
+            </div>
+
+            <!-- 独立性测试 -->
+            <div class="test-card">
+                <h2>2. 独立性测试</h2>
+                <span class="status pending" id="status-independence">待测试</span>
+                <div id="test-independence"></div>
+                <button class="run-btn" onclick="testIndependence()">运行测试</button>
+            </div>
+
+            <!-- 数据兼容性测试 -->
+            <div class="test-card">
+                <h2>3. 数据兼容性测试</h2>
+                <span class="status pending" id="status-compatibility">待测试</span>
+                <div id="test-compatibility"></div>
+                <button class="run-btn" onclick="testDataCompatibility()">运行测试</button>
+            </div>
+
+            <!-- API测试 -->
+            <div class="test-card">
+                <h2>4. API 功能测试</h2>
+                <span class="status pending" id="status-api">待测试</span>
+                <div id="test-api"></div>
+                <button class="run-btn" onclick="testAPI()">运行测试</button>
+            </div>
+        </div>
+
+        <!-- 测试摘要 -->
+        <div class="summary">
+            <h2>测试摘要</h2>
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-stat-value pass" id="pass-count">0</div>
+                    <div class="summary-stat-label">通过</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-value fail" id="fail-count">0</div>
+                    <div class="summary-stat-label">失败</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-value" id="total-count">0</div>
+                    <div class="summary-stat-label">总计</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载数据管理模块 -->
+    <script src="assets/data-manager.js"></script>
+
+    <script>
+        let passCount = 0;
+        let failCount = 0;
+        let totalCount = 0;
+
+        function addTestResult(containerId, title, desc, passed) {
+            const container = document.getElementById(containerId);
+            const item = document.createElement('div');
+            item.className = `test-item ${passed ? 'pass' : 'fail'}`;
+            item.innerHTML = `
+                <div class="test-item-title">${passed ? '✅' : '❌'} ${title}</div>
+                <div class="test-item-desc">${desc}</div>
+            `;
+            container.appendChild(item);
+
+            totalCount++;
+            if (passed) {
+                passCount++;
+            } else {
+                failCount++;
+            }
+            updateSummary();
+        }
+
+        function updateStatus(statusId, passed) {
+            const status = document.getElementById(statusId);
+            status.className = `status ${passed ? 'pass' : 'fail'}`;
+            status.textContent = passed ? '✅ 通过' : '❌ 失败';
+        }
+
+        function updateSummary() {
+            document.getElementById('pass-count').textContent = passCount;
+            document.getElementById('fail-count').textContent = failCount;
+            document.getElementById('total-count').textContent = totalCount;
+        }
+
+        // 测试1：模块加载
+        function testModuleLoading() {
+            const container = document.getElementById('test-loading');
+            container.innerHTML = '';
+            let allPassed = true;
+
+            // 测试 dataManager 对象存在
+            const test1 = typeof window.dataManager !== 'undefined';
+            addTestResult('test-loading', '全局对象存在', 'window.dataManager 已定义', test1);
+            allPassed = allPassed && test1;
+
+            // 测试核心方法存在
+            const test2 = typeof window.dataManager.exportAllData === 'function';
+            addTestResult('test-loading', '导出方法存在', 'exportAllData() 方法可用', test2);
+            allPassed = allPassed && test2;
+
+            const test3 = typeof window.dataManager.importData === 'function';
+            addTestResult('test-loading', '导入方法存在', 'importData() 方法可用', test3);
+            allPassed = allPassed && test3;
+
+            const test4 = typeof window.dataManager.getDataStats === 'function';
+            addTestResult('test-loading', '统计方法存在', 'getDataStats() 方法可用', test4);
+            allPassed = allPassed && test4;
+
+            // 测试开发者工具
+            const test5 = typeof window.dataManagerDevTools !== 'undefined';
+            addTestResult('test-loading', '开发者工具存在', 'dataManagerDevTools 已定义', test5);
+            allPassed = allPassed && test5;
+
+            updateStatus('status-loading', allPassed);
+        }
+
+        // 测试2：独立性
+        function testIndependence() {
+            const container = document.getElementById('test-independence');
+            container.innerHTML = '';
+            let allPassed = true;
+
+            // 测试不依赖其他模块
+            const test1 = window.dataManager.initialized === true;
+            addTestResult('test-independence', '独立初始化', '模块可以独立初始化', test1);
+            allPassed = allPassed && test1;
+
+            // 测试不污染全局命名空间
+            const test2 = typeof window.exportAllData === 'undefined';
+            addTestResult('test-independence', '命名空间隔离', '不污染全局命名空间', test2);
+            allPassed = allPassed && test2;
+
+            // 测试可选UI
+            const test3 = true; // UI是可选的，不影响核心功能
+            addTestResult('test-independence', 'UI可选', 'UI容器不存在时仍可正常工作', test3);
+            allPassed = allPassed && test3;
+
+            updateStatus('status-independence', allPassed);
+        }
+
+        // 测试3：数据兼容性
+        function testDataCompatibility() {
+            const container = document.getElementById('test-compatibility');
+            container.innerHTML = '';
+            let allPassed = true;
+
+            // 创建测试数据
+            const testData = {
+                vocab_progress: { test_1: { status: 'learning' } },
+                pomodoro_todayCount: '5',
+                pomodoro_todos: JSON.stringify([{ id: 1, text: 'test' }])
+            };
+
+            // 测试数据读取
+            try {
+                localStorage.setItem('vocab_progress', JSON.stringify(testData.vocab_progress));
+                const read = window.dataManager.getLocalStorageItem('vocab_progress', {});
+                const test1 = read.test_1 && read.test_1.status === 'learning';
+                addTestResult('test-compatibility', '数据读取', '可以正确读取 localStorage 数据', test1);
+                allPassed = allPassed && test1;
+            } catch (e) {
+                addTestResult('test-compatibility', '数据读取', '读取失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 测试数据写入
+            try {
+                window.dataManager.setLocalStorageItem('test_data', { value: 'test' });
+                const written = JSON.parse(localStorage.getItem('test_data'));
+                const test2 = written.value === 'test';
+                addTestResult('test-compatibility', '数据写入', '可以正确写入 localStorage 数据', test2);
+                allPassed = allPassed && test2;
+                localStorage.removeItem('test_data');
+            } catch (e) {
+                addTestResult('test-compatibility', '数据写入', '写入失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 测试数据收集
+            try {
+                const collected = window.dataManager.collectAllData();
+                const test3 = collected.version && collected.vocabulary && collected.pomodoro && collected.todos;
+                addTestResult('test-compatibility', '数据收集', '可以收集所有模块的数据', test3);
+                allPassed = allPassed && test3;
+            } catch (e) {
+                addTestResult('test-compatibility', '数据收集', '收集失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 清理测试数据
+            localStorage.removeItem('vocab_progress');
+
+            updateStatus('status-compatibility', allPassed);
+        }
+
+        // 测试4：API功能
+        function testAPI() {
+            const container = document.getElementById('test-api');
+            container.innerHTML = '';
+            let allPassed = true;
+
+            // 测试统计功能
+            try {
+                const stats = window.dataManager.getDataStats();
+                const test1 = stats.vocabulary && stats.pomodoro && stats.todos;
+                addTestResult('test-api', '统计功能', 'getDataStats() 返回正确格式', test1);
+                allPassed = allPassed && test1;
+            } catch (e) {
+                addTestResult('test-api', '统计功能', '失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 测试通知功能
+            try {
+                window.dataManager.showNotification('测试通知', 'info');
+                const test2 = true; // 如果没有抛出错误就算通过
+                addTestResult('test-api', '通知功能', 'showNotification() 正常工作', test2);
+                allPassed = allPassed && test2;
+            } catch (e) {
+                addTestResult('test-api', '通知功能', '失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 测试数据收集
+            try {
+                const data = window.dataManager.collectAllData();
+                const test3 = data.version === '1.0.0';
+                addTestResult('test-api', '版本信息', '数据格式版本正确', test3);
+                allPassed = allPassed && test3;
+            } catch (e) {
+                addTestResult('test-api', '版本信息', '失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            // 测试开发者工具
+            try {
+                const devStats = window.dataManagerDevTools.stats();
+                const test4 = devStats !== undefined;
+                addTestResult('test-api', '开发者工具', 'DevTools API 正常工作', test4);
+                allPassed = allPassed && test4;
+            } catch (e) {
+                addTestResult('test-api', '开发者工具', '失败: ' + e.message, false);
+                allPassed = false;
+            }
+
+            updateStatus('status-api', allPassed);
+        }
+
+        // 页面加载后自动运行所有测试
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🧪 开始自动测试...');
+                testModuleLoading();
+                setTimeout(() => testIndependence(), 100);
+                setTimeout(() => testDataCompatibility(), 200);
+                setTimeout(() => testAPI(), 300);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

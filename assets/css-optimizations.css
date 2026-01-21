@@ -1,0 +1,72 @@
+/*******************************************************************************
+ * CSS 性能优化补丁
+ * 
+ * 本文件包含对 pomodoro-todo.css 和 vocabulary.css 的性能优化
+ * 使用更高效的选择器和 CSS 变量
+ ******************************************************************************/
+
+/* 优化：工具类，避免重复定义 */
+.font-sans {
+    font-family: var(--font-sans);
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.text-muted {
+    color: var(--fg-muted);
+}
+
+.transition-fast {
+    transition: all var(--transition-fast);
+}
+
+.transition-normal {
+    transition: all var(--transition-normal);
+}
+
+/* 优化：简化复杂选择器 */
+.todo-delete-visible {
+    opacity: 1;
+}
+
+.todo-drag-handle-visible {
+    opacity: 0.6;
+}
+
+/* 优化：减少过渡属性 */
+.todo-item-optimized {
+    transition: transform var(--transition-fast);
+}
+
+.todo-item-opacity {
+    transition: opacity var(--transition-fast);
+}
+
+.todo-item-background {
+    transition: background var(--transition-fast);
+}
+
+/* 优化：使用 will-change 提示浏览器优化 */
+.vocab-card {
+    will-change: transform;
+}
+
+.todo-item[draggable="true"] {
+    will-change: transform, opacity;
+}
+
+/* 优化：使用 contain 属性隔离布局 */
+.vocab-card-container {
+    contain: layout style;
+}
+
+.todo-item-wrapper {
+    contain: layout;
+}
+
+/* 优化：减少重绘 */
+.vocab-card-back-content {
+    contain: layout style paint;
+}

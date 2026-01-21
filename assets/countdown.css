@@ -1,0 +1,94 @@
+/*******************************************************************************
+ * 考研倒计时样式
+ * 
+ * 本文件包含：
+ * - 倒计时显示样式（完整版和紧凑版）
+ * - 考试信息提示框样式
+ * 
+ * 设计理念：与 Tufted 主题风格一致，简洁优雅
+ ******************************************************************************/
+
+/* 定义倒计时变量，基于主题变量 */
+:root {
+    --fg: var(--theme-text);              /* 前景色（文字颜色）*/
+    --bg: var(--theme-bg);                /* 背景色 */
+    --fg-muted: var(--theme-copy-btn-text);  /* 弱化的前景色 */
+    --bg-offset: var(--theme-code-bg);    /* 偏移背景色（用于悬停等）*/
+    
+    /* 优化：统一字体变量 */
+    --font-sans: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    --font-serif: 'CrimsonPro', 'ZhuqueFangsong', serif;
+}
+
+/* ==================== 考研倒计时样式 ==================== */
+
+/* 倒计时显示（完整版 - 用于页面主体）*/
+.countdown-display {
+    display: flex;                /* 弹性布局 */
+    gap: 1rem;                    /* 项目间距 */
+    margin: 1rem 0;               /* 上下外边距 */
+    flex-wrap: wrap;              /* 允许换行 */
+}
+
+/* 单个倒计时项（天、时、分、秒）*/
+.countdown-item {
+    display: flex;                /* 弹性布局 */
+    flex-direction: column;       /* 垂直排列 */
+    align-items: center;          /* 水平居中 */
+    min-width: 4rem;              /* 最小宽度 */
+    gap: 0.2rem;                  /* 数值和单位之间的间隔 */
+}
+
+/* 倒计时数值 */
+.countdown-value {
+    font-size: 3rem;              /* 大字体 */
+    font-weight: 300;             /* 细字重 */
+    font-family: 'CrimsonPro', serif;  /* 衬线字体 */
+    line-height: 1;               /* 紧凑行高 */
+}
+
+/* 倒计时单位（天、时、分、秒）*/
+.countdown-unit {
+    font-size: 1rem;                                      /* 字体大小 */
+    color: var(--fg-muted);                               /* 弱化颜色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;   /* 字体 */
+    line-height: 1;                                       /* 紧凑行高 */
+    margin-top: -0.2rem;                                  /* 向上微调 */
+}
+
+/* 考试信息提示框 */
+.exam-info {
+    margin-top: 1rem;                     /* 顶部外边距 */
+    padding: 0.8rem 1rem;                 /* 内边距 */
+    border-left: 3px solid var(--fg);     /* 左边框 */
+    background: var(--bg-offset);         /* 背景色 */
+    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;  /* 字体 */
+}
+
+/* 考试日期文字 */
+.exam-date {
+    color: var(--fg-muted);               /* 弱化颜色 */
+}
+
+/* 边栏内的紧凑倒计时样式（用于 marginnote）*/
+.countdown-compact {
+    display: block;               /* 块级显示 */
+    margin-top: 0.5rem;           /* 顶部外边距 */
+    line-height: 1.8;             /* 行高 */
+}
+
+/* 紧凑倒计时的数值 */
+.countdown-compact .countdown-value {
+    font-size: 1.3rem;                                    /* 较小字体 */
+    font-weight: 500;                                     /* 中等字重 */
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
+    color: var(--theme-margin-text);                      /* 边注颜色 */
+}
+
+/* 紧凑倒计时的单位 */
+.countdown-compact .countdown-unit {
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
+    font-size: 0.9rem;                                    /* 较小字体 */
+    color: var(--theme-margin-text);                      /* 边注颜色 */
+    margin-right: 0.5rem;                                 /* 右外边距 */
+}

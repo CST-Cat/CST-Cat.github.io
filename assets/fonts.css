@@ -10,16 +10,9 @@
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
 /* 思源黑体半粗体 - 用于强调文本 */
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
-
 /* 朱雀仿宋 - 中文仿宋字体（用于正文）
    开源字体，优雅的仿宋风格，适合长文阅读 */
-@font-face {
-    font-family: 'ZhuqueFangsong';                                      /* 字体族名称 */
-    src: url('/assets/fonts/ZhuqueFangsong-Regular.woff2') format('woff2');  /* 字体文件路径和格式 */
-    font-weight: normal;                                                /* 字重：正常 */
-    font-style: normal;                                                 /* 样式：正常（非斜体）*/
-    font-display: swap;                                                 /* 字体加载策略：先显示后备字体，加载完成后切换 */
-}
+@import url('/assets/fonts/ZhuqueFangsong/result.css');
 
 /* Anthropic Sans - 英文无衬线字体（用于标题和界面元素）
    现代简洁的无衬线字体，清晰易读 */

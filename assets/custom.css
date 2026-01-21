@@ -12,37 +12,51 @@
 
 /* 并排布局容器 */
 .side-by-side {
-    display: flex;                /* 使用弹性布局 */
-    flex-wrap: wrap;              /* 允许换行（响应式）*/
-    gap: 1.5rem;                  /* 图片和文字之间的间距 */
-    align-items: center;          /* 垂直居中对齐 */
-    margin: 1.5rem 0;             /* 上下外边距 */
-    max-width: 90%;               /* 最大宽度 */
+    display: flex;
+    /* 使用弹性布局 */
+    flex-wrap: wrap;
+    /* 允许换行（响应式）*/
+    gap: 1.5rem;
+    /* 图片和文字之间的间距 */
+    align-items: center;
+    /* 垂直居中对齐 */
+    margin: 1.5rem 0;
+    /* 上下外边距 */
+    max-width: 90%;
+    /* 最大宽度 */
 }
 
 /* 图片容器 */
 .side-by-side-img {
-    flex: 0 0 40%;                /* 不增长，不收缩，基础宽度 40% */
-    max-width: 40%;               /* 最大宽度限制 */
+    flex: 0 0 40%;
+    /* 不增长，不收缩，基础宽度 40% */
+    max-width: 40%;
+    /* 最大宽度限制 */
 }
 
 /* 图片和 SVG 样式 */
 .side-by-side-img img,
 .side-by-side-img svg {
-    max-width: 100%;              /* 占满容器宽度 */
-    height: auto;                 /* 高度自动，保持比例 */
-    border-radius: 4px;           /* 圆角 */
+    max-width: 100%;
+    /* 占满容器宽度 */
+    height: auto;
+    /* 高度自动，保持比例 */
+    border-radius: 4px;
+    /* 圆角 */
 }
 
 /* 文字容器 */
 .side-by-side-text {
-    flex: 1;                      /* 占据剩余空间 */
-    min-width: 200px;             /* 最小宽度，防止过窄 */
+    flex: 1;
+    /* 占据剩余空间 */
+    min-width: 200px;
+    /* 最小宽度，防止过窄 */
 }
 
 /* 文字容器内的段落 */
 .side-by-side-text p {
-    margin-top: 0;                /* 移除顶部外边距 */
+    margin-top: 0;
+    /* 移除顶部外边距 */
 }
 
 /* 图片占比变体 - 通过添加类名控制图片大小 */
@@ -88,34 +102,44 @@
 
 /* 图片在左侧（默认布局）*/
 .side-by-side.img-left .side-by-side-img {
-    order: 1;                     /* 显示顺序：第一个 */
+    order: 1;
+    /* 显示顺序：第一个 */
 }
+
 .side-by-side.img-left .side-by-side-text {
-    order: 2;                     /* 显示顺序：第二个 */
+    order: 2;
+    /* 显示顺序：第二个 */
 }
 
 /* 图片在右侧 */
 .side-by-side.img-right .side-by-side-img {
-    order: 2;                     /* 显示顺序：第二个 */
+    order: 2;
+    /* 显示顺序：第二个 */
 }
+
 .side-by-side.img-right .side-by-side-text {
-    order: 1;                     /* 显示顺序：第一个 */
+    order: 1;
+    /* 显示顺序：第一个 */
 }
 
 /* 移动端响应式：小屏幕时垂直堆叠 */
 @media (max-width: 760px) {
     .side-by-side {
-        flex-direction: column;   /* 改为垂直排列 */
+        flex-direction: column;
+        /* 改为垂直排列 */
     }
-    
+
     /* 移动端所有元素占满宽度 */
     .side-by-side-img,
     .side-by-side-text {
-        flex: 1 1 100% !important;        /* 占满宽度 */
-        max-width: 100% !important;       /* 最大宽度 100% */
-        order: unset !important;          /* 取消自定义顺序 */
+        flex: 1 1 100% !important;
+        /* 占满宽度 */
+        max-width: 100% !important;
+        /* 最大宽度 100% */
+        order: unset !important;
+        /* 取消自定义顺序 */
     }
-    
+
     /* 图片下方添加间距 */
     .side-by-side-img {
         margin-bottom: 1rem;
@@ -131,14 +155,18 @@
 
 /* 全局滚动条 - 页面右侧 */
 ::-webkit-scrollbar {
-    width: 6px !important;           /* 纵向滚动条宽度 */
-    height: 6px !important;          /* 横向滚动条高度 */
+    width: 6px !important;
+    /* 纵向滚动条宽度 */
+    height: 6px !important;
+    /* 横向滚动条高度 */
 }
 
 /* 滚动条轨道 - 融入背景，完全透明 */
 ::-webkit-scrollbar-track {
-    background: transparent !important;    /* 透明背景 */
-    border-radius: 3px;                    /* 圆角 */
+    background: transparent !important;
+    /* 透明背景 */
+    border-radius: 3px;
+    /* 圆角 */
 }
 
 /* 滚动条角落（横纵交汇处）- 透明 */
@@ -151,15 +179,19 @@
 /* 代码块滚动条尺寸 */
 pre::-webkit-scrollbar,
 pre code::-webkit-scrollbar {
-    width: 5px !important;           /* 更窄的宽度 */
-    height: 5px !important;          /* 更矮的高度 */
+    width: 5px !important;
+    /* 更窄的宽度 */
+    height: 5px !important;
+    /* 更矮的高度 */
 }
 
 /* 代码块滚动条轨道 */
 pre::-webkit-scrollbar-track,
 pre code::-webkit-scrollbar-track {
-    background: transparent !important;    /* 透明背景 */
-    border-radius: 2.5px;                  /* 圆角 */
+    background: transparent !important;
+    /* 透明背景 */
+    border-radius: 2.5px;
+    /* 圆角 */
 }
 
 /* 代码块滚动条角落 */
@@ -172,16 +204,19 @@ pre code::-webkit-scrollbar-corner {
 
 /* 全局滚动条 - 纤细样式 */
 * {
-    scrollbar-width: thin;    /* Firefox 的纤细滚动条 */
+    scrollbar-width: thin;
+    /* Firefox 的纤细滚动条 */
 }
 
 /* 页面主体滚动条 */
-html, body {
+html,
+body {
     scrollbar-width: thin;
 }
 
 /* 代码块滚动条 */
-pre, pre code {
+pre,
+pre code {
     scrollbar-width: thin;
 }
 
@@ -189,8 +224,10 @@ pre, pre code {
 
 /* 全局滚动条滑块 - 浅灰色半透明 */
 ::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.3) !important;    /* 默认状态 */
-    border-radius: 3px;                                  /* 圆角 */
+    background: rgba(100, 100, 100, 0.3) !important;
+    /* 默认状态 */
+    border-radius: 3px;
+    /* 圆角 */
 }
 
 /* 鼠标悬停时 - 加深颜色 */
@@ -206,7 +243,8 @@ pre, pre code {
 /* 代码块滚动条滑块 - 更淡的颜色 */
 pre::-webkit-scrollbar-thumb,
 pre code::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.25) !important;    /* 更淡 */
+    background: rgba(100, 100, 100, 0.25) !important;
+    /* 更淡 */
     border-radius: 2.5px;
 }
 
@@ -217,11 +255,15 @@ pre code::-webkit-scrollbar-thumb:hover {
 }
 
 /* Firefox 浅色模式滚动条颜色 */
-html, body, * {
-    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;    /* 滑块颜色 轨道颜色 */
+html,
+body,
+* {
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+    /* 滑块颜色 轨道颜色 */
 }
 
-pre, pre code {
+pre,
+pre code {
     scrollbar-color: rgba(100, 100, 100, 0.25) transparent;
 }
 
@@ -254,7 +296,8 @@ html[data-theme="light"] * {
 
 /* 深色模式全局滚动条滑块 - 浅色半透明 */
 html[data-theme="dark"] ::-webkit-scrollbar-thumb {
-    background: rgba(180, 180, 180, 0.2) !important;    /* 浅色滑块 */
+    background: rgba(180, 180, 180, 0.2) !important;
+    /* 浅色滑块 */
 }
 
 /* 深色模式悬停 - 加深 */
@@ -287,20 +330,21 @@ html[data-theme="dark"] * {
 
 /* ===== 系统偏好深色模式 - 未手动设置主题时自动跟随系统 ===== */
 @media (prefers-color-scheme: dark) {
+
     /* 未设置 data-theme 属性时，跟随系统深色模式 */
     html:not([data-theme]) ::-webkit-scrollbar-thumb {
         background: rgba(180, 180, 180, 0.2) !important;
     }
-    
+
     html:not([data-theme]) ::-webkit-scrollbar-thumb:hover {
         background: rgba(180, 180, 180, 0.35) !important;
     }
-    
+
     html:not([data-theme]) pre::-webkit-scrollbar-thumb,
     html:not([data-theme]) pre code::-webkit-scrollbar-thumb {
         background: rgba(180, 180, 180, 0.15) !important;
     }
-    
+
     /* Firefox 系统深色模式 */
     html:not([data-theme]),
     html:not([data-theme]) * {

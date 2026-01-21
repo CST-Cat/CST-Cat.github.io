@@ -1,0 +1,203 @@
+/*******************************************************************************
+ * 数据管理模块样式 (Data Manager CSS)
+ * 
+ * 功能：
+ * 1. 数据管理按钮样式
+ * 2. 通知消息样式
+ * 3. 响应式设计
+ ******************************************************************************/
+
+/* ==================== 数据管理容器 ==================== */
+
+.data-management-wrapper {
+    display: block;
+    padding: 0.75rem 0;
+}
+
+.data-management-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.4rem;
+    align-items: stretch;
+}
+
+/* ==================== 数据管理按钮 ==================== */
+
+.data-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    color: var(--theme-margin-text);
+    background: transparent;
+    border: 1px solid var(--theme-margin-text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.data-btn:hover {
+    background: var(--theme-margin-text);
+    color: var(--theme-bg);
+    border-color: var(--theme-margin-text);
+    transform: translateY(-1px);
+}
+
+.data-btn:active {
+    transform: translateY(0);
+}
+
+/* 导出按钮 - 使用默认样式 */
+#data-export-btn {
+    /* 继承默认样式 */
+}
+
+/* 导入按钮 - 使用默认样式 */
+#data-import-btn {
+    /* 继承默认样式 */
+}
+
+/* 清除按钮 - 使用默认样式 */
+#data-clear-btn {
+    /* 继承默认样式 */
+}
+
+/* ==================== 通知消息 ==================== */
+
+.data-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background: var(--theme-bg);
+    border: 2px solid var(--theme-text);
+    border-radius: 6px;
+    color: var(--theme-text);
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    word-wrap: break-word;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.data-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 通知类型 - 使用统一样式 */
+.data-notification-success,
+.data-notification-error,
+.data-notification-info,
+.data-notification-warning {
+    /* 继承默认样式 */
+}
+
+/* ==================== 响应式设计 ==================== */
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+    .data-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .data-btn {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.4rem;
+    }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 480px) {
+    .data-management-buttons {
+        gap: 0.3rem;
+    }
+
+    .data-btn {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.35rem;
+    }
+}
+
+/* ==================== 打印样式 ==================== */
+
+@media print {
+    .data-management-wrapper,
+    .data-notification {
+        display: none !important;
+    }
+}
+
+/* ==================== 辅助功能 ==================== */
+
+/* 键盘焦点样式 */
+.data-btn:focus {
+    outline: 2px solid var(--theme-margin-text);
+    outline-offset: 2px;
+}
+
+/* 禁用状态 */
+.data-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 加载状态 */
+.data-btn.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.data-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 50%;
+    left: 50%;
+    margin-left: -6px;
+    margin-top: -6px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: data-btn-spin 0.6s linear infinite;
+}
+
+@keyframes data-btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== 兼容性 ==================== */
+
+/* 确保在边栏中正常显示 */
+.marginnote .data-management-wrapper {
+    padding: 0.5rem 0;
+}
+
+.marginnote .data-btn {
+    font-size: 0.75rem;
+}
+
+/* 确保在主内容区正常显示 */
+.main-content .data-management-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}

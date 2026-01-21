@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办清单独立测试</title>
+    
+    <!-- 主题样式 -->
+    <link rel="stylesheet" href="assets/theme.css">
+    <link rel="stylesheet" href="assets/fonts.css">
+    
+    <!-- 独立的待办清单样式 -->
+    <link rel="stylesheet" href="assets/todo.css">
+    
+    <style>
+        body {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+        }
+        
+        .test-container {
+            border: 1px solid var(--theme-copy-btn-text);
+            border-radius: 8px;
+            padding: 2rem;
+            background: var(--theme-bg);
+        }
+        
+        .info {
+            background: var(--theme-code-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .info h3 {
+            margin-top: 0;
+            font-size: 1rem;
+        }
+        
+        .info ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>待办清单独立测试</h1>
+    
+    <div class="info">
+        <h3>功能说明：</h3>
+        <ul>
+            <li>✓ 添加、编辑、删除待办事项</li>
+            <li>✓ 支持子待办（嵌套任务）</li>
+            <li>✓ 分组管理（可创建多个分组）</li>
+            <li>✓ 拖拽排序</li>
+            <li>✓ 截止时间设置</li>
+            <li>✓ 右键菜单快捷操作</li>
+            <li>✓ 数据持久化到 localStorage</li>
+        </ul>
+        <p><strong>提示：</strong>双击待办文字可编辑，右键点击可查看更多操作。</p>
+    </div>
+    
+    <div class="test-container">
+        <!-- 待办清单容器 -->
+        <div id="todo-app"></div>
+    </div>
+    
+    <!-- 定时器管理器（如果需要） -->
+    <script src="assets/timer-manager.js"></script>
+    
+    <!-- 独立的待办清单脚本 -->
+    <script src="assets/todo.js"></script>
+</body>
+</html>
