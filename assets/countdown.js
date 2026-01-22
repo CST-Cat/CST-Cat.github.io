@@ -6,10 +6,46 @@
  * - 支持自定义目标日期
  * - 支持边栏紧凑布局和页面完整布局
  * - 使用定时器管理器优化性能
+ * - 多语言支持：基于 HTML lang 属性自动切换语言
  ******************************************************************************/
 
 (function () {
     'use strict';
+
+    // ==================== 国际化配置 ====================
+    
+    /**
+     * 获取当前页面语言
+     */
+    function getLang() {
+        return document.documentElement.lang || 'zh';
+    }
+
+    /**
+     * 多语言文本配置
+     */
+    const i18n = {
+        zh: {
+            days: '天',
+            hours: '时',
+            minutes: '分',
+            seconds: '秒'
+        },
+        en: {
+            days: 'd',
+            hours: 'h',
+            minutes: 'm',
+            seconds: 's'
+        }
+    };
+
+    /**
+     * 获取翻译文本
+     */
+    function t(key) {
+        const lang = getLang();
+        return i18n[lang][key] || i18n['zh'][key] || key;
+    }
 
     // 根据 DOM 加载状态决定何时初始化
     if (document.readyState === 'loading') {
@@ -43,10 +79,10 @@
         if (isInSidebar) {
             container.innerHTML = `
                 <span class="countdown-compact">
-                    <span class="countdown-value" id="days">---</span><span class="countdown-unit">天</span>
-                    <span class="countdown-value" id="hours">--</span><span class="countdown-unit">时</span>
-                    <span class="countdown-value" id="minutes-cd">--</span><span class="countdown-unit">分</span>
-                    <span class="countdown-value" id="seconds">--</span><span class="countdown-unit">秒</span>
+                    <span class="countdown-value" id="days">---</span><span class="countdown-unit">${t('days')}</span>
+                    <span class="countdown-value" id="hours">--</span><span class="countdown-unit">${t('hours')}</span>
+                    <span class="countdown-value" id="minutes-cd">--</span><span class="countdown-unit">${t('minutes')}</span>
+                    <span class="countdown-value" id="seconds">--</span><span class="countdown-unit">${t('seconds')}</span>
                 </span>
             `;
         } else {
@@ -54,19 +90,19 @@
                 <div class="countdown-display">
                     <div class="countdown-item">
                         <span class="countdown-value" id="days">---</span>
-                        <span class="countdown-unit">天</span>
+                        <span class="countdown-unit">${t('days')}</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="hours">--</span>
-                        <span class="countdown-unit">时</span>
+                        <span class="countdown-unit">${t('hours')}</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="minutes-cd">--</span>
-                        <span class="countdown-unit">分</span>
+                        <span class="countdown-unit">${t('minutes')}</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="seconds">--</span>
-                        <span class="countdown-unit">秒</span>
+                        <span class="countdown-unit">${t('seconds')}</span>
                     </div>
                 </div>
             `;

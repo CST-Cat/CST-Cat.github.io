@@ -10,10 +10,80 @@
  *    - 支持截止时间设置
  *    - 右键菜单快捷操作
  *    - 数据持久化到 localStorage
+ *    - 多语言支持：基于 HTML lang 属性自动切换语言
  ******************************************************************************/
 
 (function () {
     'use strict';
+
+    // ==================== 国际化配置 ====================
+    
+    /**
+     * 获取当前页面语言
+     */
+    function getLang() {
+        return document.documentElement.lang || 'zh';
+    }
+
+    /**
+     * 多语言文本配置
+     */
+    const i18n = {
+        zh: {
+            // 分组相关
+            groups: '分组',
+            addGroup: '新建分组',
+            defaultGroup: '默认',
+            
+            // 输入提示
+            inputPlaceholder: '请输入...',
+            todoPlaceholder: 'To-do...',
+            subTodoPlaceholder: '子待办...',
+            
+            // 按钮文本
+            cancel: '取消',
+            confirm: '确定',
+            add: 'Add',
+            
+            // 工具提示
+            addSubTodo: '添加子待办',
+            deleteSubTodo: '删除子待办',
+            dragToSort: '拖拽排序',
+            delete: '删除',
+            remove: '移除'
+        },
+        en: {
+            // Groups
+            groups: 'Groups',
+            addGroup: 'Add Group',
+            defaultGroup: 'Default',
+            
+            // Input placeholders
+            inputPlaceholder: 'Enter...',
+            todoPlaceholder: 'To-do...',
+            subTodoPlaceholder: 'Sub-task...',
+            
+            // Button text
+            cancel: 'Cancel',
+            confirm: 'Confirm',
+            add: 'Add',
+            
+            // Tooltips
+            addSubTodo: 'Add sub-task',
+            deleteSubTodo: 'Delete sub-task',
+            dragToSort: 'Drag to sort',
+            delete: 'Delete',
+            remove: 'Remove'
+        }
+    };
+
+    /**
+     * 获取翻译文本
+     */
+    function t(key) {
+        const lang = getLang();
+        return i18n[lang][key] || i18n['zh'][key] || key;
+    }
 
     // 根据 DOM 加载状态决定何时初始化
     if (document.readyState === 'loading') {
@@ -49,15 +119,15 @@
             <span class="todo-wrapper">
                 <span class="todo-groups-section">
                     <span class="todo-groups-header">
-                        <span class="todo-groups-title">分组</span>
-                        <span class="todo-groups-add" title="新建分组">+</span>
+                        <span class="todo-groups-title">${t('groups')}</span>
+                        <span class="todo-groups-add" title="${t('addGroup')}">+</span>
                     </span>
                     <span class="todo-groups-list" id="todo-groups-list"></span>
                 </span>
                 <span class="todo-main-section">
                     <span class="todo-input-group">
-                        <input type="text" id="new-todo" placeholder="To-do..." autocomplete="off">
-                        <button id="add-todo-btn" title="Add">+</button>
+                        <input type="text" id="new-todo" placeholder="${t('todoPlaceholder')}" autocomplete="off">
+                        <button id="add-todo-btn" title="${t('add')}">+</button>
                     </span>
                     <span id="todo-list"></span>
                     <span id="todo-completed-section"></span>
@@ -94,7 +164,7 @@
             input.type = 'text';
             input.className = 'todo-modal-input';
             input.value = defaultValue;
-            input.placeholder = '请输入...';
+            input.placeholder = t('inputPlaceholder');
 
             // 按钮组
             const actions = document.createElement('div');
@@ -102,7 +172,7 @@
 
             const cancelBtn = document.createElement('button');
             cancelBtn.className = 'todo-modal-btn';
-            cancelBtn.textContent = '取消';
+            cancelBtn.textContent = t('cancel');
             cancelBtn.onclick = () => {
                 overlay.remove();
                 if (onCancel) onCancel();
@@ -110,7 +180,7 @@
 
             const confirmBtn = document.createElement('button');
             confirmBtn.className = 'todo-modal-btn primary';
-            confirmBtn.textContent = '确定';
+            confirmBtn.textContent = t('confirm');
             confirmBtn.onclick = () => {
                 const value = input.value.trim();
                 overlay.remove();
@@ -160,10 +230,10 @@
         try {
             groups = JSON.parse(localStorage.getItem('pomodoro_groups') || '[]');
             if (groups.length === 0) {
-                groups = [{ id: 'default', name: '默认', checked: true }];
+                groups = [{ id: 'default', name: t('defaultGroup'), checked: true }];
             }
         } catch (e) {
-            groups = [{ id: 'default', name: '默认', checked: true }];
+            groups = [{ id: 'default', name: t('defaultGroup'), checked: true }];
         }
 
         let todos = [];
@@ -437,7 +507,7 @@
             const deleteBtn = document.createElement('span');
             deleteBtn.className = 'todo-delete';
             deleteBtn.textContent = '×';
-            deleteBtn.title = '删除子待办';
+            deleteBtn.title = t('deleteSubTodo');
             deleteBtn.onclick = (e) => deleteSubTodo(parentIndex, subIndex, e);
 
             li.appendChild(checkbox);
@@ -524,7 +594,7 @@
                 const dragHandle = document.createElement('span');
                 dragHandle.className = 'todo-drag-handle';
                 dragHandle.innerHTML = '⋮⋮';
-                dragHandle.title = '拖拽排序';
+                dragHandle.title = t('dragToSort');
                 li.appendChild(dragHandle);
 
                 // 拖拽事件
@@ -673,7 +743,7 @@
             const addSubBtn = document.createElement('span');
             addSubBtn.className = 'todo-add-sub';
             addSubBtn.textContent = '+';
-            addSubBtn.title = '添加子待办';
+            addSubBtn.title = t('addSubTodo');
             if (!isInCompletedSection) {
                 addSubBtn.onclick = (e) => {
                     e.stopPropagation();
@@ -686,7 +756,7 @@
             const deleteBtn = document.createElement('span');
             deleteBtn.className = 'todo-delete';
             deleteBtn.textContent = '×';
-            deleteBtn.title = isInCompletedSection ? '删除' : '移除';
+            deleteBtn.title = isInCompletedSection ? t('delete') : t('remove');
             deleteBtn.onclick = (e) => deleteTodo(actualIndex, e);
 
             li.appendChild(checkbox);
@@ -969,12 +1039,12 @@
 
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'todo-datetime-btn';
-                cancelBtn.textContent = '取消';
+                cancelBtn.textContent = t('cancel');
                 cancelBtn.onclick = onCancel;
 
                 const confirmBtn = document.createElement('button');
                 confirmBtn.className = 'todo-datetime-btn primary';
-                confirmBtn.textContent = '确定';
+                confirmBtn.textContent = t('confirm');
                 confirmBtn.onclick = () => {
                     // 格式化为 datetime-local 格式
                     const year = selectedDate.getFullYear();
@@ -1070,7 +1140,7 @@
 
             const subInput = document.createElement('input');
             subInput.type = 'text';
-            subInput.placeholder = '子待办...';
+            subInput.placeholder = t('subTodoPlaceholder');
             subInput.className = 'todo-sub-input';
 
             const confirmBtn = document.createElement('span');

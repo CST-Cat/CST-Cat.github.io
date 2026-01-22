@@ -12,16 +12,20 @@
 
 /* 定义待办清单变量，基于主题变量 */
 :root {
-    --fg: var(--theme-text);              /* 前景色（文字颜色）*/
-    --bg: var(--theme-bg);                /* 背景色 */
-    --fg-muted: var(--theme-copy-btn-text);  /* 弱化的前景色 */
-    --bg-offset: var(--theme-code-bg);    /* 偏移背景色（用于悬停等）*/
-    
+    --fg: var(--theme-text);
+    /* 前景色（文字颜色）*/
+    --bg: var(--theme-bg);
+    /* 背景色 */
+    --fg-muted: var(--theme-copy-btn-text);
+    /* 弱化的前景色 */
+    --bg-offset: var(--theme-code-bg);
+    /* 偏移背景色（用于悬停等）*/
+
     /* 优化：统一字体变量 */
     --font-sans: 'AnthropicSans', 'NotoSansSC', sans-serif;
-    --font-serif: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    --font-serif: 'CrimsonPro', 'STFangso', serif;
     --font-mono: 'CrimsonPro', serif;
-    
+
     /* 优化：统一过渡时间 */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.2s ease;
@@ -31,243 +35,372 @@
 
 /* 待办清单包装器 */
 .todo-wrapper {
-    display: block;                                       /* 块级显示（即使是 span 元素）*/
-    text-align: left;                                     /* 左对齐 */
-    margin-top: 0.6rem;                                   /* 顶部外边距 */
-    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;  /* 无衬线字体 */
-    color: var(--theme-margin-text);                      /* 边注颜色 */
-    width: 100%;                                          /* 占满宽度 */
+    display: block;
+    /* 块级显示（即使是 span 元素）*/
+    text-align: left;
+    /* 左对齐 */
+    margin-top: 0.6rem;
+    /* 顶部外边距 */
+    font-family: 'AnthropicSans', 'NotoSansSC', sans-serif;
+    /* 无衬线字体 */
+    color: var(--theme-margin-text);
+    /* 边注颜色 */
+    width: 100%;
+    /* 占满宽度 */
 }
 
 /* 输入框组（新建待办）*/
 .todo-input-group {
-    display: flex;                /* 弹性布局 */
-    gap: 0.5rem;                  /* 元素间距 */
-    margin-bottom: 0.6rem;        /* 底部外边距 */
+    display: flex;
+    /* 弹性布局 */
+    gap: 0.5rem;
+    /* 元素间距 */
+    margin-bottom: 0.6rem;
+    /* 底部外边距 */
 }
 
 /* 新建待办输入框 */
 #new-todo {
-    flex: 1;                              /* 占据剩余空间 */
-    background: transparent;              /* 透明背景 */
-    border: none;                         /* 无边框 */
-    border-bottom: 1px solid var(--fg-muted);  /* 底部边框 */
-    font-family: inherit;                 /* 继承字体 */
-    font-size: 0.9rem;                    /* 字体大小 */
-    color: var(--fg);                     /* 文字颜色 */
-    padding: 0.2rem 0;                    /* 上下内边距 */
-    outline: none;                        /* 无轮廓线 */
-    transition: border-color 0.2s;        /* 边框颜色过渡 */
+    flex: 1;
+    /* 占据剩余空间 */
+    background: transparent;
+    /* 透明背景 */
+    border: none;
+    /* 无边框 */
+    border-bottom: 1px solid var(--fg-muted);
+    /* 底部边框 */
+    font-family: inherit;
+    /* 继承字体 */
+    font-size: 0.9rem;
+    /* 字体大小 */
+    color: var(--fg);
+    /* 文字颜色 */
+    padding: 0.2rem 0;
+    /* 上下内边距 */
+    outline: none;
+    /* 无轮廓线 */
+    transition: border-color 0.2s;
+    /* 边框颜色过渡 */
 }
 
 /* 输入框聚焦时 */
 #new-todo:focus {
-    border-bottom-color: var(--fg);       /* 边框变为前景色 */
+    border-bottom-color: var(--fg);
+    /* 边框变为前景色 */
 }
 
 /* 添加按钮 */
 #add-todo-btn {
-    background: transparent;              /* 透明背景 */
-    border: 1px solid var(--fg-muted);    /* 边框 */
-    color: var(--fg-muted);               /* 文字颜色 */
-    border-radius: 4px;                   /* 圆角 */
-    cursor: pointer;                      /* 鼠标指针 */
-    font-size: 1rem;                      /* 字体大小 */
-    line-height: 1;                       /* 行高 */
-    padding: 0 0.4rem;                    /* 左右内边距 */
-    transition: all 0.2s;                 /* 过渡动画 */
-    user-select: none;                    /* 禁止选择文字 */
+    background: transparent;
+    /* 透明背景 */
+    border: 1px solid var(--fg-muted);
+    /* 边框 */
+    color: var(--fg-muted);
+    /* 文字颜色 */
+    border-radius: 4px;
+    /* 圆角 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    font-size: 1rem;
+    /* 字体大小 */
+    line-height: 1;
+    /* 行高 */
+    padding: 0 0.4rem;
+    /* 左右内边距 */
+    transition: all 0.2s;
+    /* 过渡动画 */
+    user-select: none;
+    /* 禁止选择文字 */
 }
 
 /* 添加按钮悬停效果 */
 #add-todo-btn:hover {
-    color: var(--fg);                     /* 文字变为前景色 */
-    border-color: var(--fg);              /* 边框变为前景色 */
+    color: var(--fg);
+    /* 文字变为前景色 */
+    border-color: var(--fg);
+    /* 边框变为前景色 */
 }
 
 /* 待办列表容器 */
 #todo-list {
-    display: block;                       /* 块级显示 */
-    list-style: none;                     /* 无列表样式 */
-    padding: 0;                           /* 无内边距 */
-    margin: 0;                            /* 无外边距 */
+    display: block;
+    /* 块级显示 */
+    list-style: none;
+    /* 无列表样式 */
+    padding: 0;
+    /* 无内边距 */
+    margin: 0;
+    /* 无外边距 */
 }
 
 /* 待办项 */
 .todo-item {
-    display: flex;                        /* 弹性布局 */
-    align-items: flex-start;              /* 顶部对齐 */
-    gap: 0.5rem;                          /* 元素间距 */
-    margin-bottom: 0.5rem;                /* 底部外边距 */
-    font-size: 0.95rem;                   /* 字体大小 */
-    line-height: 1.4;                     /* 行高 */
-    color: var(--theme-margin-text);      /* 文字颜色 */
-    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;  /* 过渡动画 */
-    padding: 0.2rem 0.3rem;               /* 内边距 */
-    margin-left: -0.3rem;                 /* 左外边距（负值，扩展点击区域）*/
-    border-radius: 4px;                   /* 圆角 */
-    position: relative;                   /* 相对定位（用于拖拽指示器）*/
+    display: flex;
+    /* 弹性布局 */
+    align-items: flex-start;
+    /* 顶部对齐 */
+    gap: 0.5rem;
+    /* 元素间距 */
+    margin-bottom: 0.5rem;
+    /* 底部外边距 */
+    font-size: 0.95rem;
+    /* 字体大小 */
+    line-height: 1.4;
+    /* 行高 */
+    color: var(--theme-margin-text);
+    /* 文字颜色 */
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    /* 过渡动画 */
+    padding: 0.2rem 0.3rem;
+    /* 内边距 */
+    margin-left: -0.3rem;
+    /* 左外边距（负值，扩展点击区域）*/
+    border-radius: 4px;
+    /* 圆角 */
+    position: relative;
+    /* 相对定位（用于拖拽指示器）*/
 }
 
 /* 可拖拽的待办项 */
 .todo-item[draggable="true"] {
-    cursor: grab;                         /* 抓手光标 */
+    cursor: grab;
+    /* 抓手光标 */
 }
 
 /* 拖拽中的光标 */
 .todo-item[draggable="true"]:active {
-    cursor: grabbing;                     /* 抓取中光标 */
+    cursor: grabbing;
+    /* 抓取中光标 */
 }
 
 /* 正在被拖拽的待办项 */
 .todo-item.dragging {
-    opacity: 0.4;                         /* 半透明 */
-    background: var(--bg-offset);         /* 背景色 */
+    opacity: 0.4;
+    /* 半透明 */
+    background: var(--bg-offset);
+    /* 背景色 */
 }
 
 /* 拖拽悬停目标 */
 .todo-item.drag-over {
-    background: var(--bg-offset);         /* 背景色 */
+    background: var(--bg-offset);
+    /* 背景色 */
 }
 
 /* 拖拽到顶部时的指示器 */
 .todo-item.drag-over-top::before {
-    content: '';                          /* 伪元素 */
-    position: absolute;                   /* 绝对定位 */
-    top: -1px;                            /* 顶部 */
-    left: 0;                              /* 左侧 */
-    right: 0;                             /* 右侧 */
-    height: 2px;                          /* 高度 */
-    background: var(--fg);                /* 前景色 */
-    border-radius: 1px;                   /* 圆角 */
+    content: '';
+    /* 伪元素 */
+    position: absolute;
+    /* 绝对定位 */
+    top: -1px;
+    /* 顶部 */
+    left: 0;
+    /* 左侧 */
+    right: 0;
+    /* 右侧 */
+    height: 2px;
+    /* 高度 */
+    background: var(--fg);
+    /* 前景色 */
+    border-radius: 1px;
+    /* 圆角 */
 }
 
 /* 拖拽到底部时的指示器 */
 .todo-item.drag-over-bottom::after {
-    content: '';                          /* 伪元素 */
-    position: absolute;                   /* 绝对定位 */
-    bottom: -1px;                         /* 底部 */
-    left: 0;                              /* 左侧 */
-    right: 0;                             /* 右侧 */
-    height: 2px;                          /* 高度 */
-    background: var(--fg);                /* 前景色 */
-    border-radius: 1px;                   /* 圆角 */
+    content: '';
+    /* 伪元素 */
+    position: absolute;
+    /* 绝对定位 */
+    bottom: -1px;
+    /* 底部 */
+    left: 0;
+    /* 左侧 */
+    right: 0;
+    /* 右侧 */
+    height: 2px;
+    /* 高度 */
+    background: var(--fg);
+    /* 前景色 */
+    border-radius: 1px;
+    /* 圆角 */
 }
 
 /* 拖拽手柄样式（⋮⋮ 图标）*/
 .todo-drag-handle {
-    cursor: grab;                         /* 抓手光标 */
-    color: var(--fg-muted);               /* 弱化颜色 */
-    font-size: 0.7rem;                    /* 字体大小 */
-    line-height: 1.4;                     /* 行高 */
-    letter-spacing: -0.15em;              /* 字母间距（负值，让点靠近）*/
-    opacity: 0;                           /* 默认隐藏 */
-    transition: opacity 0.2s;             /* 透明度过渡 */
-    user-select: none;                    /* 禁止选择文字 */
-    flex-shrink: 0;                       /* 不收缩 */
-    margin-right: -0.2rem;                /* 右外边距（负值）*/
+    cursor: grab;
+    /* 抓手光标 */
+    color: var(--fg-muted);
+    /* 弱化颜色 */
+    font-size: 0.7rem;
+    /* 字体大小 */
+    line-height: 1.4;
+    /* 行高 */
+    letter-spacing: -0.15em;
+    /* 字母间距（负值，让点靠近）*/
+    opacity: 0;
+    /* 默认隐藏 */
+    transition: opacity 0.2s;
+    /* 透明度过渡 */
+    user-select: none;
+    /* 禁止选择文字 */
+    flex-shrink: 0;
+    /* 不收缩 */
+    margin-right: -0.2rem;
+    /* 右外边距（负值）*/
 }
 
 /* 悬停在待办项上时显示拖拽手柄 */
 .todo-item:hover .todo-drag-handle {
-    opacity: 0.6;                         /* 半透明显示 */
+    opacity: 0.6;
+    /* 半透明显示 */
 }
 
 /* 悬停在拖拽手柄上时 */
 .todo-drag-handle:hover {
-    opacity: 1 !important;                /* 完全不透明 */
-    color: var(--fg);                     /* 前景色 */
+    opacity: 1 !important;
+    /* 完全不透明 */
+    color: var(--fg);
+    /* 前景色 */
 }
 
 /* 拖拽中的光标 */
 .todo-drag-handle:active {
-    cursor: grabbing;                     /* 抓取中光标 */
+    cursor: grabbing;
+    /* 抓取中光标 */
 }
 
 /* 已完成的待办项文字样式 */
 .todo-item.completed .todo-text {
-    text-decoration: line-through;        /* 删除线 */
-    color: var(--fg-muted);               /* 弱化颜色 */
+    text-decoration: line-through;
+    /* 删除线 */
+    color: var(--fg-muted);
+    /* 弱化颜色 */
 }
 
 /* CSS 自绘复选框（替代 Unicode 字符，更清晰）*/
 .todo-checkbox {
-    width: 1em;                           /* 宽度 */
-    height: 1em;                          /* 高度 */
-    border: 1.5px solid var(--theme-margin-text);  /* 边框 */
-    border-radius: 2px;                   /* 圆角 */
-    display: inline-flex;                 /* 内联弹性布局 */
-    align-items: center;                  /* 垂直居中 */
-    justify-content: center;              /* 水平居中 */
-    cursor: pointer;                      /* 鼠标指针 */
-    user-select: none;                    /* 禁止选择 */
-    min-width: 1em;                       /* 最小宽度 */
-    flex-shrink: 0;                       /* 不收缩 */
-    margin-top: 0.15em;                   /* 顶部外边距（微调对齐）*/
-    transition: all 0.15s ease;           /* 过渡动画 */
+    width: 1em;
+    /* 宽度 */
+    height: 1em;
+    /* 高度 */
+    border: 1.5px solid var(--theme-margin-text);
+    /* 边框 */
+    border-radius: 2px;
+    /* 圆角 */
+    display: inline-flex;
+    /* 内联弹性布局 */
+    align-items: center;
+    /* 垂直居中 */
+    justify-content: center;
+    /* 水平居中 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    user-select: none;
+    /* 禁止选择 */
+    min-width: 1em;
+    /* 最小宽度 */
+    flex-shrink: 0;
+    /* 不收缩 */
+    margin-top: 0.15em;
+    /* 顶部外边距（微调对齐）*/
+    transition: all 0.15s ease;
+    /* 过渡动画 */
 }
 
 /* 选中状态的复选框 */
 .todo-checkbox.checked {
-    background: var(--fg);                /* 前景色背景 */
-    border-color: var(--fg);              /* 前景色边框 */
+    background: var(--fg);
+    /* 前景色背景 */
+    border-color: var(--fg);
+    /* 前景色边框 */
 }
 
 /* 选中状态的勾号（使用伪元素绘制）*/
 .todo-checkbox.checked::after {
-    content: '';                          /* 伪元素 */
-    width: 0.3em;                         /* 宽度 */
-    height: 0.55em;                       /* 高度 */
-    border: solid var(--bg);              /* 边框（背景色）*/
-    border-width: 0 2px 2px 0;            /* 只显示右边和底边 */
-    transform: rotate(45deg);             /* 旋转 45 度形成勾号 */
-    margin-bottom: 0.1em;                 /* 底部外边距（微调位置）*/
+    content: '';
+    /* 伪元素 */
+    width: 0.3em;
+    /* 宽度 */
+    height: 0.55em;
+    /* 高度 */
+    border: solid var(--bg);
+    /* 边框（背景色）*/
+    border-width: 0 2px 2px 0;
+    /* 只显示右边和底边 */
+    transform: rotate(45deg);
+    /* 旋转 45 度形成勾号 */
+    margin-bottom: 0.1em;
+    /* 底部外边距（微调位置）*/
 }
 
 /* 复选框悬停效果 */
 .todo-checkbox:hover {
-    opacity: 0.7;                         /* 略微透明 */
+    opacity: 0.7;
+    /* 略微透明 */
 }
 
 /* 待办编辑输入框样式 */
 .todo-edit-input {
-    flex: 1;                              /* 占据剩余空间 */
-    background: transparent;              /* 透明背景 */
-    border: none;                         /* 无边框 */
-    border-bottom: 1px solid var(--fg);   /* 底部边框 */
-    font-family: inherit;                 /* 继承字体 */
-    font-size: inherit;                   /* 继承字体大小 */
-    color: var(--fg);                     /* 文字颜色 */
-    padding: 0;                           /* 无内边距 */
-    outline: none;                        /* 无轮廓线 */
+    flex: 1;
+    /* 占据剩余空间 */
+    background: transparent;
+    /* 透明背景 */
+    border: none;
+    /* 无边框 */
+    border-bottom: 1px solid var(--fg);
+    /* 底部边框 */
+    font-family: inherit;
+    /* 继承字体 */
+    font-size: inherit;
+    /* 继承字体大小 */
+    color: var(--fg);
+    /* 文字颜色 */
+    padding: 0;
+    /* 无内边距 */
+    outline: none;
+    /* 无轮廓线 */
 }
 
 /* 待办文字 */
 .todo-text {
-    flex: 1;                              /* 占据剩余空间 */
-    word-break: break-word;               /* 自动换行 */
-    cursor: text;                         /* 文本光标 */
-    color: var(--theme-margin-text);      /* 边注颜色 */
+    flex: 1;
+    /* 占据剩余空间 */
+    word-break: break-word;
+    /* 自动换行 */
+    cursor: text;
+    /* 文本光标 */
+    color: var(--theme-margin-text);
+    /* 边注颜色 */
 }
 
 /* 删除按钮 */
 .todo-delete {
-    cursor: pointer;                      /* 鼠标指针 */
-    color: var(--fg-muted);               /* 弱化颜色 */
-    font-size: 1.1rem;                    /* 字体大小 */
-    line-height: 1.2;                     /* 行高 */
-    opacity: 0;                           /* 默认隐藏 */
-    transition: opacity 0.2s;             /* 透明度过渡 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    color: var(--fg-muted);
+    /* 弱化颜色 */
+    font-size: 1.1rem;
+    /* 字体大小 */
+    line-height: 1.2;
+    /* 行高 */
+    opacity: 0;
+    /* 默认隐藏 */
+    transition: opacity 0.2s;
+    /* 透明度过渡 */
 }
 
 /* 悬停在待办项上时显示删除按钮 */
 .todo-item:hover .todo-delete {
-    opacity: 1;                           /* 完全显示 */
+    opacity: 1;
+    /* 完全显示 */
 }
 
 /* 删除按钮悬停效果 */
 .todo-delete:hover {
-    color: var(--fg);                     /* 前景色 */
+    color: var(--fg);
+    /* 前景色 */
 }
 
 /* 已完成区域样式 */

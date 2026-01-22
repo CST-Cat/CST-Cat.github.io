@@ -12,10 +12,87 @@
  * - 向后兼容：不影响现有 vocabulary.js 和 pomodoro-todo.js
  * - 可选增强：现有模块可以选择性使用此模块
  * - 独立运行：可以单独加载和使用
+ * - 多语言支持：基于 HTML lang 属性自动切换语言
  ******************************************************************************/
 
 (function () {
     'use strict';
+
+    // ==================== 国际化配置 ====================
+    
+    /**
+     * 获取当前页面语言
+     * 从 HTML 根元素的 lang 属性读取
+     */
+    function getLang() {
+        return document.documentElement.lang || 'zh';
+    }
+
+    /**
+     * 多语言文本配置
+     */
+    const i18n = {
+        zh: {
+            // 按钮文本
+            export: '导出',
+            import: '导入',
+            clear: '清除',
+            
+            // 工具提示
+            exportTitle: '导出所有学习数据',
+            importTitle: '导入学习数据',
+            clearTitle: '清除所有数据',
+            
+            // 通知消息
+            exportSuccess: '数据导出成功',
+            importSuccess: '数据导入成功',
+            clearSuccess: '所有数据已清除',
+            fileReadError: '文件读取失败',
+            exportError: '导出失败',
+            importError: '导入失败',
+            clearError: '清除失败',
+            invalidFormat: '无效的备份文件格式',
+            
+            // 确认对话框
+            clearConfirm1: '确定要清除所有学习数据吗？此操作不可恢复！\n\n建议先导出备份。',
+            clearConfirm2: '再次确认：真的要删除所有数据吗？'
+        },
+        en: {
+            // Button text
+            export: 'Export',
+            import: 'Import',
+            clear: 'Clear',
+            
+            // Tooltips
+            exportTitle: 'Export all learning data',
+            importTitle: 'Import learning data',
+            clearTitle: 'Clear all data',
+            
+            // Notification messages
+            exportSuccess: 'Data exported successfully',
+            importSuccess: 'Data imported successfully',
+            clearSuccess: 'All data cleared',
+            fileReadError: 'Failed to read file',
+            exportError: 'Export failed',
+            importError: 'Import failed',
+            clearError: 'Clear failed',
+            invalidFormat: 'Invalid backup file format',
+            
+            // Confirmation dialogs
+            clearConfirm1: 'Are you sure you want to clear all learning data? This action cannot be undone!\n\nIt is recommended to export a backup first.',
+            clearConfirm2: 'Confirm again: Do you really want to delete all data?'
+        }
+    };
+
+    /**
+     * 获取翻译文本
+     * @param {string} key - 文本键名
+     * @returns {string} 翻译后的文本
+     */
+    function t(key) {
+        const lang = getLang();
+        return i18n[lang][key] || i18n['zh'][key] || key;
+    }
 
     // ==================== 数据管理核心类 ====================
 
@@ -51,14 +128,14 @@
             container.innerHTML = `
                 <span class="data-management-wrapper">
                     <span class="data-management-buttons">
-                        <button class="data-btn" id="data-export-btn" title="导出所有学习数据">
-                            导出
+                        <button class="data-btn" id="data-export-btn" title="${t('exportTitle')}">
+                            ${t('export')}
                         </button>
-                        <button class="data-btn" id="data-import-btn" title="导入学习数据">
-                            导入
+                        <button class="data-btn" id="data-import-btn" title="${t('importTitle')}">
+                            ${t('import')}
                         </button>
-                        <button class="data-btn" id="data-clear-btn" title="清除所有数据">
-                            清除
+                        <button class="data-btn" id="data-clear-btn" title="${t('clearTitle')}">
+                            ${t('clear')}
                         </button>
                     </span>
                     <input type="file" id="data-import-file" accept=".json" style="display: none;">
@@ -94,7 +171,7 @@
                         try {
                             this.importData(event.target.result);
                         } catch (error) {
-                            this.showNotification('文件读取失败', 'error');
+                            this.showNotification(t('fileReadError'), 'error');
                         }
                         fileInput.value = '';
                     };
@@ -131,11 +208,11 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
 
-                this.showNotification('数据导出成功', 'success');
+                this.showNotification(t('exportSuccess'), 'success');
                 console.log('DataManager: Data exported successfully');
             } catch (error) {
                 console.error('DataManager: Export failed:', error);
-                this.showNotification('导出失败：' + error.message, 'error');
+                this.showNotification(t('exportError') + '：' + error.message, 'error');
             }
         }
 
@@ -208,7 +285,7 @@
                 const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
                 if (!data.version) {
-                    throw new Error('无效的备份文件格式');
+                    throw new Error(t('invalidFormat'));
                 }
 
                 let importedCount = 0;
@@ -243,7 +320,7 @@
 
             } catch (error) {
                 console.error('DataManager: Import failed:', error);
-                this.showNotification('导入失败：' + error.message, 'error');
+                this.showNotification(t('importError') + '：' + error.message, 'error');
             }
         }
 
@@ -392,11 +469,11 @@
          * 清除所有数据（需要确认）
          */
         clearAllData() {
-            if (!confirm('确定要清除所有学习数据吗？此操作不可恢复！\n\n建议先导出备份。')) {
+            if (!confirm(t('clearConfirm1'))) {
                 return;
             }
 
-            if (!confirm('再次确认：真的要删除所有数据吗？')) {
+            if (!confirm(t('clearConfirm2'))) {
                 return;
             }
 
@@ -427,7 +504,7 @@
                     });
                 }
 
-                this.showNotification('所有数据已清除', 'success');
+                this.showNotification(t('clearSuccess'), 'success');
                 console.log('DataManager: All data cleared');
 
                 // 刷新页面
@@ -437,7 +514,7 @@
 
             } catch (error) {
                 console.error('DataManager: Clear failed:', error);
-                this.showNotification('清除失败：' + error.message, 'error');
+                this.showNotification(t('clearError') + '：' + error.message, 'error');
             }
         }
 

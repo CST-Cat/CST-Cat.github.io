@@ -10,63 +10,90 @@
 @import url('/assets/fonts/NotoSansSC-Regular/result.css');
 /* 思源黑体半粗体 - 用于强调文本 */
 @import url('/assets/fonts/NotoSansSC-SemiBold/result.css');
-/* 朱雀仿宋 - 中文仿宋字体（用于正文）
-   开源字体，优雅的仿宋风格，适合长文阅读 */
-@import url('/assets/fonts/ZhuqueFangsong/result.css');
+/* 华文仿宋 - 中文仿宋字体（用于正文）
+   优雅的仿宋风格，适合长文阅读 */
+@import url('/assets/fonts/STFangso/result.css');
 
 /* Anthropic Sans - 英文无衬线字体（用于标题和界面元素）
    现代简洁的无衬线字体，清晰易读 */
 
 /* 正常样式 */
 @font-face {
-    font-family: 'AnthropicSans';                                       /* 字体族名称 */
-    src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');  /* 正常样式字体文件 */
-    font-weight: normal;                                                /* 字重：正常 */
-    font-style: normal;                                                 /* 样式：正常 */
-    font-display: swap;                                                 /* 字体加载策略 */
+    font-family: 'AnthropicSans';
+    /* 字体族名称 */
+    src: url('/assets/fonts/AnthropicSans-Roman-Web.woff2') format('woff2');
+    /* 正常样式字体文件 */
+    font-weight: normal;
+    /* 字重：正常 */
+    font-style: normal;
+    /* 样式：正常 */
+    font-display: swap;
+    /* 字体加载策略 */
 }
 
 /* 斜体样式 */
 @font-face {
-    font-family: 'AnthropicSans';                                       /* 同一字体族 */
-    src: url('/assets/fonts/AnthropicSans-Italic-Web.woff2') format('woff2');  /* 斜体字体文件 */
-    font-weight: normal;                                                /* 字重：正常 */
-    font-style: italic;                                                 /* 样式：斜体 */
-    font-display: swap;                                                 /* 字体加载策略 */
+    font-family: 'AnthropicSans';
+    /* 同一字体族 */
+    src: url('/assets/fonts/AnthropicSans-Italic-Web.woff2') format('woff2');
+    /* 斜体字体文件 */
+    font-weight: normal;
+    /* 字重：正常 */
+    font-style: italic;
+    /* 样式：斜体 */
+    font-display: swap;
+    /* 字体加载策略 */
 }
 
 /* Crimson Pro - 英文衬线字体（用于正文）
    优雅的衬线字体，可变字体技术支持 200-900 字重
-   适合长文阅读，与朱雀仿宋搭配使用 */
+   适合长文阅读，与华文仿宋搭配使用 */
 
 /* 正常样式 - 可变字重 */
 @font-face {
-    font-family: 'CrimsonPro';                                          /* 字体族名称 */
-    src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');  /* 可变字体文件 */
-    font-weight: 200 900;                                               /* 支持的字重范围：从极细到极粗 */
-    font-style: normal;                                                 /* 样式：正常 */
-    font-display: swap;                                                 /* 字体加载策略 */
-    size-adjust: 115%;                                                  /* 字体大小调整：放大 15% 以匹配中文字体 */
+    font-family: 'CrimsonPro';
+    /* 字体族名称 */
+    src: url('/assets/fonts/CrimsonPro-VariableFont_wght.woff2') format('woff2-variations');
+    /* 可变字体文件 */
+    font-weight: 200 900;
+    /* 支持的字重范围：从极细到极粗 */
+    font-style: normal;
+    /* 样式：正常 */
+    font-display: swap;
+    /* 字体加载策略 */
+    size-adjust: 115%;
+    /* 字体大小调整：放大 15% 以匹配中文字体 */
 }
 
 /* 斜体样式 - 可变字重 */
 @font-face {
-    font-family: 'CrimsonPro';                                          /* 同一字体族 */
-    src: url('/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2') format('woff2-variations');  /* 斜体可变字体 */
-    font-weight: 200 900;                                               /* 支持的字重范围 */
-    font-style: italic;                                                 /* 样式：斜体 */
-    font-display: swap;                                                 /* 字体加载策略 */
-    size-adjust: 115%;                                                  /* 字体大小调整 */
+    font-family: 'CrimsonPro';
+    /* 同一字体族 */
+    src: url('/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2') format('woff2-variations');
+    /* 斜体可变字体 */
+    font-weight: 200 900;
+    /* 支持的字重范围 */
+    font-style: italic;
+    /* 样式：斜体 */
+    font-display: swap;
+    /* 字体加载策略 */
+    size-adjust: 115%;
+    /* 字体大小调整 */
 }
 
 /* JetBrains Mono - 等宽代码字体
    专为编程设计的等宽字体，字符清晰易辨，支持连字 */
 @font-face {
-    font-family: 'JetBrainsMono';                                       /* 字体族名称 */
-    src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');  /* 字体文件 */
-    font-weight: normal;                                                /* 字重：正常 */
-    font-style: normal;                                                 /* 样式：正常 */
-    font-display: swap;                                                 /* 字体加载策略 */
+    font-family: 'JetBrainsMono';
+    /* 字体族名称 */
+    src: url('/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+    /* 字体文件 */
+    font-weight: normal;
+    /* 字重：正常 */
+    font-style: normal;
+    /* 样式：正常 */
+    font-display: swap;
+    /* 字体加载策略 */
 }
 
 /* Noto Sans SC (思源黑体简体中文) - 用于侧栏和界面元素

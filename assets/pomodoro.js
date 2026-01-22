@@ -7,10 +7,90 @@
  *   - 支持暂停/继续/重置
  *   - 统计今日番茄数和总专注分钟数
  *   - 页面刷新后恢复计时状态
+ *   - 多语言支持：基于 HTML lang 属性自动切换语言
  ******************************************************************************/
 
 (function () {
     'use strict';
+
+    // ==================== 国际化配置 ====================
+    
+    /**
+     * 获取当前页面语言
+     */
+    function getLang() {
+        return document.documentElement.lang || 'zh';
+    }
+
+    /**
+     * 多语言文本配置
+     */
+    const i18n = {
+        zh: {
+            // 模式按钮
+            focus: '专注',
+            shortBreak: '短休',
+            longBreak: '长休',
+            minutes: '分',
+            
+            // 状态标签
+            readyToFocus: '准备开始专注',
+            focusing: '专注中...',
+            readyForBreak: '准备休息',
+            breaking: '休息中...',
+            paused: '已暂停',
+            
+            // 完成消息
+            focusComplete: '🎉 完成！休息一下吧',
+            breakComplete: '休息结束，继续加油！',
+            
+            // 统计标签
+            todayPomodoros: '今日番茄',
+            focusMinutes: '专注分钟',
+            
+            // 按钮提示
+            reset: '重置',
+            start: '开始',
+            pause: '暂停',
+            continue: '继续'
+        },
+        en: {
+            // Mode buttons
+            focus: 'Focus',
+            shortBreak: 'Short',
+            longBreak: 'Long',
+            minutes: 'min',
+            
+            // Status labels
+            readyToFocus: 'Ready to focus',
+            focusing: 'Focusing...',
+            readyForBreak: 'Ready for break',
+            breaking: 'Break time...',
+            paused: 'Paused',
+            
+            // Completion messages
+            focusComplete: '🎉 Complete! Take a break',
+            breakComplete: 'Break over, keep going!',
+            
+            // Stats labels
+            todayPomodoros: 'Today',
+            focusMinutes: 'Minutes',
+            
+            // Button tooltips
+            reset: 'Reset',
+            start: 'Start',
+            pause: 'Pause',
+            continue: 'Continue'
+        }
+    };
+
+    /**
+     * 获取翻译文本
+     */
+    function t(key) {
+        const lang = getLang();
+        return i18n[lang][key] || i18n['zh'][key] || key;
+    }
 
     // 根据 DOM 加载状态决定何时初始化
     if (document.readyState === 'loading') {
@@ -44,24 +124,24 @@
         // 生成番茄钟界面 HTML
         container.innerHTML = `
             <div class="timer-modes">
-                <button class="mode-btn active" data-minutes="25">专注<span class="btn-number">25</span>分</button>
-                <button class="mode-btn" data-minutes="5">短休<span class="btn-number">5</span>分</button>
-                <button class="mode-btn" data-minutes="15">长休<span class="btn-number">15</span>分</button>
+                <button class="mode-btn active" data-minutes="25">${t('focus')}<span class="btn-number">25</span>${t('minutes')}</button>
+                <button class="mode-btn" data-minutes="5">${t('shortBreak')}<span class="btn-number">5</span>${t('minutes')}</button>
+                <button class="mode-btn" data-minutes="15">${t('longBreak')}<span class="btn-number">15</span>${t('minutes')}</button>
             </div>
             <div class="timer-display" id="timer">25:00</div>
-            <div class="timer-label" id="timer-label">准备开始专注</div>
+            <div class="timer-label" id="timer-label">${t('readyToFocus')}</div>
             <div class="timer-controls">
-                <button class="control-btn secondary" id="reset-btn" title="重置">↺</button>
-                <button class="control-btn primary" id="start-btn" title="开始">▶</button>
+                <button class="control-btn secondary" id="reset-btn" title="${t('reset')}">↺</button>
+                <button class="control-btn primary" id="start-btn" title="${t('start')}">▶</button>
             </div>
             <div class="timer-stats">
                 <div class="stat-item">
                     <span class="stat-value" id="today-count">0</span>
-                    <span class="stat-label">今日番茄</span>
+                    <span class="stat-label">${t('todayPomodoros')}</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="total-minutes">0</span>
-                    <span class="stat-label">专注分钟</span>
+                    <span class="stat-label">${t('focusMinutes')}</span>
                 </div>
             </div>
         `;
@@ -163,7 +243,7 @@
                     // 恢复暂停状态
                     timeLeft = state.timeLeftWhenPaused;
                     updateDisplay();
-                    timerLabel.textContent = '已暂停';
+                    timerLabel.textContent = t('paused');
                     return true;
                 }
             } catch (e) {
@@ -208,10 +288,10 @@
                 localStorage.setItem('pomodoro_totalMinutes', totalMinutes);
                 localStorage.setItem('pomodoro_lastDate', today);
                 updateStats();
-                timerLabel.textContent = '🎉 完成！休息一下吧';
+                timerLabel.textContent = t('focusComplete');
                 playNotification();
             } else {
-                timerLabel.textContent = '休息结束，继续加油！';
+                timerLabel.textContent = t('breakComplete');
                 playNotification();
             }
             timeLeft = currentMode * 60;
@@ -226,8 +306,9 @@
         function resumeTimer() {
             isRunning = true;
             startBtn.textContent = '⏸';
+            startBtn.title = t('pause');
             container.classList.add('running');
-            timerLabel.textContent = currentMode === 25 ? '专注中...' : '休息中...';
+            timerLabel.textContent = currentMode === 25 ? t('focusing') : t('breaking');
 
             // 保存运行状态
             saveTimerState();
@@ -274,8 +355,9 @@
                 isRunning = false;
                 startTimestamp = null;
                 startBtn.textContent = '▶';
+                startBtn.title = t('continue');
                 container.classList.remove('running');
-                timerLabel.textContent = '已暂停';
+                timerLabel.textContent = t('paused');
                 saveTimerState();
             } else {
                 // 开始/继续
@@ -297,8 +379,9 @@
             timeLeft = currentMode * 60;
             updateDisplay();
             startBtn.textContent = '▶';
+            startBtn.title = t('start');
             container.classList.remove('running');
-            timerLabel.textContent = '准备开始专注';
+            timerLabel.textContent = currentMode === 25 ? t('readyToFocus') : t('readyForBreak');
             clearTimerState();
         }
 
@@ -336,11 +419,9 @@
                 clearTimerState();  // 切换模式时清除之前的状态
 
                 if (currentMode === 25) {
-                    timerLabel.textContent = '准备开始专注';
-                } else if (currentMode === 5) {
-                    timerLabel.textContent = '准备短休息';
+                    timerLabel.textContent = t('readyToFocus');
                 } else {
-                    timerLabel.textContent = '准备长休息';
+                    timerLabel.textContent = t('readyForBreak');
                 }
             });
         });

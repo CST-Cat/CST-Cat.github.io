@@ -17,13 +17,14 @@
     --bg: var(--theme-bg);
     --fg-muted: var(--theme-copy-btn-text);
     --bg-offset: var(--theme-code-bg);
-    
+
     /* 优化：统一字体变量 */
     --font-sans: 'AnthropicSans', 'NotoSansSC', sans-serif;
-    --font-serif: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    --font-serif: 'CrimsonPro', 'STFangso', serif;
     --font-mono: 'CrimsonPro', serif;
-    --font-chinese: 'ZhuqueFangsong', 'NotoSansSC', serif;  /* 中文正文字体 */
-    
+    --font-chinese: 'CrimsonPro', serif;
+    /* 单词学习模块统一使用 CrimsonPro 衬线字体 */
+
     /* 优化：统一过渡时间 */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.2s ease;
@@ -336,21 +337,27 @@
 .vocab-bank-selector {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.4rem;
     position: relative;
 }
 
 .vocab-bank-label {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--fg-muted);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-family: 'CrimsonPro', serif;
     font-weight: 500;
+    margin-right: -0.15rem;
 }
 
 /* 自定义下拉选择器容器 */
 .vocab-bank-select-custom {
     position: relative;
-    min-width: 140px;
+    min-width: 90px;
+}
+
+/* 每日单词数选择器 - 更窄 */
+#vocab-daily-target-custom {
+    min-width: 110px;
 }
 
 /* 选中的显示框 */
@@ -358,13 +365,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.4rem 0.8rem;
+    padding: 0.35rem 0.7rem;
     background-color: transparent;
     border: 1px solid var(--fg-muted);
     border-radius: var(--radius-sm);
     color: var(--fg);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
-    font-size: 0.95rem;
+    font-family: 'CrimsonPro', serif;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
@@ -378,7 +385,7 @@
 .vocab-bank-select-arrow {
     width: 12px;
     height: 12px;
-    margin-left: 0.8rem;
+    margin-left: 0.6rem;
     transition: transform 0.2s ease;
     flex-shrink: 0;
 }
@@ -420,10 +427,10 @@
 
 /* 下拉选项 */
 .vocab-bank-select-option {
-    padding: 0.5rem 0.8rem;
+    padding: 0.45rem 0.7rem;
     color: var(--fg);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
-    font-size: 0.95rem;
+    font-family: 'CrimsonPro', serif;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: background-color 0.15s ease;
 }
@@ -485,6 +492,20 @@
     gap: 0.5rem;
 }
 
+/* 词库总数显示 */
+.vocab-bank-total {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: 'CrimsonPro', serif;
+    font-weight: 500;
+    background: transparent;
+    color: var(--fg-muted);
+    border: 1px solid var(--fg-muted);
+}
+
 /* 复习/新词标记 */
 .vocab-review-badge,
 .vocab-new-badge {
@@ -493,7 +514,7 @@
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
     font-size: 0.85rem;
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-family: 'CrimsonPro', serif;
     font-weight: 500;
     background: transparent;
     color: var(--fg-muted);
@@ -605,7 +626,7 @@
 .vocab-example {
     font-size: 1rem;
     color: var(--fg-muted);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-family: 'CrimsonPro', serif;
     font-style: normal;
     line-height: 1.6;
     max-width: 90%;
@@ -636,6 +657,45 @@
     background: var(--fg-muted);
     border-radius: 2px;
 }
+
+/* ==================== 加载动画样式 ==================== */
+
+/* 加载提示容器 */
+.vocab-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--fg-muted);
+    font-family: 'CrimsonPro', serif;
+    font-size: 0.95rem;
+}
+
+/* 加载动画（脉冲效果） */
+.vocab-loading::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-top: 1rem;
+    border: 2px solid var(--fg-muted);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: vocab-spin 0.8s linear infinite;
+}
+
+/* 旋转动画 */
+@keyframes vocab-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== 卡片背面详细内容样式 ==================== */
 
 /* 小号单词标题 */
 .vocab-word-mini {
@@ -859,7 +919,7 @@
     border-radius: 4px;
     background: transparent;
     color: var(--fg);
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    font-family: 'CrimsonPro', serif;
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s;

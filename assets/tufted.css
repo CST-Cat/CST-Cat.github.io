@@ -33,8 +33,8 @@ body {
     /* 使用弹性布局 */
     flex-direction: column;
     /* 垂直方向排列 */
-    /* 正文字体：英文用 CrimsonPro 衬线，中文用朱雀仿宋 */
-    font-family: 'CrimsonPro', 'ZhuqueFangsong', serif;
+    /* 正文字体：英文用 CrimsonPro 衬线，中文用华文仿宋 */
+    font-family: 'CrimsonPro', 'STFangso', serif;
     /* 禁用连字（fi, fl 等不会黏在一起） */
     font-variant-ligatures: none;
 }

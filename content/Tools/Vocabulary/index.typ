@@ -1,5 +1,8 @@
 #import "../../index.typ": template, tufted
-#show: template.with(title: "Vocabulary Drill")
+#show: template.with(
+  title: "Vocabulary Drill",
+  lang: "en"  // Set this page to English
+)
 
 // CSS 文件
 #html.elem("link", attrs: (rel: "stylesheet", href: "/assets/vocabulary.css"))
@@ -16,17 +19,17 @@
 = Vocabulary Drill
 
 #tufted.margin-note[
-  *单词学习* \
+  *Vocabulary Learning* \
   #html.span(id: "vocab-sidebar")[]
 ]
 
 #tufted.margin-note(class: "todo-margin-note")[
-  *待办事项* \
+  *To-Do List* \
   #html.span(id: "todo-app")[]
 ]
 
 #tufted.margin-note(class: "data-management-margin-note")[
-  *数据管理* \
+  *Data Management* \
   #html.span(id: "data-management-app")[]
 ]
 
