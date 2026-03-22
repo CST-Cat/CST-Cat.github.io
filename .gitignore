@@ -18,7 +18,7 @@ uv.lock
 *.swo
 
 # build outputs
-_site/
+
 target/
 
 # temp files
