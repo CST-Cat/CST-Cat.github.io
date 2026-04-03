@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tufted-blog.pages.dev/sitemap.xml
+Sitemap: https://wxhou.cn/sitemap.xml

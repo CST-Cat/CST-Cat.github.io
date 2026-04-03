@@ -3,3 +3,6 @@ CUSTOM STYLES
 
 Add your custom CSS styles here to override or extend the default styles.
 *******************************************************************************/
+.heading-en {
+    font-style: normal !important;
+}
