@@ -11,7 +11,7 @@ CSS CUSTOM PROPERTIES (Theme Variables)
 
 :root {
     /* Light mode colors (default) */
-    --theme-bg: #fffff8;
+        --theme-bg: #fffff8;
     --theme-text: #111;
     --theme-heading: #111;
     --theme-code-bg: #f7f7f7;
@@ -67,8 +67,8 @@ html:not([data-theme]) {
 /* System preference: only apply dark variables when no explicit theme is set */
 @media (prefers-color-scheme: light) {
     html:not([data-theme]) {
-        --theme-bg: #fffff8;
-        --theme-text: #111;
+    --theme-bg: #fffff8;
+    --theme-text: #111;
         --theme-heading: #111;
         --theme-code-bg: #f7f7f7;
         --theme-code-text: inherit;

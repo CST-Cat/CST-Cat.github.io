@@ -10,8 +10,8 @@
   // 然后在 `content/` 路径中新建 `Entry/`路径，在其中添加 `index.typ` 作为 Entry 页的内容
   header-links: (
     "/": "Home",
-    "/Docs/": "Docs",
     "/Blog/": "Blog",
+    "/Docs/": "Docs",
     "/Essays/": "Essays",
   ),
   
@@ -27,12 +27,12 @@
   lang: "zh",
   /// 订阅源配置 (字符串数组)，指定包含在 RSS 订阅源中的内容目录列表。（可选）
   /// 例如，`("/Blog/",)` 会将 `Blog` 目录下的所有文章包含在订阅源中。
-  feed-dir: ("/Blog/",),
+  feed-dir: ("/Blog/", "/Essays/", "/Docs/"),
   
   /// 自定义页眉元素列表 (content 数组)。显示在页面顶部。
-  header-elements: (
-    [Hi there! Welcome to my blog!],
-  ),
+  // header-elements: (
+  //   [Hi there! Welcome to my blog!],
+  // ),
   /// 自定义页脚元素列表 (content 数组)，显示在页面底部。
   footer-elements: (
     "© 2026 wxh's Blog. Just for fun. ",

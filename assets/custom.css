@@ -1,8 +1,90 @@
-/*******************************************************************************
-CUSTOM STYLES
+@import url("/assets/fonts/ZhuqueFangsong-Regular/result.css");
+@import url("/assets/fonts/STKaiti/result.css");
+@import url("/assets/fonts/NotoSansSC-Regular/result.css");
+@import url("/assets/fonts/NotoSansSC-SemiBold/result.css");
 
-Add your custom CSS styles here to override or extend the default styles.
+/* --- English Sans (for headings) --- */
+@font-face {
+    font-family: "Custom Sans";
+    src: url("/assets/fonts/Sans-Roman-Web.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Custom Sans";
+    src: url("/assets/fonts/Sans-Italic-Web.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* --- English Serif (for body text) --- */
+@font-face {
+    font-family: "Crimson Pro";
+    src: url("/assets/fonts/CrimsonPro-VariableFont_wght.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Crimson Pro";
+    src: url("/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* --- Code Font --- */
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("/assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* --- Chinese: 朱雀仿宋 (正文，切片) --- */
+@import url("/assets/fonts/ZhuqueFangsong-Regular/result.css");
+
+/* --- Chinese: ST楷体 (标题，切片) --- */
+@import url("/assets/fonts/STKaiti/result.css");
+
+/* --- Noto Sans SC (侧栏/边注，切片) --- */
+@import url("/assets/fonts/NotoSansSC-Regular/result.css");
+@import url("/assets/fonts/NotoSansSC-SemiBold/result.css");
+
+/*******************************************************************************
+FONT APPLICATION
 *******************************************************************************/
+
+/* 正文: 英文用 Crimson Pro，中文用朱雀仿宋 */
+body {
+    font-family: "Crimson Pro", "朱雀仿宋", Georgia, serif !important;
+    font-weight: 400 !important;
+    font-variant-ligatures: none !important;
+    font-feature-settings: "liga" 0, "clig" 0 !important;
+}
+
+/* 标题: 英文用 Custom Sans，中文用ST楷体 */
+h1, h2, h3, h4, h5 {
+    font-family: "Custom Sans", "STKaiti", sans-serif !important;
+}
+
+/* 侧栏/边注: Noto Sans SC */
+.marginnote, .sidenote {
+    font-family: "Noto Sans SC", "Custom Sans", sans-serif !important;
+    color: #858580 !important;
+}
+
+/* 保留原有 heading-en 样式覆盖 */
 .heading-en {
     font-style: normal !important;
+}
+
+/* 代码: JetBrains Mono */
+code, pre, kbd, tt {
+    font-family: "JetBrains Mono", monospace !important;
 }

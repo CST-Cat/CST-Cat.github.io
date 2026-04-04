@@ -31,14 +31,15 @@
     </script>
   </head>
   <body>
-    <header class="site-header">Hi there! Welcome to my blog!</header>
+    <header class="site-header"></header>
     <header class="site-header">
-      <nav class="site-nav"><a href="/">Home</a><a href="/Docs/">Docs</a><a href="/Blog/">Blog</a><a href="/Essays/">Essays</a></nav>
+      <nav class="site-nav"><a href="/">Home</a><a href="/Blog/">Blog</a><a href="/Docs/">Docs</a><a href="/Essays/">Essays</a></nav>
     </header>
     <article>
       <section>
         <h2>Iterators vs Generators in Python</h2>
-        <p>Python’s iteration protocols are fundamental to writing efficient, Pythonic code.<sup class="footnote-ref"><a class="footnote-ref-link" href="#fn-1" id="fnref-1">1</a></sup><span class="marginnote" id="fn-1"><sup><a class="footnote-ref-link" href="#fnref-1">1</a></sup> The iterator protocol was introduced in Python 2.2 (2001) as part of PEP 234.</span> While iterators and generators are closely related, understanding their differences helps you choose the right tool for the job.</p>
+        <h2>浪淘沙大江东去</h2>
+        <p>Python’s iteration protocols are fundamental to writing efficient, Pythonic code.<sup class="footnote-ref"><a class="footnote-ref-link" href="#fn-1" id="fnref-1">1</a></sup><span class="marginnote" id="fn-1"><sup><a class="footnote-ref-link" href="#fnref-1">1</a></sup> The iterator protocol was introduced in Python 2.2 (2001) as part of PEP 234.</span> While iterators and generators are closely related, understanding their differences千古风流人物 helps you choose the right tool for the job. 测试一下中英文排版，测试一下中英文排版，大江东去，浪淘尽</p>
         <h3>What Are Iterators?</h3>
         <p>An iterator is any object that implements the iterator protocol: the <code>__iter__()</code> and <code>__next__()</code> methods.<sup class="footnote-ref"><a class="footnote-ref-link" href="#fn-2" id="fnref-2">2</a></sup><span class="marginnote" id="fn-2"><sup><a class="footnote-ref-link" href="#fnref-2">2</a></sup> An <em>iterable</em> returns an iterator when you call <code>__iter__()</code> on it, while an <em>iterator</em> returns itself from <code>__iter__()</code> and produces values via <code>__next__()</code>.</span> When you loop over a list or tuple, Python creates an iterator behind the scenes. You can also build custom iterators by defining these methods in a class.</p>
         <pre><code data-lang="python"><span style="color: #d73948">class</span> <span style="color: #4b69c6">Counter</span>:<br>    <span style="color: #d73948">def</span> <span style="color: #4b69c6">__init__</span>(self, max):<br>        <span style="color: #d73948">self</span>.max <span style="color: #d73948">=</span> <span style="color: #4b69c6">max</span><br>        <span style="color: #d73948">self</span>.current <span style="color: #d73948">=</span> <span style="color: #b60157">0</span><br><br>    <span style="color: #d73948">def</span> <span style="color: #4b69c6">__iter__</span>(self):<br>        <span style="color: #d73948">return</span> <span style="color: #d73948">self</span><br><br>    <span style="color: #d73948">def</span> <span style="color: #4b69c6">__next__</span>(self):<br>        <span style="color: #d73948">if</span> <span style="color: #d73948">self</span>.current <span style="color: #d73948">>=</span> <span style="color: #d73948">self</span>.max:<br>            <span style="color: #d73948">raise</span> <span style="color: #4b69c6">StopIteration</span><br>        <span style="color: #d73948">self</span>.current <span style="color: #d73948">+=</span> <span style="color: #b60157">1</span><br>        <span style="color: #d73948">return</span> <span style="color: #d73948">self</span>.current</code></pre>

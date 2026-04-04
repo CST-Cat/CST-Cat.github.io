@@ -8,6 +8,10 @@
 
 中文博客样例可参考 #link("https://yousa-mirage.github.io/Blog")[我的个人网站]。
 
+== 2026
+
+- #link("2026-04-04-typography-beauty/")[仿宋与楷体的排版之美]
+
 == 2025
 
 - #link("2025-10-30-normal-distribution/")[Normal Distribution]

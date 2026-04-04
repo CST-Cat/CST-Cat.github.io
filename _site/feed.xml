@@ -5,8 +5,32 @@
     <link>https://wxhou.cn</link>
     <description>Tufted Blog Template, Powered by Typst</description>
     <language>zh</language>
-    <lastBuildDate>Fri, 03 Apr 2026 13:43:13 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 03 Apr 2026 18:46:41 +0000</lastBuildDate>
     <atom:link href="https://wxhou.cn/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>仿宋与楷体的排版之美</title>
+      <link>https://wxhou.cn/Blog/2026-04-04-typography-beauty/</link>
+      <guid isPermaLink="true">https://wxhou.cn/Blog/2026-04-04-typography-beauty/</guid>
+      <pubDate>Sat, 04 Apr 2026 00:00:00 +0000</pubDate>
+      <category>Blog</category>
+      <description>探讨中文传统字体在网页排版中的视觉效果与阅读体验。</description>
+    </item>
+    <item>
+      <title>时间管理：从焦虑到从容</title>
+      <link>https://wxhou.cn/Essays/2026-04-03-time-management/</link>
+      <guid isPermaLink="true">https://wxhou.cn/Essays/2026-04-03-time-management/</guid>
+      <pubDate>Fri, 03 Apr 2026 00:00:00 +0000</pubDate>
+      <category>Essays</category>
+      <description>关于如何管理时间、减少焦虑、过上从容生活的个人思考。</description>
+    </item>
+    <item>
+      <title>Typst 中文排版指南</title>
+      <link>https://wxhou.cn/Docs/typst-chinese-typesetting/</link>
+      <guid isPermaLink="true">https://wxhou.cn/Docs/typst-chinese-typesetting/</guid>
+      <pubDate>Thu, 02 Apr 2026 00:00:00 +0000</pubDate>
+      <category>Docs</category>
+      <description>一份关于如何在 Typst 中进行高质量中文排版的实用指南。</description>
+    </item>
     <item>
       <title>The Normal Distribution: A Fundamental Concept in Statistics</title>
       <link>https://wxhou.cn/Blog/2025-10-30-normal-distribution/</link>

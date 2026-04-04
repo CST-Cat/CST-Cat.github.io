@@ -2,62 +2,58 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://wxhou.cn/Blog/2024-10-04-iterators-generators/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Blog/2025-04-16-monkeys-apes/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Blog/2025-10-30-normal-distribution/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
+  </url>
+  <url>
+    <loc>https://wxhou.cn/Blog/2026-04-04-typography-beauty/</loc>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Blog/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Docs/custom-styling/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Docs/custom-styling-en/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Docs/github-deploy/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Docs/github-deploy-en/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Docs/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
-    <loc>https://wxhou.cn/Docs/typst-example/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <loc>https://wxhou.cn/Docs/typst-chinese-typesetting/</loc>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
-    <loc>https://wxhou.cn/Docs/typst-example-en/</loc>
-    <lastmod>2026-04-03</lastmod>
-  </url>
-  <url>
-    <loc>https://wxhou.cn/Docs/website-config/</loc>
-    <lastmod>2026-04-03</lastmod>
-  </url>
-  <url>
-    <loc>https://wxhou.cn/Docs/website-config-en/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <loc>https://wxhou.cn/Essays/2026-04-03-time-management/</loc>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/Essays/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
   <url>
     <loc>https://wxhou.cn/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-04</lastmod>
   </url>
 </urlset>

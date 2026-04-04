@@ -8,9 +8,10 @@
 )
 
 = Iterators vs Generators in Python
+= 浪淘沙大江东去
 
-Python's iteration protocols are fundamental to writing efficient, Pythonic code.#footnote[The iterator protocol was introduced in Python 2.2 (2001) as part of PEP 234.] While iterators and generators are closely related, understanding their differences helps you choose the right tool for the job.
-
+Python's iteration protocols are fundamental to writing efficient, Pythonic code.#footnote[The iterator protocol was introduced in Python 2.2 (2001) as part of PEP 234.] While iterators and generators are closely related, understanding their differences千古风流人物 helps you choose the right tool for the job.
+测试一下中英文排版，测试一下中英文排版，大江东去，浪淘尽
 == What Are Iterators?
 
 An iterator is any object that implements the iterator protocol: the `__iter__()` and `__next__()` methods.#footnote[An _iterable_ returns an iterator when you call `__iter__()` on it, while an _iterator_ returns itself from `__iter__()` and produces values via `__next__()`.] When you loop over a list or tuple, Python creates an iterator behind the scenes. You can also build custom iterators by defining these methods in a class.
