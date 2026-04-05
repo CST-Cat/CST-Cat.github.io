@@ -399,7 +399,11 @@ def run_typst_command(args: list[str]) -> bool:
         bool: 命令是否成功执行
     """
     try:
-        result = subprocess.run(["typst"] + args, capture_output=True, text=True, encoding="utf-8")
+        # 优先使用项目本地的 typst 二进制
+        script_dir = Path(__file__).parent
+        local_typst = script_dir / "typst"
+        typst_cmd = str(local_typst) if local_typst.exists() else "typst"
+        result = subprocess.run([typst_cmd] + args, capture_output=True, text=True, encoding="utf-8")
         if result.returncode != 0:
             print(f"  ❌ Typst 错误: {result.stderr.strip()}")
             return False
