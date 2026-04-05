@@ -2,7 +2,7 @@
 #import "refs.typ": template-refs
 #import "notes.typ": template-notes
 #import "figures.typ": template-figures
-#import "layout.typ": full-width, margin-note
+#import "layout.typ": full-width, margin-note, html-img
 #import "links.typ": template-links
 #import "metadata.typ": metadata
 
@@ -66,7 +66,7 @@
 
         // load CSS
         let base-css = (
-          "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
+          "/assets/tufte.min.css",
           "/assets/tufted.css",
           "/assets/theme.css",
         )
