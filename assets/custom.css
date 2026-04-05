@@ -1,7 +1,6 @@
+@import url("https://chinese-fonts-cdn.deno.dev/packages/sypxzs/dist/思源屏显臻宋/result.css");
 @import url("/assets/fonts/ZhuqueFangsong-Regular/result.css");
 @import url("/assets/fonts/STKaiti/result.css");
-@import url("/assets/fonts/NotoSansSC-Regular/result.css");
-@import url("/assets/fonts/NotoSansSC-SemiBold/result.css");
 
 /* --- English Sans (for headings) --- */
 @font-face {
@@ -52,10 +51,6 @@
 /* --- Chinese: ST楷体 (标题，切片) --- */
 @import url("/assets/fonts/STKaiti/result.css");
 
-/* --- Noto Sans SC (侧栏/边注，切片) --- */
-@import url("/assets/fonts/NotoSansSC-Regular/result.css");
-@import url("/assets/fonts/NotoSansSC-SemiBold/result.css");
-
 /*******************************************************************************
 FONT APPLICATION
 *******************************************************************************/
@@ -73,9 +68,9 @@ h1, h2, h3, h4, h5 {
     font-family: "Custom Sans", "STKaiti", sans-serif !important;
 }
 
-/* 侧栏/边注: Noto Sans SC */
+/* 侧栏/边注: 思源屏显臻宋 */
 .marginnote, .sidenote {
-    font-family: "Noto Sans SC", "Custom Sans", sans-serif !important;
+    font-family: "思源屏显臻宋", "Custom Sans", sans-serif !important;
     color: #858580 !important;
 }
 
