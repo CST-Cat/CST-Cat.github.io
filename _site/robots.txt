@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /Blog/
-Allow: /Essays/
-Allow: /Docs/
-Disallow: /
-Crawl-delay: 20
-
-Sitemap: https://wxhou.cn/sitemap.xml

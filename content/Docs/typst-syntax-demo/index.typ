@@ -267,7 +267,7 @@ H#sub[2]O
 
 *效果：*（查看右侧边栏）
 #tufted.margin-note[
-  #image("../../Blog/2025-04-16-monkeys-apes/imgs/gorilla.webp")
+  #image("../typst-example/miku.png")
 ]
 #tufted.margin-note[
   ⬆️ 这是一只大猩猩

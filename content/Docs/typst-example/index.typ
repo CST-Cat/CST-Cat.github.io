@@ -207,7 +207,7 @@
 使用 `image()` 函数可以添加图片，使用 `width`、`height` 参数可以控制大小，例如 `figure + image`：
 
 #figure(caption: "这是只猴！")[
-  #image("../../Blog/2025-04-16-monkeys-apes/imgs/gorilla.webp", height: 250pt)
+  #image("./miku.png", height: 250pt)
 ]
 
 ```typ
