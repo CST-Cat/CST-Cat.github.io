@@ -8,3 +8,6 @@
  #link("/Docs/")[Docs]：教程、文档
  
  #link("/Essays/")[Essays]：随笔、想法
+
+ #link("/Vault/")[Vault]：手办、数码收藏
+ 
