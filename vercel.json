@@ -1,0 +1,5 @@
+{
+  "buildCommand": "curl -fsSL https://github.com/typst/typst/releases/download/v0.13.1/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJ -C /usr/local/bin && python build.py build",
+  "outputDirectory": "_site",
+  "installCommand": "pip install Pillow"
+}
