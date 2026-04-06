@@ -1,4 +1,4 @@
-@import url("/assets/fonts/STKaiti/result.css");
+/* STKaiti 已在模板 head 中通过 <link> 直接加载，避免 @import 级联延迟 */
 
 /* --- English Serif (for body text) --- */
 @font-face {
@@ -6,7 +6,7 @@
     src: url("/assets/fonts/CrimsonPro-VariableFont_wght.woff2") format("woff2");
     font-weight: 100 900;
     font-style: normal;
-    font-display: swap;
+    font-display: optional;
 }
 
 @font-face {
@@ -14,7 +14,7 @@
     src: url("/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2") format("woff2");
     font-weight: 100 900;
     font-style: italic;
-    font-display: swap;
+    font-display: optional;
 }
 
 /* --- Code Font --- */
@@ -23,7 +23,7 @@
     src: url("/assets/fonts/JetBrainsMono-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
-    font-display: swap;
+    font-display: optional;
 }
 
 /*******************************************************************************
