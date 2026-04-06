@@ -1,4 +1,4 @@
-/* STKaiti 已在模板 head 中通过 <link> 直接加载，避免 @import 级联延迟 */
+/* 字体样式在模板 head 中通过 <link> 直接加载，避免 @import 级联延迟 */
 
 /* --- English Serif (for body text) --- */
 @font-face {
@@ -38,9 +38,9 @@ body {
     font-feature-settings: "liga" 0, "clig" 0 !important;
 }
 
-/* 标题: 英文用 Crimson Pro，中文用 ST楷体 */
+/* 标题: 英文用 Crimson Pro，中文用朱雀仿宋 */
 h1, h2, h3, h4, h5 {
-    font-family: "Crimson Pro", "STKaiti", serif !important;
+    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", serif !important;
 }
 
 /* 侧栏/边注: 思源屏显臻宋 */

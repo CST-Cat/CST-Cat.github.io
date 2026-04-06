@@ -680,6 +680,35 @@ def copy_content_assets(force: bool = False) -> bool:
         return False
 
 
+def remove_unused_font_assets(site_dir: Path) -> bool:
+    """
+    删除站点产物中已停用的字体资源目录。
+
+    当前会移除：
+    - _site/assets/fonts/STKaiti
+    """
+
+    stale_font_dirs = [
+        site_dir / "assets" / "fonts" / "STKaiti",
+    ]
+
+    try:
+        removed_count = 0
+
+        for font_dir in stale_font_dirs:
+            if font_dir.exists() and font_dir.is_dir():
+                shutil.rmtree(font_dir)
+                removed_count += 1
+
+        if removed_count > 0:
+            print(f"✅ 已删除停用字体目录: {removed_count} 个")
+
+        return True
+    except Exception as e:
+        print(f"❌ 删除停用字体目录失败: {e}")
+        return False
+
+
 def normalize_font_display(site_dir: Path, target_display: str = "optional") -> bool:
     """
     将站点 CSS 中的 font-display: swap 统一替换为目标策略。
@@ -687,12 +716,10 @@ def normalize_font_display(site_dir: Path, target_display: str = "optional") -> 
     主要用于减少首屏字体闪切（FOUT）。
     当前处理文件：
     - _site/assets/custom.css
-    - _site/assets/fonts/STKaiti/result.css
     """
 
     target_files = [
         site_dir / "assets" / "custom.css",
-        site_dir / "assets" / "fonts" / "STKaiti" / "result.css",
     ]
 
     pattern = re.compile(r"font-display\s*:\s*swap\s*;", re.IGNORECASE)
@@ -1825,6 +1852,7 @@ def build(force: bool = False) -> bool:
 
     results.append(copy_assets())
     results.append(copy_content_assets(force))
+    results.append(remove_unused_font_assets(SITE_DIR))
     results.append(normalize_font_display(SITE_DIR))
     results.append(extract_inline_images(SITE_DIR))
     results.append(optimize_inline_images(SITE_DIR))
