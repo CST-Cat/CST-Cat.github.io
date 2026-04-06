@@ -36,6 +36,7 @@ Tufted Blog Template 构建脚本
 import argparse
 import base64
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -585,6 +586,9 @@ def build_pdf(force: bool = False) -> bool:
 def copy_assets() -> bool:
     """
     复制静态资源到输出目录。
+
+    注意：会保留 _site/assets/inline-images 下由后处理生成的文件，
+    避免增量构建时被覆盖后导致页面图片断链。
     """
     if not ASSETS_DIR.exists():
         print(f"  ⚠ 静态资源目录 {ASSETS_DIR} 不存在。")
@@ -592,13 +596,33 @@ def copy_assets() -> bool:
 
     SITE_DIR.mkdir(parents=True, exist_ok=True)
     target_dir = SITE_DIR / "assets"
+    inline_backup_dir = SITE_DIR / ".inline-images-backup"
 
     try:
+        # 先备份运行时生成的 inline-images
+        if inline_backup_dir.exists():
+            shutil.rmtree(inline_backup_dir)
+
         if target_dir.exists():
+            existing_inline_dir = target_dir / "inline-images"
+            if existing_inline_dir.exists() and any(existing_inline_dir.rglob("*")):
+                shutil.copytree(existing_inline_dir, inline_backup_dir)
+
             shutil.rmtree(target_dir)
+
         shutil.copytree(ASSETS_DIR, target_dir)
+
+        # 还原 inline-images（仅覆盖同名文件，不影响 assets 源目录内容）
+        if inline_backup_dir.exists():
+            restored_inline_dir = target_dir / "inline-images"
+            restored_inline_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(inline_backup_dir, restored_inline_dir, dirs_exist_ok=True)
+            shutil.rmtree(inline_backup_dir)
+
         return True
     except Exception as e:
+        if inline_backup_dir.exists():
+            shutil.rmtree(inline_backup_dir, ignore_errors=True)
         print(f"  ❌ 复制静态资源失败: {e}")
         return False
 
@@ -828,6 +852,106 @@ def extract_inline_images(site_dir: Path) -> bool:
         return True
     except Exception as e:
         print(f"❌ 内联图片抽离失败: {e}")
+        return False
+
+
+def optimize_inline_images(site_dir: Path, max_edge: int = 1920, jpeg_quality: int = 78) -> bool:
+    """
+    压缩 _site/assets/inline-images 中的 JPEG 图片，降低总下载体积。
+
+    说明:
+    - 仅处理 .jpg/.jpeg 文件
+    - 最长边限制为 max_edge（保持比例）
+    - 使用 progressive + optimize 重新编码
+    - 需要 Pillow；若未安装则跳过（不影响构建）
+    """
+
+    inline_dir = site_dir / "assets" / "inline-images"
+    if not inline_dir.exists():
+        return True
+
+    try:
+        from PIL import Image
+    except ImportError:
+        print("⚠ Pillow 未安装，跳过内联图片压缩（可安装: pip install pillow）")
+        return True
+
+    manifest_path = inline_dir / ".optimize-manifest.json"
+    optimizer_tag = f"jpeg-q{jpeg_quality}-max{max_edge}"
+
+    try:
+        if manifest_path.exists():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if not isinstance(manifest, dict):
+                manifest = {}
+        else:
+            manifest = {}
+    except Exception:
+        manifest = {}
+
+    optimized_count = 0
+    skipped_count = 0
+    saved_bytes = 0
+
+    try:
+        resample = Image.Resampling.LANCZOS
+    except Exception:
+        resample = Image.LANCZOS
+
+    try:
+        for file in inline_dir.iterdir():
+            if not file.is_file() or file.suffix.lower() not in {".jpg", ".jpeg"}:
+                continue
+
+            if manifest.get(file.name) == optimizer_tag:
+                skipped_count += 1
+                continue
+
+            old_size = file.stat().st_size
+            temp_file = file.with_suffix(file.suffix + ".tmp")
+
+            with Image.open(file) as img:
+                if img.mode not in {"RGB", "L"}:
+                    img = img.convert("RGB")
+
+                if max(img.size) > max_edge:
+                    img.thumbnail((max_edge, max_edge), resample=resample)
+
+                img.save(
+                    temp_file,
+                    format="JPEG",
+                    quality=jpeg_quality,
+                    optimize=True,
+                    progressive=True,
+                )
+
+            new_size = temp_file.stat().st_size
+
+            if new_size < old_size:
+                temp_file.replace(file)
+                optimized_count += 1
+                saved_bytes += old_size - new_size
+            else:
+                temp_file.unlink(missing_ok=True)
+
+            manifest[file.name] = optimizer_tag
+
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8",
+        )
+
+        if optimized_count > 0:
+            print(
+                "✅ 内联图片压缩完成: "
+                f"优化 {optimized_count} 张 JPEG，节省 {saved_bytes / 1024 / 1024:.2f} MB"
+            )
+        elif skipped_count > 0:
+            print("✅ 内联图片压缩检查完成: 图片已是当前压缩配置，无需更新")
+
+        return True
+    except Exception as e:
+        print(f"❌ 内联图片压缩失败: {e}")
         return False
 
 
@@ -1391,6 +1515,7 @@ def build(force: bool = False) -> bool:
     results.append(copy_assets())
     results.append(copy_content_assets(force))
     results.append(extract_inline_images(SITE_DIR))
+    results.append(optimize_inline_images(SITE_DIR))
     results.append(add_image_lazy_loading(SITE_DIR))
     results.append(add_asset_versioning(SITE_DIR))
 
