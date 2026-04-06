@@ -1,22 +1,5 @@
 @import url("/assets/fonts/STKaiti/result.css");
 
-/* --- English Sans (for headings) --- */
-@font-face {
-    font-family: "Custom Sans";
-    src: url("/assets/fonts/Sans-Roman-Web.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Custom Sans";
-    src: url("/assets/fonts/Sans-Italic-Web.woff2") format("woff2");
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-}
-
 /* --- English Serif (for body text) --- */
 @font-face {
     font-family: "Crimson Pro";
@@ -43,29 +26,26 @@
     font-display: swap;
 }
 
-/* --- Chinese: ST楷体 (标题，切片) --- */
-@import url("/assets/fonts/STKaiti/result.css");
-
 /*******************************************************************************
 FONT APPLICATION
 *******************************************************************************/
 
 /* 正文: 英文用 Crimson Pro，中文用朱雀仿宋 */
 body {
-    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", "ZhuqueFangsong", Georgia, serif !important;
+    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", Georgia, serif !important;
     font-weight: 400 !important;
     font-variant-ligatures: none !important;
     font-feature-settings: "liga" 0, "clig" 0 !important;
 }
 
-/* 标题: 英文用 Custom Sans，中文用ST楷体 */
+/* 标题: 英文用 Crimson Pro，中文用 ST楷体 */
 h1, h2, h3, h4, h5 {
-    font-family: "Custom Sans", "STKaiti", sans-serif !important;
+    font-family: "Crimson Pro", "STKaiti", serif !important;
 }
 
 /* 侧栏/边注: 思源屏显臻宋 */
 .marginnote, .sidenote {
-    font-family: "Source Han Serif CN for Display", "Custom Sans", sans-serif !important;
+    font-family: "Source Han Serif CN for Display", "Crimson Pro", serif !important;
     color: #858580 !important;
 }
 

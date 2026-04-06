@@ -34,6 +34,8 @@ Tufted Blog Template 构建脚本
 """
 
 import argparse
+import base64
+import hashlib
 import os
 import re
 import shutil
@@ -651,6 +653,184 @@ def copy_content_assets(force: bool = False) -> bool:
         return False
 
 
+def add_asset_versioning(site_dir: Path) -> bool:
+    """
+    为生成的 HTML 中的 /assets/* 资源引用追加基于内容哈希的版本参数。
+
+    示例:
+        /assets/custom.css -> /assets/custom.css?v=1a2b3c4d
+    """
+    assets_dir = site_dir / "assets"
+    if not assets_dir.exists():
+        return True
+
+    versionable_exts = {
+        ".css",
+        ".js",
+        ".woff2",
+        ".woff",
+        ".ttf",
+        ".otf",
+        ".eot",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+        ".webp",
+        ".svg",
+        ".ico",
+        ".avif",
+    }
+
+    try:
+        version_map: dict[str, str] = {}
+
+        # 计算资源文件哈希
+        for file in assets_dir.rglob("*"):
+            if not file.is_file() or file.suffix.lower() not in versionable_exts:
+                continue
+
+            rel_path = file.relative_to(site_dir)
+            asset_url = f"/{rel_path.as_posix()}"
+
+            digest = hashlib.md5(file.read_bytes()).hexdigest()[:8]
+            version_map[asset_url] = digest
+
+        if not version_map:
+            return True
+
+        ref_pattern = re.compile(
+            r"(?P<prefix>\b(?:href|src|xlink:href)=['\"])(?P<path>/assets/[^'\"]+)(?P<suffix>['\"])",
+            re.IGNORECASE,
+        )
+
+        updated_files = 0
+
+        for html_file in site_dir.rglob("*.html"):
+            content = html_file.read_text(encoding="utf-8")
+
+            def _replace(match: re.Match[str]) -> str:
+                original_path = match.group("path")
+
+                # 分离 fragment 与 query
+                path_no_frag, frag_sep, fragment = original_path.partition("#")
+                base, query_sep, query = path_no_frag.partition("?")
+
+                if base not in version_map:
+                    return match.group(0)
+
+                # 保留原有 query（除旧 v=）并追加新 v=
+                query_parts = []
+                if query:
+                    query_parts = [part for part in query.split("&") if part and not part.startswith("v=")]
+                query_parts.append(f"v={version_map[base]}")
+
+                new_path = f"{base}?{'&'.join(query_parts)}"
+                if frag_sep:
+                    new_path = f"{new_path}#{fragment}"
+
+                return f"{match.group('prefix')}{new_path}{match.group('suffix')}"
+
+            new_content = ref_pattern.sub(_replace, content)
+
+            if new_content != content:
+                html_file.write_text(new_content, encoding="utf-8")
+                updated_files += 1
+
+        if updated_files > 0:
+            print(f"✅ 资源版本参数注入完成: 更新 {updated_files} 个 HTML 文件")
+
+        return True
+    except Exception as e:
+        print(f"❌ 资源版本参数注入失败: {e}")
+        return False
+
+
+def extract_inline_images(site_dir: Path) -> bool:
+    """
+    将 HTML 中的 data:image/*;base64,... 抽离为静态文件，避免页面体积过大。
+
+    支持匹配:
+    - src="data:image/..."
+    - xlink:href="data:image/..."
+
+    输出目录:
+        _site/assets/inline-images/
+    """
+
+    inline_dir = site_dir / "assets" / "inline-images"
+
+    def mime_to_ext(mime: str) -> str:
+        subtype = mime.split("/", 1)[1].lower()
+        if subtype in {"jpeg", "jpg"}:
+            return "jpg"
+        if subtype == "svg+xml":
+            return "svg"
+        if subtype == "x-icon":
+            return "ico"
+        return subtype.replace("+xml", "")
+
+    pattern = re.compile(
+        r"(?P<prefix>\b(?:src|xlink:href)=(?P<quote>['\"]))data:(?P<mime>image/[a-zA-Z0-9.+-]+);base64,(?P<data>[^'\"]+)(?P=quote)",
+        re.IGNORECASE,
+    )
+
+    try:
+        inline_dir.mkdir(parents=True, exist_ok=True)
+
+        replaced_count = 0
+        written_count = 0
+        updated_html_count = 0
+
+        for html_file in site_dir.rglob("*.html"):
+            content = html_file.read_text(encoding="utf-8")
+            changed = False
+
+            def _replace(match: re.Match[str]) -> str:
+                nonlocal changed, replaced_count, written_count
+
+                mime = match.group("mime").lower()
+                raw_data = match.group("data").strip()
+
+                try:
+                    blob = base64.b64decode(raw_data, validate=False)
+                except Exception:
+                    return match.group(0)
+
+                if not blob:
+                    return match.group(0)
+
+                digest = hashlib.sha256(blob).hexdigest()[:16]
+                ext = mime_to_ext(mime)
+                filename = f"{digest}.{ext}"
+
+                target_file = inline_dir / filename
+                if not target_file.exists():
+                    target_file.write_bytes(blob)
+                    written_count += 1
+
+                replaced_count += 1
+                changed = True
+
+                return f"{match.group('prefix')}/assets/inline-images/{filename}{match.group('quote')}"
+
+            new_content = pattern.sub(_replace, content)
+
+            if changed and new_content != content:
+                html_file.write_text(new_content, encoding="utf-8")
+                updated_html_count += 1
+
+        if replaced_count > 0:
+            print(
+                f"✅ 内联图片抽离完成: 替换 {replaced_count} 处，生成 {written_count} 个文件，更新 {updated_html_count} 个 HTML"
+            )
+
+        return True
+    except Exception as e:
+        print(f"❌ 内联图片抽离失败: {e}")
+        return False
+
+
 def clean() -> bool:
     """
     清理生成的文件。
@@ -1152,6 +1332,8 @@ def build(force: bool = False) -> bool:
 
     results.append(copy_assets())
     results.append(copy_content_assets(force))
+    results.append(extract_inline_images(SITE_DIR))
+    results.append(add_asset_versioning(SITE_DIR))
 
     if site_url := get_site_url():
         results.append(generate_sitemap(site_url))
