@@ -52,7 +52,7 @@ FONT APPLICATION
 
 /* 正文: 英文用 Crimson Pro，中文用朱雀仿宋 */
 body {
-    font-family: "Crimson Pro", "ZhuqueFangsong", Georgia, serif !important;
+    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", "ZhuqueFangsong", Georgia, serif !important;
     font-weight: 400 !important;
     font-variant-ligatures: none !important;
     font-feature-settings: "liga" 0, "clig" 0 !important;

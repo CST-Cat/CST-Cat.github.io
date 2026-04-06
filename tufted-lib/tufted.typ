@@ -74,10 +74,10 @@
           html.link(rel: "stylesheet", href: css-link)
         }
 
-        // 思源屏显臻宋 CDN
-        html.link(rel: "stylesheet", href: "https://chinese-fonts-cdn.deno.dev/packages/sypxzs/dist/思源屏显臻宋/result.css")
-        // 朱雀仿宋 CDN
-        html.link(rel: "stylesheet", href: "https://chinese-fonts-cdn.deno.dev/packages/zqfs/dist/ZhuqueFangsong-Regular/result.css")
+        // 思源屏显臻宋 CDN（直连地址，避免 Referer 校验导致的 403）
+        html.link(rel: "stylesheet", href: "https://ik.imagekit.io/bavig10763/packages/sypxzs/dist/%E6%80%9D%E6%BA%90%E5%B1%8F%E6%98%BE%E8%87%BB%E5%AE%8B/result.css?t_3=1467")
+        // 朱雀仿宋 CDN（直连地址，避免 Referer 校验导致的 403）
+        html.link(rel: "stylesheet", href: "https://ik.imagekit.io/bavig10763/packages/zqfs/dist/ZhuqueFangsong-Regular/result.css?t_3=1467")
 
         // load JS scripts
         let base-js = (
