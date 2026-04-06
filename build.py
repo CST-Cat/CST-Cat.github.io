@@ -831,6 +831,64 @@ def extract_inline_images(site_dir: Path) -> bool:
         return False
 
 
+def add_image_lazy_loading(site_dir: Path) -> bool:
+    """
+    为 HTML 中的 <img> 标签补充懒加载属性。
+
+    注入规则（仅在属性不存在时补充）：
+    - loading="lazy"
+    - decoding="async"
+    - fetchpriority="low"
+    """
+
+    img_pattern = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
+
+    def ensure_attr(tag: str, name: str, value: str) -> str:
+        if re.search(rf"\b{name}\s*=", tag, re.IGNORECASE):
+            return tag
+
+        close_pos = tag.rfind(">")
+        if close_pos == -1:
+            return tag
+
+        return f'{tag[:close_pos]} {name}="{value}"{tag[close_pos:]}'
+
+    try:
+        updated_html_count = 0
+        updated_img_count = 0
+
+        for html_file in site_dir.rglob("*.html"):
+            content = html_file.read_text(encoding="utf-8")
+
+            def _replace(match: re.Match[str]) -> str:
+                nonlocal updated_img_count
+
+                original_tag = match.group(0)
+                new_tag = original_tag
+                new_tag = ensure_attr(new_tag, "loading", "lazy")
+                new_tag = ensure_attr(new_tag, "decoding", "async")
+                new_tag = ensure_attr(new_tag, "fetchpriority", "low")
+
+                if new_tag != original_tag:
+                    updated_img_count += 1
+
+                return new_tag
+
+            new_content = img_pattern.sub(_replace, content)
+
+            if new_content != content:
+                html_file.write_text(new_content, encoding="utf-8")
+                updated_html_count += 1
+
+        if updated_img_count > 0:
+            print(f"✅ 图片懒加载注入完成: 更新 {updated_img_count} 个 <img>，涉及 {updated_html_count} 个 HTML")
+
+        return True
+    except Exception as e:
+        print(f"❌ 图片懒加载注入失败: {e}")
+        return False
+
+
 def clean() -> bool:
     """
     清理生成的文件。
@@ -1333,6 +1391,7 @@ def build(force: bool = False) -> bool:
     results.append(copy_assets())
     results.append(copy_content_assets(force))
     results.append(extract_inline_images(SITE_DIR))
+    results.append(add_image_lazy_loading(SITE_DIR))
     results.append(add_asset_versioning(SITE_DIR))
 
     if site_url := get_site_url():
