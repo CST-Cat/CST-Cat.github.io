@@ -1,6 +1,9 @@
 #!/usr/bin/env -S uv run
 # /// script
 # requires-python = ">=3.10"
+# dependencies = [
+#   "pillow>=10.0.0",
+# ]
 # ///
 
 """
@@ -995,7 +998,9 @@ def optimize_inline_images(site_dir: Path, max_edge: int = 1920, jpeg_quality: i
 def generate_responsive_images(
     site_dir: Path,
     target_widths: tuple[int, ...] = (480, 768, 1024, 1366),
-    default_sizes: str = "100vw",
+    default_sizes: str = "(max-width: 900px) 100vw, 760px",
+    prefer_webp: bool = True,
+    webp_quality: int = 80,
 ) -> bool:
     """
     为 HTML 中本地 <img> 自动生成多尺寸文件并注入 srcset/sizes。
@@ -1004,6 +1009,8 @@ def generate_responsive_images(
     - 仅处理本地栅格图片: .jpg/.jpeg/.png/.webp
     - 忽略 http(s)、data URI、已存在 srcset 的外部资源
     - 生成规则: <name>-w{width}.<ext>
+    - 默认优先输出 WebP（可通过 prefer_webp 关闭）
+    - 注入 width/height 属性，帮助浏览器预留布局并改进 lazy-load 生效时机
     """
 
     try:
@@ -1049,6 +1056,36 @@ def generate_responsive_images(
 
         return candidate
 
+    def _replace_url_ext(url: str, new_ext: str) -> str:
+        slash_idx = url.rfind("/")
+        dot_idx = url.rfind(".")
+        if dot_idx > slash_idx:
+            return f"{url[:dot_idx]}{new_ext}"
+        return f"{url}{new_ext}"
+
+    def _normalize_mode(img, output_ext: str):
+        if output_ext in {".jpg", ".jpeg"} and img.mode not in {"RGB", "L"}:
+            return img.convert("RGB")
+
+        if output_ext == ".webp" and img.mode not in {"RGB", "RGBA", "L", "LA"}:
+            return img.convert("RGBA" if "A" in img.getbands() else "RGB")
+
+        return img
+
+    def _save_resized_image(img, output_path: Path, output_ext: str) -> None:
+        if output_ext in {".jpg", ".jpeg"}:
+            img.save(
+                output_path,
+                format="JPEG",
+                quality=78,
+                optimize=True,
+                progressive=True,
+            )
+        elif output_ext == ".png":
+            img.save(output_path, format="PNG", optimize=True)
+        elif output_ext == ".webp":
+            img.save(output_path, format="WEBP", quality=webp_quality, method=6)
+
     try:
         resample = Image.Resampling.LANCZOS
     except Exception:
@@ -1081,6 +1118,10 @@ def generate_responsive_images(
                 if ext not in raster_exts:
                     return original_tag
 
+                output_ext = ".webp" if prefer_webp else ext
+                output_base_file = local_file.with_suffix(output_ext)
+                output_base_url = _replace_url_ext(base_url, output_ext)
+
                 cache_key = str(local_file)
                 if cache_key in image_dim_cache:
                     src_w, src_h = image_dim_cache[cache_key]
@@ -1092,38 +1133,50 @@ def generate_responsive_images(
                         return original_tag
                     image_dim_cache[cache_key] = (src_w, src_h)
 
+                # 始终补齐原始尺寸，帮助浏览器提前建立布局与懒加载判定
+                new_tag = _set_or_replace_attr(original_tag, "width", str(src_w))
+                new_tag = _set_or_replace_attr(new_tag, "height", str(src_h))
+
+                # 自动生成 WebP 主图并切换 src（若已是 WebP 则仅更新时间戳逻辑）
+                try:
+                    source_mtime = local_file.stat().st_mtime
+                    if (
+                        output_base_file != local_file
+                        and (
+                            (not output_base_file.exists())
+                            or (output_base_file.stat().st_mtime < source_mtime)
+                        )
+                    ):
+                        with Image.open(local_file) as src_img:
+                            working = _normalize_mode(src_img, output_ext)
+                            _save_resized_image(working, output_base_file, output_ext)
+                            generated_variants += 1
+                except Exception:
+                    return original_tag
+
+                new_tag = _set_or_replace_attr(new_tag, "src", output_base_url)
+
                 widths = [w for w in target_widths if 0 < w < src_w]
                 if not widths:
-                    return original_tag
+                    if new_tag != original_tag:
+                        updated_img_tags += 1
+                    return new_tag
 
                 variant_entries: list[tuple[str, int]] = []
 
                 try:
                     with Image.open(local_file) as src_img:
                         for w in widths:
-                            variant_name = f"{local_file.stem}-w{w}{ext}"
+                            variant_name = f"{local_file.stem}-w{w}{output_ext}"
                             variant_path = local_file.with_name(variant_name)
 
                             if (not variant_path.exists()) or (variant_path.stat().st_mtime < local_file.stat().st_mtime):
-                                working = src_img
-                                if ext in {".jpg", ".jpeg"} and src_img.mode not in {"RGB", "L"}:
-                                    working = src_img.convert("RGB")
+                                working = _normalize_mode(src_img, output_ext)
 
                                 new_h = max(1, round(src_h * (w / src_w)))
                                 resized = working.resize((w, new_h), resample=resample)
 
-                                if ext in {".jpg", ".jpeg"}:
-                                    resized.save(
-                                        variant_path,
-                                        format="JPEG",
-                                        quality=78,
-                                        optimize=True,
-                                        progressive=True,
-                                    )
-                                elif ext == ".png":
-                                    resized.save(variant_path, format="PNG", optimize=True)
-                                elif ext == ".webp":
-                                    resized.save(variant_path, format="WEBP", quality=80, method=6)
+                                _save_resized_image(resized, variant_path, output_ext)
 
                                 generated_variants += 1
 
@@ -1132,12 +1185,17 @@ def generate_responsive_images(
                 except Exception:
                     return original_tag
 
-                variant_entries.append((base_url, src_w))
+                variant_entries.append((output_base_url, src_w))
                 variant_entries.sort(key=lambda item: item[1])
                 srcset_value = ", ".join(f"{url} {w}w" for url, w in variant_entries)
 
-                new_tag = _set_or_replace_attr(original_tag, "srcset", srcset_value)
-                if re.search(r"\bsizes\s*=", new_tag, re.IGNORECASE) is None:
+                new_tag = _set_or_replace_attr(new_tag, "srcset", srcset_value)
+
+                # 对生成过的标签统一校正 sizes：
+                # - 新标签补齐 sizes
+                # - 旧版本的 sizes="100vw" 自动升级为更贴近正文宽度的默认值
+                sizes_match = re.search(r"\bsizes\s*=\s*(['\"])(?P<value>.*?)\1", new_tag, re.IGNORECASE)
+                if sizes_match is None or sizes_match.group("value").strip().lower() in {"100vw", "auto"}:
                     new_tag = _set_or_replace_attr(new_tag, "sizes", default_sizes)
 
                 if new_tag != original_tag:
@@ -1154,7 +1212,7 @@ def generate_responsive_images(
         if updated_img_tags > 0:
             print(
                 "✅ 多尺寸图片生成完成: "
-                f"新增 {generated_variants} 个变体，更新 {updated_img_tags} 个 <img>，涉及 {updated_html_files} 个 HTML"
+                f"新增/更新 {generated_variants} 个变体文件，更新 {updated_img_tags} 个 <img>，涉及 {updated_html_files} 个 HTML"
             )
 
         return True
