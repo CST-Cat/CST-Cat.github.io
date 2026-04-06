@@ -727,6 +727,29 @@ def add_asset_versioning(site_dir: Path) -> bool:
             r"(?P<prefix>\b(?:href|src|xlink:href)=['\"])(?P<path>/assets/[^'\"]+)(?P<suffix>['\"])",
             re.IGNORECASE,
         )
+        srcset_pattern = re.compile(
+            r"(?P<prefix>\bsrcset=['\"])(?P<value>[^'\"]+)(?P<suffix>['\"])",
+            re.IGNORECASE,
+        )
+
+        def _append_version(path: str) -> str:
+            # 分离 fragment 与 query
+            path_no_frag, frag_sep, fragment = path.partition("#")
+            base, query_sep, query = path_no_frag.partition("?")
+
+            if base not in version_map:
+                return path
+
+            query_parts = []
+            if query:
+                query_parts = [part for part in query.split("&") if part and not part.startswith("v=")]
+            query_parts.append(f"v={version_map[base]}")
+
+            new_path = f"{base}?{'&'.join(query_parts)}"
+            if frag_sep:
+                new_path = f"{new_path}#{fragment}"
+
+            return new_path
 
         updated_files = 0
 
@@ -735,27 +758,41 @@ def add_asset_versioning(site_dir: Path) -> bool:
 
             def _replace(match: re.Match[str]) -> str:
                 original_path = match.group("path")
-
-                # 分离 fragment 与 query
-                path_no_frag, frag_sep, fragment = original_path.partition("#")
-                base, query_sep, query = path_no_frag.partition("?")
-
-                if base not in version_map:
+                new_path = _append_version(original_path)
+                if new_path == original_path:
                     return match.group(0)
-
-                # 保留原有 query（除旧 v=）并追加新 v=
-                query_parts = []
-                if query:
-                    query_parts = [part for part in query.split("&") if part and not part.startswith("v=")]
-                query_parts.append(f"v={version_map[base]}")
-
-                new_path = f"{base}?{'&'.join(query_parts)}"
-                if frag_sep:
-                    new_path = f"{new_path}#{fragment}"
-
                 return f"{match.group('prefix')}{new_path}{match.group('suffix')}"
 
+            def _replace_srcset(match: re.Match[str]) -> str:
+                value = match.group("value")
+                parts = [part.strip() for part in value.split(",") if part.strip()]
+                if not parts:
+                    return match.group(0)
+
+                changed = False
+                new_parts: list[str] = []
+
+                for part in parts:
+                    tokens = part.split()
+                    if not tokens:
+                        continue
+
+                    url = tokens[0]
+                    descriptor = " ".join(tokens[1:])
+
+                    new_url = _append_version(url)
+                    if new_url != url:
+                        changed = True
+
+                    new_parts.append(f"{new_url} {descriptor}".strip())
+
+                if not changed:
+                    return match.group(0)
+
+                return f"{match.group('prefix')}{', '.join(new_parts)}{match.group('suffix')}"
+
             new_content = ref_pattern.sub(_replace, content)
+            new_content = srcset_pattern.sub(_replace_srcset, new_content)
 
             if new_content != content:
                 html_file.write_text(new_content, encoding="utf-8")
@@ -952,6 +989,177 @@ def optimize_inline_images(site_dir: Path, max_edge: int = 1920, jpeg_quality: i
         return True
     except Exception as e:
         print(f"❌ 内联图片压缩失败: {e}")
+        return False
+
+
+def generate_responsive_images(
+    site_dir: Path,
+    target_widths: tuple[int, ...] = (480, 768, 1024, 1366),
+    default_sizes: str = "100vw",
+) -> bool:
+    """
+    为 HTML 中本地 <img> 自动生成多尺寸文件并注入 srcset/sizes。
+
+    说明:
+    - 仅处理本地栅格图片: .jpg/.jpeg/.png/.webp
+    - 忽略 http(s)、data URI、已存在 srcset 的外部资源
+    - 生成规则: <name>-w{width}.<ext>
+    """
+
+    try:
+        from PIL import Image
+    except ImportError:
+        print("⚠ Pillow 未安装，跳过多尺寸图片生成（可安装: pip install pillow）")
+        return True
+
+    raster_exts = {".jpg", ".jpeg", ".png", ".webp"}
+    img_tag_pattern = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
+    src_pattern = re.compile(r"\bsrc=(?P<quote>['\"])(?P<src>[^'\"]+)(?P=quote)", re.IGNORECASE)
+
+    def _set_or_replace_attr(tag: str, name: str, value: str) -> str:
+        attr_pattern = re.compile(rf"\b{name}\s*=\s*(['\"]).*?\1", re.IGNORECASE)
+        replacement = f'{name}="{value}"'
+
+        if attr_pattern.search(tag):
+            return attr_pattern.sub(replacement, tag, count=1)
+
+        close_pos = tag.rfind(">")
+        if close_pos == -1:
+            return tag
+        return f"{tag[:close_pos]} {replacement}{tag[close_pos:]}"
+
+    def _split_url(url: str) -> tuple[str, str, str]:
+        no_frag, _, frag = url.partition("#")
+        base, _, query = no_frag.partition("?")
+        return base, query, frag
+
+    def _resolve_local_file(base_url: str, html_file: Path) -> Path | None:
+        if base_url.startswith(("http://", "https://", "//", "data:")):
+            return None
+
+        if base_url.startswith("/"):
+            candidate = site_dir / base_url.lstrip("/")
+        else:
+            candidate = (html_file.parent / base_url).resolve()
+
+        try:
+            candidate.resolve().relative_to(site_dir.resolve())
+        except Exception:
+            return None
+
+        return candidate
+
+    try:
+        resample = Image.Resampling.LANCZOS
+    except Exception:
+        resample = Image.LANCZOS
+
+    generated_variants = 0
+    updated_img_tags = 0
+    updated_html_files = 0
+    image_dim_cache: dict[str, tuple[int, int]] = {}
+
+    try:
+        for html_file in site_dir.rglob("*.html"):
+            content = html_file.read_text(encoding="utf-8")
+
+            def _replace_img(match: re.Match[str]) -> str:
+                nonlocal generated_variants, updated_img_tags
+
+                original_tag = match.group(0)
+                src_match = src_pattern.search(original_tag)
+                if not src_match:
+                    return original_tag
+
+                src_url = src_match.group("src")
+                base_url, _, _ = _split_url(src_url)
+                local_file = _resolve_local_file(base_url, html_file)
+                if local_file is None or not local_file.exists():
+                    return original_tag
+
+                ext = local_file.suffix.lower()
+                if ext not in raster_exts:
+                    return original_tag
+
+                cache_key = str(local_file)
+                if cache_key in image_dim_cache:
+                    src_w, src_h = image_dim_cache[cache_key]
+                else:
+                    try:
+                        with Image.open(local_file) as src_img:
+                            src_w, src_h = src_img.size
+                    except Exception:
+                        return original_tag
+                    image_dim_cache[cache_key] = (src_w, src_h)
+
+                widths = [w for w in target_widths if 0 < w < src_w]
+                if not widths:
+                    return original_tag
+
+                variant_entries: list[tuple[str, int]] = []
+
+                try:
+                    with Image.open(local_file) as src_img:
+                        for w in widths:
+                            variant_name = f"{local_file.stem}-w{w}{ext}"
+                            variant_path = local_file.with_name(variant_name)
+
+                            if (not variant_path.exists()) or (variant_path.stat().st_mtime < local_file.stat().st_mtime):
+                                working = src_img
+                                if ext in {".jpg", ".jpeg"} and src_img.mode not in {"RGB", "L"}:
+                                    working = src_img.convert("RGB")
+
+                                new_h = max(1, round(src_h * (w / src_w)))
+                                resized = working.resize((w, new_h), resample=resample)
+
+                                if ext in {".jpg", ".jpeg"}:
+                                    resized.save(
+                                        variant_path,
+                                        format="JPEG",
+                                        quality=78,
+                                        optimize=True,
+                                        progressive=True,
+                                    )
+                                elif ext == ".png":
+                                    resized.save(variant_path, format="PNG", optimize=True)
+                                elif ext == ".webp":
+                                    resized.save(variant_path, format="WEBP", quality=80, method=6)
+
+                                generated_variants += 1
+
+                            variant_url = f"{base_url.rsplit('/', 1)[0]}/{variant_name}"
+                            variant_entries.append((variant_url, w))
+                except Exception:
+                    return original_tag
+
+                variant_entries.append((base_url, src_w))
+                variant_entries.sort(key=lambda item: item[1])
+                srcset_value = ", ".join(f"{url} {w}w" for url, w in variant_entries)
+
+                new_tag = _set_or_replace_attr(original_tag, "srcset", srcset_value)
+                if re.search(r"\bsizes\s*=", new_tag, re.IGNORECASE) is None:
+                    new_tag = _set_or_replace_attr(new_tag, "sizes", default_sizes)
+
+                if new_tag != original_tag:
+                    updated_img_tags += 1
+
+                return new_tag
+
+            new_content = img_tag_pattern.sub(_replace_img, content)
+
+            if new_content != content:
+                html_file.write_text(new_content, encoding="utf-8")
+                updated_html_files += 1
+
+        if updated_img_tags > 0:
+            print(
+                "✅ 多尺寸图片生成完成: "
+                f"新增 {generated_variants} 个变体，更新 {updated_img_tags} 个 <img>，涉及 {updated_html_files} 个 HTML"
+            )
+
+        return True
+    except Exception as e:
+        print(f"❌ 多尺寸图片生成失败: {e}")
         return False
 
 
@@ -1516,6 +1724,7 @@ def build(force: bool = False) -> bool:
     results.append(copy_content_assets(force))
     results.append(extract_inline_images(SITE_DIR))
     results.append(optimize_inline_images(SITE_DIR))
+    results.append(generate_responsive_images(SITE_DIR))
     results.append(add_image_lazy_loading(SITE_DIR))
     results.append(add_asset_versioning(SITE_DIR))
 
