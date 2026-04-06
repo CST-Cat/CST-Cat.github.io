@@ -6,15 +6,15 @@
 
 = Vault
 
+待完善，很多照片待上传，目前上传了车模部分。
+
 == Hobby
 
 === Figures
 
 === Plamo
 
-=== CarModels
-
-#link("CarModels/")[车模收藏]
+=== #link("CarModels/")[CarModels]
 
 == Tech
 
