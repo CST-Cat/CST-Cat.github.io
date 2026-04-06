@@ -6,18 +6,21 @@
 
 = Blog
 
-中文博客样例可参考 #link("https://yousa-mirage.github.io/Blog")[我的个人网站]。
+== 博客文章
 
-== 2026
+#link("tufted-Optimize/")[Tufted-Blog-Template 优化记录]
 
-- #link("2026-04-04-typography-beauty/")[仿宋与楷体的排版之美]
 
-== 2025
+== 考研周记
 
-- #link("2025-10-30-normal-distribution/")[Normal Distribution]
-- #link("2025-04-16-monkeys-apes/")[Monkeys vs Apes]
 
-== 2024
+#link("2026-W15/")[2026-W15]
+#link("2026-W14/")[2026-W14]
+#link("2026-W13/")[2026-W13]
+#link("2026-W12/")[2026-W12]
+#link("2026-W11/")[2026-W11]
+#link("2026-W10/")[2026-W10]
+#link("2026-W09/")[2026-W09]
 
-- #link("2024-10-04-iterators-generators/")[Iterators vs Generators in Python]
+
 
