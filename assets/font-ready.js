@@ -4,7 +4,7 @@
  * 行为：
  * 1. 页面初始 opacity 为 0（见 custom.css）
  * 2. 等待 document.fonts.ready
- * 3. 加上 body.font-loaded 触发 0.3s 淡入
+ * 3. 加上 body.font-loaded 触发 0.15s 淡入
  * 4. 兜底超时，避免异常情况下页面长期不可见
  */
 (function () {
