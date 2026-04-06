@@ -37,7 +37,7 @@ body {
     font-variant-ligatures: none !important;
     font-feature-settings: "liga" 0, "clig" 0 !important;
     opacity: 0;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.08s ease;
 }
 
 body.font-loaded {
