@@ -36,6 +36,12 @@ body {
     font-weight: 400 !important;
     font-variant-ligatures: none !important;
     font-feature-settings: "liga" 0, "clig" 0 !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.font-loaded {
+    opacity: 1;
 }
 
 /* 标题: 英文用 Crimson Pro，中文用朱雀仿宋 */
