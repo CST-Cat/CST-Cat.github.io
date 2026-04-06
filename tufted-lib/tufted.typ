@@ -74,6 +74,11 @@
           html.link(rel: "stylesheet", href: css-link)
         }
 
+        // 思源屏显臻宋 CDN
+        html.link(rel: "stylesheet", href: "https://chinese-fonts-cdn.deno.dev/packages/sypxzs/dist/思源屏显臻宋/result.css")
+        // 朱雀仿宋 CDN
+        html.link(rel: "stylesheet", href: "https://chinese-fonts-cdn.deno.dev/packages/zqfs/dist/ZhuqueFangsong-Regular/result.css")
+
         // load JS scripts
         let base-js = (
           "/assets/code-blocks.js",
