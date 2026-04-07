@@ -1,6 +1,6 @@
 // index.typ for 2026-W13
 // Add your content here.
-#import "../index.typ": template, tufted
+#import "../../index.typ": template, tufted
 #import "@preview/theorion:0.4.1": *
 #show: template.with(
   title: "考研周记2026W13",
