@@ -18,7 +18,7 @@
 
 == Tech
 
-=== Phone
+=== #link("Phone/")[Phone]
 
 === Computer
 
