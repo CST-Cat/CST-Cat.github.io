@@ -13,10 +13,6 @@
 
 == 前言
 
-将域名托管到 Cloudflare 有什么优势？
-
-== 为什么选择 Cloudflare
-
 将域名托管到 Cloudflare 有以下几个显著的好处：
 
 - *免费 CDN 加速*：Cloudflare 提供全球分布的内容分发网络（CDN），可以显著提升网站的访问速度。
