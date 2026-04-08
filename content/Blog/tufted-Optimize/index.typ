@@ -11,16 +11,16 @@
 
 #outline()
 
-今天集中做了一轮站点性能和体验优化，这里做一份完整记录，方便后续复盘和回滚。
+== 4.7优化总览
 
-== 今日优化总览
+4.7集中做了一轮站点性能和体验优化，这里做一份完整记录，方便后续复盘和回滚。
 
 - 图片链路优化：抽离内联图片、压缩、响应式、多端懒加载
 - 字体链路优化：接入国内可用 CDN，移除 STKaiti
 - 首屏体验优化：加入 Font Loading API，字体就绪后淡入
 - 构建后处理：资源版本号、Sitemap、RSS 保持自动化
 
-== 抽离图片与图片链路优化
+=== 抽离图片与图片链路优化
 
 核心做法是把 HTML 里体积大的 base64 图片抽离成静态文件，再统一做压缩、响应式和懒加载。
 
@@ -61,7 +61,7 @@ results.append(add_image_lazy_loading(SITE_DIR))     # 注入 loading/decoding/f
 - JPEG 压缩：优化 30 张，节省约 25.20 MB
 - 响应式图片：生成/更新 195 个变体，更新 48 个 `<img>`
 
-== 字体链路优化（CDN + 移除 STKaiti 和本地的朱雀仿宋）
+=== 字体链路优化（CDN + 移除 STKaiti 和本地的朱雀仿宋）
 
 为了减少不可控字体链路和请求负担，这次做了两件事：
 
@@ -100,7 +100,7 @@ h1, h2, h3, h4, h5 {
 }
 ```
 
-== 首屏字体体验：Font Loading API + 淡入
+=== 首屏字体体验：Font Loading API + 淡入
 
 为了减少“字体突然切换”的违和感，加入了字体就绪后显示页面的方案。
 
@@ -164,7 +164,7 @@ body.font-loaded {
 
 实际实现里还加了超时兜底（1500ms），防止极端情况下页面长期不可见。
 
-== 构建后处理与发布稳定性
+=== 构建后处理与发布稳定性
 
 除页面内容外，构建流程也保持自动处理：
 
@@ -189,6 +189,19 @@ if site_url := get_site_url():
   results.append(generate_sitemap(site_url))
   results.append(generate_robots_txt(site_url))
   results.append(generate_rss(site_url))
+```
+
+== 4.8 优化记录
+
+- 修复图片压缩问题：通过调整 Typst 文件中的 `#image` 调用，添加 `height: auto` 属性，确保图片比例正常。
+- 修复 CSS 问题：覆盖全局 `max-height: 80vh` 规则，避免图片被垂直压缩。
+
+```css
+/* assets/tufted.css: 修复图片比例问题 */
+img {
+  height: auto;
+  max-height: none; /* 覆盖全局规则 */
+}
 ```
 
 

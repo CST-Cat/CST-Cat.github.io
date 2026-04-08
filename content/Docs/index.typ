@@ -17,6 +17,7 @@
 
 == 2025
 
+- #link("50cny-10y-spaceship/")[在spaceship，不到50人民币购入10年xyz域名]
 - #link("icbc-visa/")[工商银行星座卡校园版申请教程]
 - #link("new-linux-server-setup/")[Linux 服务器常用加固操作]
 - #link("typst-syntax-demo/")[Typst 语法演示模板]

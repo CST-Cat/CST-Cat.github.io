@@ -55,6 +55,7 @@ svg {
 section>img,
 section>svg {
     max-width: 55%;
+    max-height: none;
     position: relative;
     left: 27.5%;
     transform: translateX(-50%);
@@ -69,6 +70,7 @@ section>svg {
 section>figure:not(.fullwidth)>img,
 section>figure:not(.fullwidth)>svg {
     max-width: 100%;
+    max-height: none;
     margin-left: auto;
     margin-right: auto;
 }

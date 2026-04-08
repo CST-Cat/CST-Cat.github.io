@@ -10,19 +10,19 @@
 
 == Hobby
 
-=== Figures
+==== Figures
 
-=== Plamo
+==== Plamo
 
-=== #link("CarModels/")[CarModels]
+==== #link("CarModels/")[CarModels]
 
 == Tech
 
-=== #link("Phone/")[Phone]
+==== #link("Phone/")[Phone]
 
-=== Computer
+==== Computer
 
-=== Other
+==== Other
 
 
 
