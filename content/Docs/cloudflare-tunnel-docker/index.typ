@@ -15,7 +15,7 @@
 
 很多时候我们需要把本地服务器、云服务器的docker应用安全地暴露到公网，不想暴露整台机器，又想要方便地访问，这时候cloudflare tunnel就派上用场了。有全球cdn，自动部署证书，既方便又安全。
 
-使用cloudflare tunnel最好有一个自己的域名，方便记忆，可以给不同的docker，分配一个专属的子域名，最好将域名托管到cloudflare，不用每个子域名都添加CNAME解析，cloudflare会自动解析。
+使用cloudflare tunnel最好有一个自己的域名，方便记忆，可以给不同的docker，分配一个专属的子域名，最好将域名托管到cloudflare，不用每个子域名都添加A/AAAA记录，cloudflare会自动添加。
 
 本文只介绍，有自己域名的情况下，如何使用cloudflare tunnel在docker环境中实现内网穿透的步骤。
 

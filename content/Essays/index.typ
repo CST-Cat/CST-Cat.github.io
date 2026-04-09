@@ -6,5 +6,6 @@
 
 = Essays
 
-- #link("2026-04-03-time-management/")[时间管理：从焦虑到从容]
+- #link("The World Changes Faster/")[不是我不明白，这世界变化快]
 
+- #link("shunshierwei/")[顺势而为]
