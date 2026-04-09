@@ -14,6 +14,7 @@
     "/Docs/": "Docs",
     "/Essays/": "Essays",
     "/Vault/": "Vault",
+    "/About/": "About",
   ),
   
   /// 网站的站点标题。会显示在浏览器标签页以及 SEO/社交分享卡片中。
