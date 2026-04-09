@@ -9,5 +9,7 @@
  
  #link("/Essays/")[Essays]：随笔、想法
 
- #link("/Vault/")[Vault]：手办、数码收藏
+ #link("/Vault/")[Vault]：手办、数码收藏、
+
+Contact: #link("mailto:blog.wxhou@outlook.com")[blog.wxhou@outlook.com]
  
