@@ -11,5 +11,5 @@
 
  #link("/Vault/")[Vault]：手办、数码收藏、
 
-Contact: blog.wxhou@outlook.com
+Contact: `blog.wxhou@outlook.com`
  
