@@ -11,6 +11,12 @@
 #link("tufted-Optimize/")[Tufted-Blog-Template 优化记录]
 
 
+== 考研笔记
+
+尚未整理好
+
+#link("kaoyan-notes/")[考研笔记]
+
 == 考研周记
 
 
