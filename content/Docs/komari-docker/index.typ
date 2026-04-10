@@ -132,7 +132,7 @@ docker rm komari
 更详细的美化，可参考#link("https://idcflare.com/t/topic/18769")[【保姆级教程】
 Komari探针从部署到美化]
 
-可在此处选择自己喜欢的主题#link(komari-document.pages.dev/community/theme)[komari社区维护的主题]
+可在此处选择自己喜欢的主题#link("https://komari-document.pages.dev/community/theme")[komari社区维护的主题]
 
 点击项目地址
 
