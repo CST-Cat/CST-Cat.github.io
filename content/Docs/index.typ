@@ -12,11 +12,11 @@
 
 - #link("oracle-example/")[oracle cloud一些基础操作]
 - #link("terminus-mosh/")[termius+mosh配置教程]
-- #link("cloudflare-tunnel-docker/")[Cloudflare Tunnel 内网穿透（Docker版）]
-
+- #link("komari-docker/")[docker部署komari]
 
 == 2025
 
+- #link("cloudflare-tunnel-docker/")[Cloudflare Tunnel 内网穿透（Docker版）]
 - #link("50cny-10y-spaceship/")[不到60人民币购入10年xyz域名]
 - #link("host-domain-to-cf/")[托管域名到 Cloudflare]
 - #link("icbc-visa/")[工商银行星座卡校园版申请教程]

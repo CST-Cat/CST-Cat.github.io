@@ -17,7 +17,7 @@
 
 使用cloudflare tunnel最好有一个自己的域名，方便记忆，可以给不同的docker，分配一个专属的子域名，最好将域名托管到cloudflare，不用每个子域名都添加A/AAAA记录，cloudflare会自动添加。
 
-本文只介绍，有自己域名的情况下，如何使用cloudflare tunnel在docker环境中实现内网穿透的步骤。
+本文只介绍，有自己域名的情况下，如何使用cloudflare tunnel在docker环境中实现内网穿透的步骤。如何将域名托管到cloudflare？可以参考#link("host-domain-to-cf/")[托管域名到 Cloudflare]
 
 == 安装 Cloudflare Tunnel
 
