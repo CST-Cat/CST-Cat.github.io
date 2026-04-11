@@ -9,3 +9,5 @@
 - #link("The World Changes Faster/")[不是我不明白，这世界变化快]
 
 - #link("shunshierwei/")[顺势而为]
+
+- #link("renshengwuchang/")[人生无常]
