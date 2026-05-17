@@ -46,6 +46,12 @@ svg {
     width: auto;
 }
 
+/* Give lazy-loaded images a non-zero offscreen placeholder for layout. */
+img[loading="lazy"] {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 400px;
+}
+
 /* 
    CONTENT ALIGNMENT & CENTERING 
    Shared logic for images, SVGs
@@ -516,6 +522,11 @@ RESPONSIVE LAYOUT
     figure[role="math"] {
         width: 100%;
     }
+
+    /* Blog index rows take full width on mobile */
+    .blog-entry {
+        width: 100%;
+    }
 }
 
 
@@ -645,4 +656,89 @@ POST TILES
 
 .post-tile p {
     margin: 0.25rem 0 0;
+}
+
+/*******************************************************************************
+BLOG INDEX
+*******************************************************************************/
+
+.blog-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    padding: 1em 0;
+    border-bottom: 1px solid var(--theme-table-border, #ccc);
+    width: 55%;
+}
+
+.blog-entry-content {
+    flex: 1;
+}
+
+.blog-entry-content a:any-link {
+    font-size: 1.5em;
+    text-decoration: none;
+}
+
+.blog-entry-date {
+    flex-shrink: 0;
+    color: var(--theme-footer, #777);
+    font-size: 1.2em;
+    white-space: nowrap;
+}
+
+/*******************************************************************************
+TABLE OF CONTENTS
+*******************************************************************************/
+
+.toc-sidebar {
+    position: fixed;
+    top: 15rem;
+    left: 1rem;
+    z-index: 10;
+    display: none;
+    width: 13%;
+    max-height: calc(100vh - 11rem);
+    overflow-y: auto;
+    color: var(--theme-line-numbers-text, #aaa);
+}
+
+.toc-sidebar ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.toc-sidebar li {
+    margin: 0 0 0.2em;
+}
+
+.toc-sidebar .toc-after-title {
+    padding-left: 0.8em;
+}
+
+.toc-sidebar a:any-link {
+    display: block;
+    color: inherit;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    text-decoration: none;
+    border-left: 1px solid transparent;
+    padding-left: 0.6em;
+    transition: border-color 120ms ease, color 120ms ease;
+}
+
+.toc-sidebar a:hover,
+.toc-sidebar a:focus-visible,
+.toc-sidebar a.is-active {
+    color: var(--theme-copy-btn-hover-text, #333);
+    border-left-color: currentColor;
+    outline: none;
+}
+
+@media (min-width: 1200px) {
+    .toc-sidebar {
+        display: block;
+    }
 }

@@ -204,5 +204,117 @@ img {
 }
 ```
 
+== 2026-05-17 优化记录（12:13 CST）
+
+这次优化主要围绕“合并上游模板后的功能边界”做整理：保留上游带来的 Typst 原生能力，同时把本地构建脚本里已经重复或容易冲突的后处理拆开。
+
+=== 合并上游分支后的同步整理
+
+当前仓库保留了两个远端：
+
+- `origin`: `https://github.com/CST-Cat/CST-Cat.github.io.git`
+- `upstream`: `https://github.com/Yousa-Mirage/Tufted-Blog-Template.git`
+
+本次同步后，主分支处在 `main`，并与 `origin/main` 对齐。上游模板带来的结构更新主要体现在 `tufted-lib`、前端资源和构建链路上，因此后续整理重点放在避免新旧逻辑同时处理同一类 HTML 属性。
+
+=== 图片懒加载职责归位
+
+合并上游后，`tufted-lib/figures.typ` 已经在 Typst HTML 输出阶段为图片写入：
+
+```typst
+html.img(
+  src: it.source,
+  alt: alt,
+  loading: "lazy",
+  decoding: "async",
+  width: img-w,
+  height: img-h,
+)
+```
+
+因此 `build.py` 里旧的 `add_image_lazy_loading()` 后处理被删除，构建流程不再二次扫描 HTML 注入 `loading`、`decoding`、`fetchpriority`。这样懒加载成为模板默认能力，也避免 Python 后处理覆盖 Typst 已经确定好的图片语义。
+
+=== 多尺寸图片脚本独立
+
+响应式图片生成仍然保留，但从 `build.py` 中抽成独立脚本：
+
+```text
+scripts/generate_responsive_images.py
+```
+
+`build.py` 现在只负责调用脚本：
+
+```python
+results.append(generate_responsive_images(SITE_DIR))
+```
+
+这样构建主流程更清晰：Typst 负责原始 HTML 和图片基础属性，独立脚本负责生成 WebP 与 `srcset`/`sizes`，资源版本化仍然在最后统一处理。
+
+=== width/height 保护
+
+旧逻辑会无条件用原图尺寸覆盖 `<img>` 上已有的 `width` 和 `height`。这在合并上游后会和 Typst 原生输出冲突，尤其是模板已经根据 `#image(width: ...)` 推导出尺寸时。
+
+新脚本改成只在下面两种情况下补齐尺寸：
+
+- `width` 或 `height` 缺失
+- `width` 或 `height` 明显是 `0`
+
+如果只缺一边，则按原图比例推导另一边；如果 Typst 已经写好了有效尺寸，就保持不动。
+
+=== 相对路径 bug 修复
+
+旧版 `generate_responsive_images()` 在处理无目录相对路径时，会把：
+
+```html
+<img src="miku.png">
+```
+
+错误拼成类似：
+
+```html
+srcset="miku.png/miku-w480.webp 480w, ..."
+```
+
+这次抽脚本时顺手修复为同级文件路径：
+
+```html
+src="miku.webp"
+srcset="miku-w480.webp 480w, miku-w768.webp 768w, ..."
+```
+
+同时也验证了根路径形式（如 `/miku.png`）会生成 `/miku-w480.webp`，不会把文件名当成目录。
+
+=== 验证记录
+
+本次修改后做了三类验证：
+
+- `python -m py_compile build.py scripts/generate_responsive_images.py`：语法检查通过
+- `uv run build.py build --force`：全量构建通过
+- `uv run build.py build`：增量构建通过
+
+强制构建后 `_site` 里不再因为旧增量产物残留而保留 Python 注入的 `fetchpriority="low"`；如果以后模板级图片逻辑有大改，建议优先跑一次 `uv run build.py build --force`，避免本地预览混入旧 HTML。
+
+== 2026-05-17 优化补充记录（未构建）
+
+本轮在不触发构建脚本的前提下，完成了以下收尾：
+
+- `CarModels` 图片路径由 `/content/Vault/CarModels/imgs/...` 统一改为 `imgs/...`。
+- 首屏第一张图改为 `#tufted.priority-image(...)`，输出 `loading="eager"` 与 `fetchpriority="high"`。
+- 新增 `tufted.priority-image` helper，用于首屏高优先级图片声明。
+- `scripts/generate_responsive_images.py` 增加跳过规则：小图、过矮图、超长条图不生成响应式 WebP 变体。
+- `build.py` 新增 `check` 命令与 `check_image_paths()`，用于拦截 `#image("/content/...")` 路径。
+- 完整构建入口接入图片路径检查，检查失败即中断流程。
+
+已完成轻量验证：
+
+- `python -m py_compile build.py scripts/generate_responsive_images.py` 通过。
+- `python build.py check` 通过。
+- `rg` 复查未发现 `#image("/content/...")`。
+
+未执行项：
+
+- 按约束未运行 `build.py build/html/preview`，因此“真实构建验证”仍待后续确认。
+
+
 
 

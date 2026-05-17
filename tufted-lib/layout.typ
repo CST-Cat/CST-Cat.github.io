@@ -18,6 +18,26 @@
   html.img(src: src, alt: alt, style: style)
 }
 
+// 首屏关键图可显式使用 eager/fetchpriority。
+#let priority-image(
+  src,
+  alt: "",
+  width: none,
+  height: none,
+  style: none,
+) = {
+  html.img(
+    src: src,
+    alt: alt,
+    width: width,
+    height: height,
+    style: style,
+    loading: "eager",
+    decoding: "async",
+    fetchpriority: "high",
+  )
+}
+
 // TODO: implement <figure class="fullwidth">
 // possible requires introspection or `set html.figure(class: "fullwidth")` support
 

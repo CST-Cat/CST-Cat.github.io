@@ -13,7 +13,9 @@
 
 == 考研记录
 
-#link("kaoyan-notes/")[考研笔记]
+#link("kaoyan-notes-math/")[数一笔记]
+
+#link("kaoyan-notes-408/")[408笔记]
 
 #link("journal/")[考研周记]
 
