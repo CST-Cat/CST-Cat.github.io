@@ -3,15 +3,12 @@
 
 = Home
 
-欢迎来到我的博客\
+#link("/Blog/")[Blog]：博客文章、考研记录，侧重个人经历
 
- #link("/Blog/")[Blog]：博客文章、考研记录，侧重个人经历
- 
- #link("/Docs/")[Docs]：教程、文档，可重现复刻，侧重内容的通用性和实用性
- 
- #link("/Musings/")[Musings]：随笔、想法
+#link("/Docs/")[Docs]：教程、文档，可复用的经验
 
- #link("/Vault/")[Vault]：手办、数码收藏
+#link("/Musings/")[Musings]：随笔、想法
 
- #link("/About/")[About]：关于我和这个博客
- 
+#link("/Vault/")[Vault]：手办、数码收藏
+
+#link("/About/")[About]：关于我和这个博客

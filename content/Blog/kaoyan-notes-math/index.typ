@@ -101,7 +101,7 @@ $ integral_L P dif x + Q dif y = integral_alpha^beta [P(phi(t), psi(t)) phi'(t) 
 
 设 $D$ 为平面上由分段光滑的闭曲线 $L$ 围成的单连通区域，$P(x, y), Q(x, y)$ 在 $D$ 上有一阶连续偏导数，则
 
-$ oint.ccw_L P dif x + Q dif y = integral.double_D ((diff Q) / (diff x) - (diff P) / (diff y)) dif x dif y $
+$ integral.cont.ccw_L P dif x + Q dif y = integral.double_D ((partial Q) / (partial x) - (partial P) / (partial y)) dif x dif y $
 
 其中 $L$ 取正方向（逆时针）。
 
@@ -155,7 +155,7 @@ $ integral.double_Sigma R(x, y, z) dif x dif y = integral.double_(D_(x y)) R(x, 
 
 设空间区域 $Omega$ 由分片光滑的闭曲面 $Sigma$ 围成，$P, Q, R$ 在 $Omega$ 上有一阶连续偏导数，则
 
-$ ointegral.ccw_Sigma P dif y dif z + Q dif z dif x + R dif x dif y = integral.triple_Omega ((diff P) / (diff x) + (diff Q) / (diff y) + (diff R) / (diff z)) dif V $
+$ integral.surf_Sigma P dif y dif z + Q dif z dif x + R dif x dif y = integral.triple_Omega ((partial P) / (partial x) + (partial Q) / (partial y) + (partial R) / (partial z)) dif V $
 
 其中 $Sigma$ 取外侧。
 
@@ -163,11 +163,11 @@ $ ointegral.ccw_Sigma P dif y dif z + Q dif z dif x + R dif x dif y = integral.t
 
 设 $Sigma$ 为分片光滑的有向曲面，$Gamma$ 为 $Sigma$ 的边界曲线（取与 $Sigma$ 的侧相协调的方向），$P, Q, R$ 有一阶连续偏导数，则
 
-$ oint_Gamma P dif x + Q dif y + R dif z = integral.double_Sigma mat(delim: "|", dif y dif z, dif z dif x, dif x dif y; diff / (diff x), diff / (diff y), diff / (diff z); P, Q, R) $
+$ integral.cont_Gamma P dif x + Q dif y + R dif z = integral.double_Sigma mat(delim: "|", dif y dif z, dif z dif x, dif x dif y; partial / (partial x), partial / (partial y), partial / (partial z); P, Q, R) $
 
 即
 
-$ oint_Gamma P dif x + Q dif y + R dif z = integral.double_Sigma ((diff R) / (diff y) - (diff Q) / (diff z)) dif y dif z + ((diff P) / (diff z) - (diff R) / (diff x)) dif z dif x + ((diff Q) / (diff x) - (diff P) / (diff y)) dif x dif y $
+$ integral.cont_Gamma P dif x + Q dif y + R dif z = integral.double_Sigma ((partial R) / (partial y) - (partial Q) / (partial z)) dif y dif z + ((partial P) / (partial z) - (partial R) / (partial x)) dif z dif x + ((partial Q) / (partial x) - (partial P) / (partial y)) dif x dif y $
 
 === 四类积分对比总结
 
@@ -217,12 +217,12 @@ $ oint_Gamma P dif x + Q dif y + R dif z = integral.double_Sigma ((diff R) / (di
 
 ==== 四大公式的联系
 
-#info-box[
-  *格林公式*：将 *第二类线积分* $oint_L P dif x + Q dif y$ 转化为 *二重积分*（平面情形）
+#note-box[
+  *格林公式*：将 *第二类线积分* $integral.cont_L P dif x + Q dif y$ 转化为 *二重积分*（平面情形）
 
-  *斯托克斯公式*：将 *第二类线积分* $oint_Gamma P dif x + Q dif y + R dif z$ 转化为 *第二类面积分*（空间情形，格林公式的推广）
+  *斯托克斯公式*：将 *第二类线积分* $integral.cont_Gamma P dif x + Q dif y + R dif z$ 转化为 *第二类面积分*（空间情形，格林公式的推广）
 
-  *高斯公式*：将 *第二类面积分* $ointegral_Sigma$ 转化为 *三重积分*
+  *高斯公式*：将 *第二类面积分* $integral.surf_Sigma$ 转化为 *三重积分*
 ]
 
 === 典型例题
@@ -279,15 +279,15 @@ $ integral_(-L) = integral_1^0 2t dif t = -1 $
   *验证*：反向后结果变号，这正是第二类线积分与第一类的本质区别。
 ]
 
-*例2*：用格林公式计算 $oint_L (x^2 - y) dif x + (y^2 + x) dif y$，$L$ 为单位圆 $x^2 + y^2 = 1$ 逆时针方向。
+*例2*：用格林公式计算 $integral.cont_L (x^2 - y) dif x + (y^2 + x) dif y$，$L$ 为单位圆 $x^2 + y^2 = 1$ 逆时针方向。
 
 *解*：令 $P = x^2 - y, quad Q = y^2 + x$
 
-$ (diff Q) / (diff x) - (diff P) / (diff y) = 1 - (-1) = 2 $
+$ (partial Q) / (partial x) - (partial P) / (partial y) = 1 - (-1) = 2 $
 
 由格林公式：
 
-$ oint_L P dif x + Q dif y = integral.double_D 2 dif x dif y = 2 dot pi dot 1^2 = 2 pi $
+$ integral.cont_L P dif x + Q dif y = integral.double_D 2 dif x dif y = 2 dot pi dot 1^2 = 2 pi $
 
 *例3*：计算 $integral_L y^2 dif x$，其中 $L$ 为抛物线 $y = x^2$ 从 $(0, 0)$ 到 $(1, 1)$。
 
@@ -333,9 +333,9 @@ $ = sqrt(2) integral_0^(2 pi) dif theta integral_0^1 r dot r dif r = sqrt(2) dot
 
 *解*：用高斯公式。$P = x, Q = y, R = z$
 
-$ (diff P) / (diff x) + (diff Q) / (diff y) + (diff R) / (diff z) = 1 + 1 + 1 = 3 $
+$ (partial P) / (partial x) + (partial Q) / (partial y) + (partial R) / (partial z) = 1 + 1 + 1 = 3 $
 
-$ ointegral_Sigma P dif y dif z + Q dif z dif x + R dif x dif y = integral.triple_Omega 3 dif V = 3 dot 4 / 3 pi = 4 pi $
+$ integral.surf_Sigma P dif y dif z + Q dif z dif x + R dif x dif y = integral.triple_Omega 3 dif V = 3 dot 4 / 3 pi = 4 pi $
 
 #tip-box[
   *要点*：高斯公式将复杂的面积分转化为简单的三重积分，是第二类面积分最强大的工具。
@@ -371,7 +371,7 @@ $ = integral_0^1 dif y [-(1 - y - z)^3 / 3]_0^(1 - y) = integral_0^1 (1 - y)^3 /
 
 === 做题判断流程
 
-#info-box[
+#note-box[
   拿到一道积分题，按以下步骤判断类型：
 
   1. *看积分域*：是曲线 $L$ → 线积分；是曲面 $Sigma$ → 面积分
@@ -502,7 +502,7 @@ $ = integral_0^1 dif y [-(1 - y - z)^3 / 3]_0^(1 - y) = integral_0^1 (1 - y)^3 /
   [有无方向], [重积分*没有方向*], [第二类线面积分*有方向*],
 )
 
-#info-box[
+#note-box[
   *一句话理解*：
   - *重积分*：在一个"实心"区域上积分（面积、体积上的累加）
   - *线积分*：沿一条"线"上积分（沿曲线的累加）
@@ -520,7 +520,7 @@ $ = integral_0^1 dif y [-(1 - y - z)^3 / 3]_0^(1 - y) = integral_0^1 (1 - y)^3 /
   [斯托克斯公式], [第二类线积分（沿 $partial Sigma$）], [第二类面积分（在 $Sigma$ 上）], [空间曲面及其边界],
 )
 
-#info-box[
+#note-box[
   *规律*：三大公式的本质都是 *边界上的积分 = 内部的积分*。
   - 格林公式：线（$partial D$ 的边界）→ 面（$D$ 内部）
   - 高斯公式：面（$partial Omega$ 的边界）→ 体（$Omega$ 内部）
@@ -600,29 +600,29 @@ $ = integral_0^1 dif y [-(1 - y - z)^3 / 3]_0^(1 - y) = integral_0^1 (1 - y)^3 /
 - 法向量朝外 → 外侧（闭曲面常用）
 - 法向量朝内 → 内侧
 
-#info-box[
+#note-box[
   *类比*：
   - "方向"就像单行道——从 $A$ 到 $B$ 和从 $B$ 到 $A$ 是不同的
   - "侧"就像一张纸的正面和反面——翻过来就变了
 ]
 
-==== 困惑4：什么时候用 $integral$、$oint$、$integral.double$、$ointegral$？
+==== 困惑4：什么时候用 $integral$、$integral.cont$、$integral.double$、$integral.surf$？
 
 #table(
   columns: (auto, auto, auto),
   align: center,
   table.header([*符号*], [*含义*], [*使用场景*]),
   [$integral_L$], [沿曲线 $L$ 的积分（非闭合）], [线积分，$L$ 有起点和终点],
-  [$oint_L$], [沿*闭合*曲线 $L$ 的积分], [线积分，$L$ 是封闭的（起点 $=$ 终点）],
+  [$integral.cont_L$], [沿*闭合*曲线 $L$ 的积分], [线积分，$L$ 是封闭的（起点 $=$ 终点）],
   [$integral.double_D$ 或 $integral.double_Sigma$], [二重积分或面积分（非闭合）], [区域/曲面不封闭],
-  [$ointegral_Sigma$], [沿*闭合*曲面 $Sigma$ 的积分], [面积分，$Sigma$ 是封闭曲面（如球面）],
+  [$integral.surf_Sigma$], [沿*闭合*曲面 $Sigma$ 的积分], [面积分，$Sigma$ 是封闭曲面（如球面）],
 )
 
 #tip-box[
   *判断方法*：看积分域是否"首尾相连"。
-  - 曲线：起点 $=$ 终点 → 用 $oint$
-  - 曲面：没有边界（像球面那样封闭）→ 用 $ointegral$
-  - 格林公式和高斯公式要求闭合，所以它们的左边一定有圈 $oint$ 或 $ointegral$
+  - 曲线：起点 $=$ 终点 → 用 $integral.cont$
+  - 曲面：没有边界（像球面那样封闭）→ 用 $integral.surf$
+  - 格林公式和高斯公式要求闭合，所以它们的左边一定有圈 $integral.cont$ 或 $integral.surf$
 ]
 
 ==== 困惑5：格林公式、高斯公式、斯托克斯公式分别什么时候用？
@@ -631,12 +631,12 @@ $ = integral_0^1 dif y [-(1 - y - z)^3 / 3]_0^(1 - y) = integral_0^1 (1 - y)^3 /
   columns: (auto, auto, auto, auto, auto),
   align: center,
   table.header([*公式*], [*空间维度*], [*左边*], [*右边*], [*什么时候用*]),
-  [格林公式], [二维平面], [$oint_L P dif x + Q dif y$], [$integral.double_D (Q_x - P_y) dif x dif y$], [$L$ 是平面闭曲线],
-  [高斯公式], [三维空间], [$ointegral_Sigma P dif y dif z + dots$], [$integral.triple_Omega (P_x + Q_y + R_z) dif V$], [$Sigma$ 是空间闭曲面],
-  [斯托克斯], [三维空间], [$oint_Gamma P dif x + Q dif y + R dif z$], [$integral.double_Sigma dots dif S$], [$Gamma$ 是空间闭曲线],
+  [格林公式], [二维平面], [$integral.cont_L P dif x + Q dif y$], [$integral.double_D (Q_x - P_y) dif x dif y$], [$L$ 是平面闭曲线],
+  [高斯公式], [三维空间], [$integral.surf_Sigma P dif y dif z + dots$], [$integral.triple_Omega (P_x + Q_y + R_z) dif V$], [$Sigma$ 是空间闭曲面],
+  [斯托克斯], [三维空间], [$integral.cont_Gamma P dif x + Q dif y + R dif z$], [$integral.double_Sigma dots dif S$], [$Gamma$ 是空间闭曲线],
 )
 
-#info-box[
+#note-box[
   *速记口诀*：
   - 平面闭曲线做功 → *格林*
   - 空间闭曲面通量 → *高斯*
@@ -700,7 +700,7 @@ $ P dif y dif z + Q dif z dif x + R dif x dif y = (P cos alpha + Q cos beta + R 
 
 即：第二类面积分 $=$ 向量场与法向量的点积 $times$ 第一类面积分
 
-#info-box[
+#note-box[
   *理解*：
   - 第一类面积分：标量函数在曲面上积分（不关心法向量方向）
   - 第二类面积分：向量场在曲面上沿法方向积分（关心法向量方向）
@@ -716,7 +716,7 @@ $ P dif x + Q dif y = (P cos alpha + Q cos beta) dif s $
 
 即：第二类线积分 $=$ 向量场与切向量的点积 $times$ 第一类线积分
 
-#info-box[
+#note-box[
   *统一理解向量场积分*：
   - *第二类线积分*：$integral_L arrow(F) dot dif arrow(r) = integral_L arrow(F) dot arrow(tau) dif s$（向量场沿*切线方向*积分 → 做功）
   - *第二类面积分*：$integral.double_Sigma arrow(F) dot dif arrow(S) = integral.double_Sigma arrow(F) dot arrow(n) dif S$（向量场沿*法线方向*积分 → 通量）
@@ -728,7 +728,7 @@ $ P dif x + Q dif y = (P cos alpha + Q cos beta) dif s $
 - *第一类线/面积分*：同上，$f >= 0$ 则 $>= 0$（因为 $dif s, dif S > 0$）
 - *第二类线/面积分*：结果*可以是负数*，这很正常！
 
-#info-box[
+#note-box[
   *物理解释*：
   - 第二类线积分是"力做的功"，力和运动方向相反时，功为负
   - 第二类面积分是"流体通量"，流体从内向外流为正，从外向内流为负
@@ -774,7 +774,7 @@ $ integral_(-L) = integral_1^0 (1 - 2t) dif t = -(integral_0^1 (1 - 2t) dif t) =
 
 并非所有第二类线积分都与路径有关！满足以下条件时，第二类线积分与路径无关：
 
-$ (diff P) / (diff y) = (diff Q) / (diff x) quad "(平面情形)" $
+$ (partial P) / (partial y) = (partial Q) / (partial x) quad "(平面情形)" $
 
 此时 $P dif x + Q dif y$ 是某个函数 $u(x,y)$ 的全微分，积分只取决于起点和终点：
 
@@ -784,11 +784,11 @@ $ integral_L P dif x + Q dif y = u(B) - u(A) $
   *注意前提条件*：
   - 区域 $D$ 必须是*单连通*的（没有"洞"）
   - $P, Q$ 在 $D$ 上有连续偏导数
-  - 如果区域有洞（如去掉原点），即使 $(diff P) / (diff y) = (diff Q) / (diff x)$，也可能与路径有关！
+  - 如果区域有洞（如去掉原点），即使 $(partial P) / (partial y) = (partial Q) / (partial x)$，也可能与路径有关！
 
   *经典反例*：$P = -y / (x^2 + y^2), quad Q = x / (x^2 + y^2)$
 
-  验证 $(diff P) / (diff y) = (diff Q) / (diff x)$，但沿原点的单位圆积分 $= 2 pi != 0$。因为原点是奇点，区域不是单连通的。
+  验证 $(partial P) / (partial y) = (partial Q) / (partial x)$，但沿原点的单位圆积分 $= 2 pi != 0$。因为原点是奇点，区域不是单连通的。
 ]
 
 === 考研常考的计算陷阱总结
@@ -819,9 +819,9 @@ $ integral_L P dif x + Q dif y = u(B) - u(A) $
 
 #tip-box[*判断*：微元是 $dif x, dif y$ → *第二类线积分* → 参数化代入（非闭合，不用格林）]
 
-*题3*：$oint_L (2x - y) dif x + (x + 3y) dif y$，$L$ 为正方形边界逆时针。
+*题3*：$integral.cont_L (2x - y) dif x + (x + 3y) dif y$，$L$ 为正方形边界逆时针。
 
-#tip-box[*判断*：$oint$（闭合）+ $dif x, dif y$ → *第二类线积分* → 优先用*格林公式*]
+#tip-box[*判断*：$integral.cont$（闭合）+ $dif x, dif y$ → *第二类线积分* → 优先用*格林公式*]
 
 *题4*：$integral.double_D (x^2 + y^2) dif x dif y$，$D: x^2 + y^2 <= 1$。
 
@@ -843,7 +843,7 @@ $ integral_L P dif x + Q dif y = u(B) - u(A) $
 
 #tip-box[*判断*：坐标微元 $dif x dif y$ + 曲面 $Sigma$ → *第二类面积分* → 非闭合 → 投影法（注意上侧取正）]
 
-*题9*：$oint_Gamma y dif x + z dif y + x dif z$，$Gamma$ 为空间闭曲线。
+*题9*：$integral.cont_Gamma y dif x + z dif y + x dif z$，$Gamma$ 为空间闭曲线。
 
 #tip-box[*判断*：空间闭曲线 + $dif x, dif y, dif z$ → *第二类线积分* → 用*斯托克斯公式*]
 
@@ -903,13 +903,13 @@ $ integral.double_Sigma z dif x dif y = integral.double_D sqrt(1 - x^2 - y^2) di
 
 ===== 对比组 C：闭合 vs 非闭合，该不该用公式
 
-*题 C1*：$oint_L y^2 dif x + x^2 dif y$，$L$ 为单位圆逆时针。
+*题 C1*：$integral.cont_L y^2 dif x + x^2 dif y$，$L$ 为单位圆逆时针。
 
 *解*：闭合 → 用格林公式。$P = y^2, Q = x^2$
 
-$ (diff Q)/(diff x) - (diff P)/(diff y) = 2x - 2y $
+$ (partial Q)/(partial x) - (partial P)/(partial y) = 2x - 2y $
 
-$ oint_L = integral.double_D (2x - 2y) dif x dif y $
+$ integral.cont_L = integral.double_D (2x - 2y) dif x dif y $
 
 利用对称性：$D$ 关于 $x, y$ 都对称，$2x$ 和 $-2y$ 都是奇函数 → $= 0$
 
@@ -954,35 +954,35 @@ $ = integral.double_D 1 / sqrt(1 - x^2 - y^2) dif x dif y = integral_0^(2pi) dif
 
 ===== 对比组 E：格林公式 vs 直接算
 
-*题 E1*：$oint_L (x + y) dif x + (x - y) dif y$，$L$ 为 $x^2 + y^2 = 4$ 逆时针。
+*题 E1*：$integral.cont_L (x + y) dif x + (x - y) dif y$，$L$ 为 $x^2 + y^2 = 4$ 逆时针。
 
-*解*：格林公式。$(diff Q)/(diff x) - (diff P)/(diff y) = 1 - 1 = 0$ → $oint_L = 0$
+*解*：格林公式。$(partial Q)/(partial x) - (partial P)/(partial y) = 1 - 1 = 0$ → $integral.cont_L = 0$
 
 格林公式一步搞定！如果直接参数化，要算 $integral_0^(2pi) [dots]$ 一大堆三角函数。
 
 *题 E2*：$integral_L (x + y) dif x + (x - y) dif y$，$L$ 为从 $(2, 0)$ 到 $(0, 2)$ 的圆弧。
 
-*解*：$(diff Q)/(diff x) - (diff P)/(diff y) = 0$ → 积分与路径无关！
+*解*：$(partial Q)/(partial x) - (partial P)/(partial y) = 0$ → 积分与路径无关！
 
 所以换成沿直线 $x + y = 2$（从 $(2,0)$ 到 $(0,2)$）：$x = 2-t, y = t, t: 0 -> 2$
 
 $ = integral_0^2 [(2 - t + t)(-1) + (2 - t - t)(1)] dif t = integral_0^2 (-2 + 2 - 2t) dif t = integral_0^2 (-2t) dif t = -4 $
 
 #tip-box[
-  *要点*：先检查 $(diff Q)/(diff x) - (diff P)/(diff y)$。若为 $0$ 且区域单连通：
+  *要点*：先检查 $(partial Q)/(partial x) - (partial P)/(partial y)$。若为 $0$ 且区域单连通：
   - 闭合 → 直接 $= 0$
   - 非闭合 → 换一条最简单的路径算（通常选直线段）
 ]
 
 ===== 对比组 F：高斯公式 vs 投影法
 
-*题 F1*：$ointegral_Sigma x^2 dif y dif z + y^2 dif z dif x + z^2 dif x dif y$，$Sigma$ 为球面 $x^2+y^2+z^2=a^2$ 外侧。
+*题 F1*：$integral.surf_Sigma x^2 dif y dif z + y^2 dif z dif x + z^2 dif x dif y$，$Sigma$ 为球面 $x^2+y^2+z^2=a^2$ 外侧。
 
 *解*：闭曲面 → 高斯公式。
 
-$ (diff P)/(diff x) + (diff Q)/(diff y) + (diff R)/(diff z) = 2x + 2y + 2z $
+$ (partial P)/(partial x) + (partial Q)/(partial y) + (partial R)/(partial z) = 2x + 2y + 2z $
 
-$ ointegral_Sigma = integral.triple_Omega (2x + 2y + 2z) dif V $
+$ integral.surf_Sigma = integral.triple_Omega (2x + 2y + 2z) dif V $
 
 对称性：$integral.triple_Omega x dif V = integral.triple_Omega y dif V = integral.triple_Omega z dif V = 0$（奇函数在对称域上积分为 $0$）
 
@@ -998,7 +998,7 @@ $ = integral.double_D (a^2 - x^2 - y^2) dif x dif y quad (D: x^2 + y^2 <= a^2, "
 
 也可以补底面 $Sigma_1: z = 0, x^2 + y^2 <= a^2$ 取下侧，用高斯公式：
 
-$ointegral_(Sigma + Sigma_1) = integral.triple_Omega 2z dif V$，再减去 $Sigma_1$ 上的贡献（$z = 0$ → 贡献为 $0$）。
+$integral.surf_(Sigma + Sigma_1) = integral.triple_Omega 2z dif V$，再减去 $Sigma_1$ 上的贡献（$z = 0$ → 贡献为 $0$）。
 
 ===== 对比组 G：$integral.double_Sigma f dif S$ 中利用对称性
 
@@ -1022,7 +1022,7 @@ $ integral.double_Sigma x^2 dif S = integral.double_Sigma y^2 dif S = integral.d
 
 $ integral.double_Sigma x^2 dif y dif z = integral.double_Sigma y^2 dif z dif x = integral.double_Sigma z^2 dif x dif y quad ("轮换对称性") $
 
-三者相加 $= ointegral_Sigma (x^2 dif y dif z + y^2 dif z dif x + z^2 dif x dif y)$，就是题 F1 的结果 $= 0$。
+三者相加 $= integral.surf_Sigma (x^2 dif y dif z + y^2 dif z dif x + z^2 dif x dif y)$，就是题 F1 的结果 $= 0$。
 
 所以 $integral.double_Sigma x^2 dif y dif z = 0$。
 
@@ -1032,11 +1032,11 @@ $ integral.double_Sigma x^2 dif y dif z = integral.double_Sigma y^2 dif z dif x 
 
 ===== 对比组 H：奇点处理
 
-*题 H1*：$oint_L (-y dif x + x dif y) / (x^2 + y^2)$，$L$ 为单位圆逆时针。
+*题 H1*：$integral.cont_L (-y dif x + x dif y) / (x^2 + y^2)$，$L$ 为单位圆逆时针。
 
 *解*：$P = -y/(x^2+y^2), Q = x/(x^2+y^2)$。
 
-验证 $(diff Q)/(diff x) - (diff P)/(diff y) = 0$（在 $(0,0)$ 以外成立），但原点是*奇点*！
+验证 $(partial Q)/(partial x) - (partial P)/(partial y) = 0$（在 $(0,0)$ 以外成立），但原点是*奇点*！
 
 原点在 $L$ 内部 → *不能直接用格林公式*说结果为 $0$。
 
@@ -1044,11 +1044,11 @@ $ integral.double_Sigma x^2 dif y dif z = integral.double_Sigma y^2 dif z dif x 
 
 $ = integral_0^(2pi) ((-sin t)(-sin t) + (cos t)(cos t)) / 1 dif t = integral_0^(2pi) 1 dif t = 2pi $
 
-*题 H2*：$oint_L (-y dif x + x dif y) / (x^2 + y^2)$，$L$ 为 $(x-3)^2 + y^2 = 1$ 逆时针。
+*题 H2*：$integral.cont_L (-y dif x + x dif y) / (x^2 + y^2)$，$L$ 为 $(x-3)^2 + y^2 = 1$ 逆时针。
 
-*解*：同样的被积函数，但 $L$ 围的区域不包含原点 → 区域内 $(diff Q)/(diff x) = (diff P)/(diff y)$ 处处成立 → *可以*用格林公式。
+*解*：同样的被积函数，但 $L$ 围的区域不包含原点 → 区域内 $(partial Q)/(partial x) = (partial P)/(partial y)$ 处处成立 → *可以*用格林公式。
 
-$ oint_L = integral.double_D 0 dif x dif y = 0 $
+$ integral.cont_L = integral.double_D 0 dif x dif y = 0 $
 
 #warning-box[
   *同样的被积函数，不同的结果*！关键在于*奇点是否在积分域内部*：
@@ -1064,21 +1064,21 @@ $ oint_L = integral.double_D 0 dif x dif y = 0 $
 
 $Sigma + Sigma_1$ 构成闭曲面，用高斯公式：
 
-$ (diff P)/(diff x) + (diff Q)/(diff y) + (diff R)/(diff z) = 1 + 1 + 2z = 2 + 2z $
+$ (partial P)/(partial x) + (partial Q)/(partial y) + (partial R)/(partial z) = 1 + 1 + 2z = 2 + 2z $
 
-$ ointegral_(Sigma + Sigma_1) = integral.triple_Omega (2 + 2z) dif V $
+$ integral.surf_(Sigma + Sigma_1) = integral.triple_Omega (2 + 2z) dif V $
 
 $Omega$ 为上半球体。$integral.triple_Omega 2 dif V = 2 dot 2/3 pi = (4pi)/3$
 
 $integral.triple_Omega 2z dif V$：球坐标 $= 2 integral_0^(2pi) dif phi integral_0^(pi/2) integral_0^1 r cos theta dot r^2 sin theta dif r dif theta dif phi = 2 dot 2pi dot 1/2 dot 1/4 = pi/2$
 
-$ointegral = (4pi)/3 + pi/2 = (11pi)/6$
+$integral.surf = (4pi)/3 + pi/2 = (11pi)/6$
 
 再算 $Sigma_1$ 上的贡献：$z = 0$，法向量朝下（$cos gamma < 0$），取下侧。
 
 $integral.double_(Sigma_1) x dif y dif z + y dif z dif x + z^2 dif x dif y$
 
-$Sigma_1$ 垂直于 $z$ 轴 → $dif y dif z = 0, dif z dif x = 0$（投影到 $yOz$ 面和 $zOx$ 面为 $0$），$z^2 = 0$
+$Sigma_1$ 垂直于 $z$ 轴 → $dif y dif z = 0, dif z dif x = 0$（投影到 $y O z$ 面和 $z O x$ 面为 $0$），$z^2 = 0$
 
 所以 $integral.double_(Sigma_1) = 0$
 
@@ -1094,7 +1094,7 @@ $Sigma_1$ 垂直于 $z$ 轴 → $dif y dif z = 0, dif z dif x = 0$（投影到 $
 
 === 方法选择决策树总结
 
-#info-box[
+#note-box[
   *第一步：判断积分类型*
   - 积分域是平面区域 $D$ → 二重积分
   - 积分域是空间区域 $Omega$ → 三重积分
@@ -1108,7 +1108,7 @@ $Sigma_1$ 垂直于 $z$ 轴 → $dif y dif z = 0, dif z dif x = 0$（投影到 $
   - 第二类线积分：
     - 闭合 + 平面 → *格林公式*
     - 闭合 + 空间 → *斯托克斯公式*
-    - $(diff P)/(diff y) = (diff Q)/(diff x)$ → 与路径无关，换简单路径或用端点值
+    - $(partial P)/(partial y) = (partial Q)/(partial x)$ → 与路径无关，换简单路径或用端点值
     - 其他 → 直接参数化
   - 第一类面积分 → 投影，乘 $sqrt(1 + z_x^2 + z_y^2)$，积极利用对称性
   - 第二类面积分：

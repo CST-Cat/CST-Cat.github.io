@@ -16,7 +16,7 @@
     "/Vault/": "Vault",
     "/About/": "About",
   ),
-  
+
   /// 网站的站点标题。会显示在浏览器标签页以及 SEO/社交分享卡片中。
   website-title: "wxh's Blog",
   /// 网站作者。用于生成 <meta name="author"> 标签。（可选）
@@ -29,12 +29,12 @@
   lang: "zh",
   /// 订阅源配置 (字符串数组)，指定包含在 RSS 订阅源中的内容目录列表。（可选）
   /// 例如，`("/Blog/",)` 会将 `Blog` 目录下的所有文章包含在订阅源中。
-  feed-dir: ("/Blog/", "/Essays/", "/Docs/"),
-  
+  feed-dir: ("/Blog/", "/Docs/", "/Musings/", "/Vault/"),
+
   /// 自定义页眉元素列表 (content 数组)。显示在页面顶部。
-  // header-elements: (
-  //   [Hi there! Welcome to my blog!],
-  // ),
+  header-elements: (
+    [Welcome to my blog!],
+  ),
   /// 自定义页脚元素列表 (content 数组)，显示在页面底部。
   footer-elements: (
     "© 2026 wxh's Blog. Just for fun. ",
