@@ -521,17 +521,6 @@ RESPONSIVE LAYOUT
 		width: 100%;
 	}
 
-	/* Wrap navigation links on narrow screens */
-	header nav {
-		flex-wrap: wrap;
-	}
-
-	/* Align theme toggle with nav links on narrow screens */
-	.theme-toggle-btn {
-		margin-left: 0;
-		margin-top: 0;
-	}
-
 }
 
 /*******************************************************************************
