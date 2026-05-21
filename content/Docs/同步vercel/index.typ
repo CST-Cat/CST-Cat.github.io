@@ -13,8 +13,6 @@
 
 为什么要同步到vercel？主要是vercel 其实有国内cdn，如果绑上自己的域名，可以在国内直接访问，github pages不太行。
 
-#outline()
-
 #html.hr()
 
 == 1. GitHub 仓库同步

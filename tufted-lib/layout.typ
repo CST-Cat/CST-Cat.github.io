@@ -26,16 +26,24 @@
   height: none,
   style: none,
 ) = {
-  html.img(
+  let attrs = (
     src: src,
     alt: alt,
-    width: width,
-    height: height,
-    style: style,
     loading: "eager",
     decoding: "async",
     fetchpriority: "high",
   )
+  if width != none {
+    attrs.insert("width", width)
+  }
+  if height != none {
+    attrs.insert("height", height)
+  }
+  if style != none {
+    attrs.insert("style", style)
+  }
+
+  html.img(..attrs)
 }
 
 // TODO: implement <figure class="fullwidth">

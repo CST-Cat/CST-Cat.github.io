@@ -9,8 +9,6 @@
 
 == Phone
 
-#outline()
-
 === 摩托罗拉 LX2 
 
 #image("/assets/1775322834317.jpg", width: 100%, height: auto)

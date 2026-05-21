@@ -13,8 +13,6 @@
 
 转载自#link("https://idcflare.com/t/topic/16977")[机圈黑话/专有名词扫盲（持续更新ing）]，原作者是idcflare的idcman，感谢原作者的辛苦总结和分享。
 
-#outline()
-
 = 机圈黑话
 
 == 基础术语

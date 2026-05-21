@@ -8,6 +8,8 @@
 
 == 博客文章
 
+#link("toc-stress-test/")[左侧浮动目录压力测试文章]
+
 #link("tufted-Optimize/")[Tufted-Blog-Template 优化记录]
 
 
@@ -18,5 +20,4 @@
 #link("kaoyan-notes-408/")[408笔记]
 
 #link("journal/")[考研周记]
-
 

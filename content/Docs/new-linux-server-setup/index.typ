@@ -9,8 +9,6 @@
 
 = Linux 服务器常用加固操作
 
-#outline()
-
 如果嫌麻烦的话，可以不重装系统，只看 SSH 加固、防火墙、ZRAM/Swap、Fail2ban 和时区设置这五项。
 
 
