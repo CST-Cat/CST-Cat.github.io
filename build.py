@@ -22,7 +22,7 @@ Tufted Blog Template 构建脚本
     uv run build.py assets      # 仅复制静态资源
     uv run build.py clean       # 清理生成的文件
     uv run build.py preview     # 启动本地预览服务器（默认端口 8000）
-    uv run build.py admin       # 启动本地内容管理面板（快速新建文章）
+    uv run build.py admin       # 启动本地内容管理面板（编辑和新建页面）
     uv run build.py preview -p 3000  # 使用自定义端口
     uv run build.py --help      # 显示帮助信息
 
@@ -66,7 +66,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 from urllib.parse import parse_qs, unquote, urlparse
 
 # ============================================================================
@@ -77,6 +77,9 @@ CONTENT_DIR = Path("content")  # 源文件目录
 SITE_DIR = Path("_site")  # 输出目录
 ASSETS_DIR = Path("assets")  # 静态资源目录
 CONFIG_FILE = Path("config.typ")  # 全局配置文件
+CACHE_DIR = Path(".tufted-cache")  # 本地缓存目录（不提交）
+CONTENT_MANIFEST_FILE = CACHE_DIR / "content-manifest.json"  # content 页面结构清单
+CONTENT_MANIFEST_VERSION = 1
 
 
 @dataclass
@@ -377,18 +380,20 @@ def find_common_dependencies() -> list[Path]:
 
 def find_typ_files() -> list[Path]:
     """
-    查找 content/ 目录下所有 .typ 文件，排除路径中包含以下划线开头的目录的文件。
+    从 content manifest 中读取所有 .typ 文件。
+
+    manifest 会在首次运行、页面增删/移动时自动重建；普通内容或标题修改
+    不需要再次扫描目录树。
 
     返回:
         list[Path]: .typ 文件路径列表
     """
-    typ_files = []
-    for typ_file in CONTENT_DIR.rglob("*.typ"):
-        # 检查路径中是否有以下划线开头的目录
-        parts = typ_file.relative_to(CONTENT_DIR).parts
-        if not any(part.startswith("_") for part in parts):
-            typ_files.append(typ_file)
-    return typ_files
+    manifest = get_content_manifest(update_file_metadata=False)
+    paths: list[Path] = []
+    for rel_path in manifest.get("typ_paths", []):
+        if isinstance(rel_path, str):
+            paths.append(CONTENT_DIR / rel_path)
+    return paths
 
 
 def get_file_output_path(typ_file: Path, type: Literal["pdf", "html"]) -> Path:
@@ -420,7 +425,31 @@ def run_typst_command(args: list[str]) -> bool:
         script_dir = Path(__file__).parent
         local_typst = script_dir / "typst"
         typst_cmd = str(local_typst) if local_typst.exists() else "typst"
-        result = subprocess.run([typst_cmd] + args, capture_output=True, text=True, encoding="utf-8")
+
+        env = os.environ.copy()
+        proxy_keys = ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy")
+        unsupported_proxy_keys = [
+            key
+            for key in proxy_keys
+            if env.get(key, "").lower().startswith(("socks://", "socks4://", "socks5://"))
+        ]
+        for key in unsupported_proxy_keys:
+            env.pop(key, None)
+
+        if unsupported_proxy_keys and not getattr(run_typst_command, "_proxy_warning_shown", False):
+            print(
+                "  ⚠ Typst 当前下载器不支持 SOCKS 代理，已仅为 Typst 子进程临时移除: "
+                + ", ".join(unsupported_proxy_keys)
+            )
+            setattr(run_typst_command, "_proxy_warning_shown", True)
+
+        result = subprocess.run(
+            [typst_cmd] + args,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+        )
         if result.returncode != 0:
             print(f"  ❌ Typst 错误: {result.stderr.strip()}")
             return False
@@ -1373,7 +1402,7 @@ def check_image_paths() -> bool:
     inline_code_pattern = re.compile(r"`[^`]*`")
 
     try:
-        for typ_file in CONTENT_DIR.rglob("*.typ"):
+        for typ_file in find_typ_files():
             in_code_block = False
             for line_no, line in enumerate(typ_file.read_text(encoding="utf-8").splitlines(), 1):
                 if line.lstrip().startswith("```"):
@@ -1517,6 +1546,45 @@ def list_content_groups() -> list[str]:
     return groups
 
 
+def resolve_content_dir_path(rel_dir: str) -> Path | None:
+    """
+    将前端传入的 content 相对目录解析为安全目录路径。
+    """
+    normalized = rel_dir.strip().replace("\\", "/").strip("/")
+    content_root = CONTENT_DIR.resolve()
+    candidate = CONTENT_DIR.resolve() if not normalized else (CONTENT_DIR / normalized).resolve()
+
+    try:
+        content_rel_path = candidate.relative_to(content_root)
+    except ValueError:
+        return None
+
+    if any(part.startswith("_") for part in content_rel_path.parts):
+        return None
+
+    return CONTENT_DIR if content_rel_path == Path(".") else CONTENT_DIR / content_rel_path
+
+
+def content_dir_to_url(content_dir: Path) -> str:
+    """
+    将 content 下的目录路径转换为站点 URL。
+    """
+    rel_path = content_dir.relative_to(CONTENT_DIR)
+    if rel_path == Path("."):
+        return "/"
+    return f"/{rel_path.as_posix().strip('/')}/"
+
+
+def content_dir_to_label(content_dir: Path) -> str:
+    """
+    生成人类可读的内容目录标签。
+    """
+    rel_path = content_dir.relative_to(CONTENT_DIR)
+    if rel_path == Path("."):
+        return "Home"
+    return rel_path.as_posix()
+
+
 def content_path_to_url(typ_file: Path) -> str:
     """
     将 content 下的 Typst 文件路径转换为站点 URL。
@@ -1547,6 +1615,20 @@ def content_path_to_label(typ_file: Path) -> str:
     return rel_path.with_suffix("").as_posix()
 
 
+def read_content_page_title(index_path: Path) -> tuple[str, str]:
+    """
+    读取页面标题和描述，用于 admin 列表与父级选择器。
+    """
+    try:
+        source = index_path.read_text(encoding="utf-8")
+    except Exception:
+        source = ""
+
+    title = _extract_template_string(source, "title") or _extract_first_heading(source)
+    description = _extract_template_string(source, "description")
+    return title, description
+
+
 def _extract_template_string(source: str, field: str) -> str:
     """
     从 template.with(...) 参数中提取简单字符串字段。
@@ -1558,7 +1640,7 @@ def _extract_template_string(source: str, field: str) -> str:
 
     value = match.group(1)
     try:
-        return bytes(value, "utf-8").decode("unicode_escape")
+        return json.loads(f'"{value}"')
     except Exception:
         return value.replace(r"\"", '"').replace(r"\\", "\\")
 
@@ -1577,44 +1659,376 @@ def _extract_first_heading(source: str) -> str:
 
 def collect_content_pages() -> list[dict[str, str | int | bool]]:
     """
-    扫描 content 下所有可管理的 Typst 页面。
+    从 content manifest 中读取所有可管理的 Typst 页面。
     """
-    if not CONTENT_DIR.exists():
+    manifest = get_content_manifest(update_file_metadata=True)
+    return [dict(page) for page in manifest.get("pages", []) if isinstance(page, dict)]
+
+
+def collect_content_parent_dirs() -> list[dict[str, str | int]]:
+    """
+    从 content manifest 中读取可作为新页面父级的 content 页面目录。
+    """
+    manifest = get_content_manifest(update_file_metadata=True)
+    return [dict(parent) for parent in manifest.get("parents", []) if isinstance(parent, dict)]
+
+
+def _content_rel_label(path: Path) -> str:
+    """
+    将 content 下路径规范化为 manifest 使用的相对字符串。
+    """
+    return "" if path == Path(".") else path.as_posix()
+
+
+def _content_path_from_label(rel_path: str) -> Path:
+    """
+    从 manifest 相对字符串还原 content 下路径。
+    """
+    cleaned = rel_path.strip().replace("\\", "/").strip("/")
+    return CONTENT_DIR if not cleaned else CONTENT_DIR / cleaned
+
+
+def _path_mtime_ns(path: Path) -> int:
+    try:
+        return int(path.stat().st_mtime_ns)
+    except OSError:
+        return 0
+
+
+def get_nav_parent_order() -> list[str]:
+    """
+    从 config.typ 的 nav-items 中提取顶层页面顺序。
+    """
+    if not CONFIG_FILE.exists():
         return []
 
-    pages: list[dict[str, str | int | bool]] = []
-    for typ_file in sorted(find_typ_files(), key=lambda p: content_path_to_label(p).lower()):
-        rel_path = typ_file.relative_to(CONTENT_DIR)
+    try:
+        source = CONFIG_FILE.read_text(encoding="utf-8")
+    except Exception:
+        return []
 
-        try:
-            source = typ_file.read_text(encoding="utf-8")
-        except Exception:
-            source = ""
+    source = "\n".join(
+        line for line in source.splitlines() if not line.lstrip().startswith("//")
+    )
 
-        parts = rel_path.parts
-        group = parts[0] if len(parts) > 1 else "Root"
-        is_section_index = len(parts) == 2 and rel_path.name == "index.typ"
-        is_home = rel_path == Path("index.typ")
+    order: list[str] = []
+    for match in re.finditer(r'"(/[^"]*/)"\s*:', source):
+        nav_path = match.group(1).strip("/")
+        if not nav_path or "/" in nav_path:
+            continue
+        if nav_path not in order:
+            order.append(nav_path)
 
-        title = _extract_template_string(source, "title") or _extract_first_heading(source)
-        description = _extract_template_string(source, "description")
+    return order
 
-        pages.append(
+
+def sort_content_parents(parents: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    按导航顺序排列父级页面；模板没有 nav-items 时退回通用路径排序。
+    """
+    nav_order = get_nav_parent_order()
+    nav_rank = {path: index for index, path in enumerate(nav_order)}
+
+    def _sort_key(parent: dict[str, Any]) -> tuple[int, int, int, str]:
+        parent_path = str(parent.get("path", ""))
+        label = str(parent.get("label", parent_path or "Home")).lower()
+        depth = int(parent.get("depth", 0))
+        top_level = parent_path.split("/", 1)[0] if parent_path else ""
+        rank = nav_rank.get(top_level, len(nav_rank))
+
+        if depth == 1 and parent_path in nav_rank:
+            return (0, rank, depth, label)
+        if parent_path == "":
+            return (1, len(nav_rank), depth, label)
+        if top_level in nav_rank:
+            return (2, rank, depth, label)
+        if depth == 1:
+            return (3, rank, depth, label)
+        return (4, rank, depth, label)
+
+    return sorted(parents, key=_sort_key)
+
+
+def default_content_parent_path(parents: list[dict[str, Any]]) -> str:
+    """
+    选择新建页面的默认父级。优先使用第一个顶层栏目，避免模板硬编码 Blog。
+    """
+    sorted_parents = sort_content_parents(parents)
+    for parent in sorted_parents:
+        if int(parent.get("depth", 0)) == 1:
+            return str(parent.get("path", ""))
+    if sorted_parents:
+        return str(sorted_parents[0].get("path", ""))
+    return ""
+
+
+def _scan_content_structure() -> dict[str, Any]:
+    """
+    扫描 content 目录结构，只记录目录 mtime 和 .typ 路径，不读取页面内容。
+    """
+    dirs: dict[str, int] = {}
+    typ_paths: list[str] = []
+
+    if not CONTENT_DIR.exists():
+        return {"dirs": dirs, "typ_paths": typ_paths}
+
+    for dirpath_str, dirnames, filenames in os.walk(CONTENT_DIR):
+        dir_path = Path(dirpath_str)
+        rel_dir = dir_path.relative_to(CONTENT_DIR)
+        rel_parts = () if rel_dir == Path(".") else rel_dir.parts
+
+        if any(part.startswith("_") for part in rel_parts):
+            dirnames[:] = []
+            continue
+
+        dirnames[:] = sorted(
+            [dirname for dirname in dirnames if not dirname.startswith("_")],
+            key=str.lower,
+        )
+        dirs[_content_rel_label(rel_dir)] = _path_mtime_ns(dir_path)
+
+        for filename in sorted(filenames, key=str.lower):
+            if Path(filename).suffix != ".typ":
+                continue
+            typ_file = dir_path / filename
+            rel_file = typ_file.relative_to(CONTENT_DIR)
+            if not any(part.startswith("_") for part in rel_file.parts):
+                typ_paths.append(rel_file.as_posix())
+
+    return {
+        "dirs": dirs,
+        "typ_paths": sorted(set(typ_paths), key=str.lower),
+    }
+
+
+def _make_content_page_entry(typ_file: Path) -> dict[str, Any]:
+    rel_path = typ_file.relative_to(CONTENT_DIR)
+
+    try:
+        source = typ_file.read_text(encoding="utf-8")
+    except Exception:
+        source = ""
+
+    parts = rel_path.parts
+    group = parts[0] if len(parts) > 1 else "Root"
+    is_section_index = len(parts) == 2 and rel_path.name == "index.typ"
+    is_home = rel_path == Path("index.typ")
+
+    title = _extract_template_string(source, "title") or _extract_first_heading(source)
+    description = _extract_template_string(source, "description")
+
+    return {
+        "path": rel_path.as_posix(),
+        "label": content_path_to_label(typ_file),
+        "title": title or content_path_to_label(typ_file),
+        "description": description,
+        "group": group,
+        "url": content_path_to_url(typ_file),
+        "bytes": len(source.encode("utf-8")),
+        "mtime": int(typ_file.stat().st_mtime) if typ_file.exists() else 0,
+        "mtime_ns": _path_mtime_ns(typ_file),
+        "is_home": is_home,
+        "is_section_index": is_section_index,
+        "is_pdf": "pdf" in typ_file.stem.lower(),
+    }
+
+
+def _build_parent_entries_from_pages(pages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    page_by_path = {str(page.get("path", "")): page for page in pages}
+    parent_paths: set[str] = set()
+
+    if "index.typ" in page_by_path:
+        parent_paths.add("")
+
+    for page in pages:
+        rel_path = Path(str(page.get("path", "")))
+        if rel_path.name != "index.typ":
+            continue
+        parent_dir = rel_path.parent
+        if parent_dir != Path("."):
+            parent_paths.add(parent_dir.as_posix())
+
+    parents: list[dict[str, Any]] = []
+    for parent_path in sorted(parent_paths, key=str.lower):
+        content_dir = _content_path_from_label(parent_path)
+        rel_dir = content_dir.relative_to(CONTENT_DIR)
+        parts = rel_dir.parts if rel_dir != Path(".") else ()
+        index_rel_path = "index.typ" if parent_path == "" else f"{parent_path}/index.typ"
+        page = page_by_path.get(index_rel_path, {})
+        label = content_dir_to_label(content_dir)
+        parents.append(
             {
-                "path": rel_path.as_posix(),
-                "label": content_path_to_label(typ_file),
-                "title": title or content_path_to_label(typ_file),
-                "description": description,
-                "group": group,
-                "url": content_path_to_url(typ_file),
-                "bytes": len(source.encode("utf-8")),
-                "mtime": int(typ_file.stat().st_mtime) if typ_file.exists() else 0,
-                "is_home": is_home,
-                "is_section_index": is_section_index,
+                "path": parent_path,
+                "label": label,
+                "title": str(page.get("title") or label),
+                "description": str(page.get("description", "")),
+                "url": content_dir_to_url(content_dir),
+                "depth": len(parts),
+                "group": parts[0] if parts else "Root",
             }
         )
 
-    return pages
+    return sort_content_parents(parents)
+
+
+def _new_content_manifest(structure: dict[str, Any], reason: str) -> dict[str, Any]:
+    pages: list[dict[str, Any]] = []
+    for rel_path in structure.get("typ_paths", []):
+        if not isinstance(rel_path, str):
+            continue
+        typ_file = CONTENT_DIR / rel_path
+        if typ_file.exists():
+            pages.append(_make_content_page_entry(typ_file))
+
+    pages.sort(key=lambda page: str(page.get("label", "")).lower())
+
+    return {
+        "version": CONTENT_MANIFEST_VERSION,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "reason": reason,
+        "content_dir": str(CONTENT_DIR),
+        "typ_paths": sorted((str(page["path"]) for page in pages), key=str.lower),
+        "structure": {
+            "dirs": structure.get("dirs", {}),
+        },
+        "pages": pages,
+        "parents": _build_parent_entries_from_pages(pages),
+    }
+
+
+def _load_content_manifest() -> dict[str, Any] | None:
+    try:
+        payload = json.loads(CONTENT_MANIFEST_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+    if payload.get("version") != CONTENT_MANIFEST_VERSION:
+        return None
+    if payload.get("content_dir") != str(CONTENT_DIR):
+        return None
+    if not isinstance(payload.get("typ_paths"), list):
+        return None
+    if not isinstance(payload.get("pages"), list):
+        return None
+
+    return payload
+
+
+def _write_content_manifest(manifest: dict[str, Any]) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    temp_path = CONTENT_MANIFEST_FILE.with_suffix(".tmp")
+    temp_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temp_path.replace(CONTENT_MANIFEST_FILE)
+
+
+def _needs_content_structure_probe(manifest: dict[str, Any]) -> bool:
+    dirs = manifest.get("structure", {}).get("dirs", {})
+    if not isinstance(dirs, dict):
+        return True
+
+    for rel_dir, old_mtime in dirs.items():
+        if not isinstance(rel_dir, str):
+            return True
+        dir_path = _content_path_from_label(rel_dir)
+        if not dir_path.exists() or not dir_path.is_dir():
+            return True
+        if _path_mtime_ns(dir_path) != old_mtime:
+            return True
+
+    return False
+
+
+def _refresh_content_manifest_metadata(manifest: dict[str, Any]) -> bool | None:
+    """
+    刷新已知页面的标题、描述、mtime 等元数据。
+
+    返回 None 表示已知页面文件消失，需要重新扫描结构。
+    """
+    pages = manifest.get("pages", [])
+    if not isinstance(pages, list):
+        return None
+
+    changed = False
+    refreshed_pages: list[dict[str, Any]] = []
+
+    for page in pages:
+        if not isinstance(page, dict):
+            changed = True
+            continue
+
+        rel_path = str(page.get("path", ""))
+        typ_file = CONTENT_DIR / rel_path
+        if not typ_file.exists():
+            return None
+
+        current_mtime_ns = _path_mtime_ns(typ_file)
+        current_size = typ_file.stat().st_size
+        if page.get("mtime_ns") != current_mtime_ns or page.get("bytes") != current_size:
+            page = _make_content_page_entry(typ_file)
+            changed = True
+
+        refreshed_pages.append(page)
+
+    if changed:
+        refreshed_pages.sort(key=lambda page: str(page.get("label", "")).lower())
+        manifest["pages"] = refreshed_pages
+        manifest["parents"] = _build_parent_entries_from_pages(refreshed_pages)
+        manifest["typ_paths"] = sorted((str(page["path"]) for page in refreshed_pages), key=str.lower)
+        manifest["generated_at"] = datetime.now(timezone.utc).isoformat()
+        manifest["reason"] = "metadata-refresh"
+
+    return changed
+
+
+def get_content_manifest(
+    force_rescan: bool = False,
+    update_file_metadata: bool = True,
+) -> dict[str, Any]:
+    """
+    返回 content 页面清单。
+
+    - 首次运行或 .typ 页面增删/移动时重建清单。
+    - 普通内容、标题、描述变化只刷新对应文件元数据。
+    - 目录结构未变化时，构建命令不再递归扫描 content 页面。
+    """
+    manifest = None if force_rescan else _load_content_manifest()
+    changed = False
+
+    if manifest is None:
+        structure = _scan_content_structure()
+        manifest = _new_content_manifest(structure, "initial-scan")
+        changed = True
+    elif _needs_content_structure_probe(manifest):
+        structure = _scan_content_structure()
+        new_typ_paths = structure.get("typ_paths", [])
+        old_typ_paths = manifest.get("typ_paths", [])
+
+        if new_typ_paths != old_typ_paths:
+            manifest = _new_content_manifest(structure, "structure-changed")
+        else:
+            manifest["structure"] = {"dirs": structure.get("dirs", {})}
+            manifest["generated_at"] = datetime.now(timezone.utc).isoformat()
+            manifest["reason"] = "structure-verified"
+        changed = True
+
+    if update_file_metadata:
+        metadata_changed = _refresh_content_manifest_metadata(manifest)
+        if metadata_changed is None:
+            structure = _scan_content_structure()
+            manifest = _new_content_manifest(structure, "metadata-missing-file")
+            changed = True
+        elif metadata_changed:
+            changed = True
+
+    if changed:
+        _write_content_manifest(manifest)
+
+    return manifest
 
 
 def resolve_content_typ_path(rel_path: str) -> Path | None:
@@ -1663,6 +2077,7 @@ def read_content_page(rel_path: str) -> dict:
         "url": content_path_to_url(typ_file),
         "content": content,
         "mtime": int(typ_file.stat().st_mtime),
+        "is_pdf": "pdf" in typ_file.stem.lower(),
     }
 
 
@@ -1759,6 +2174,111 @@ def build_single_content_page(rel_path: str) -> dict:
     }
 
 
+def live_preview_content_page(rel_path: str, content: str) -> dict:
+    """
+    编译未保存的页面内容到临时 HTML，供 admin 实时预览。
+    """
+    typ_file = resolve_content_typ_path(rel_path)
+    if typ_file is None:
+        return {"ok": False, "message": "无效的页面路径。"}
+    if not typ_file.exists():
+        return {"ok": False, "message": f"页面不存在: {rel_path}"}
+    if "pdf" in typ_file.stem.lower():
+        return {"ok": False, "message": "PDF 类型页面暂不支持 HTML 实时预览。"}
+
+    page_path, output_path, preview_url = _admin_preview_target_for_content_page(typ_file)
+
+    temp_source = typ_file.parent / f"_admin-preview-{time.time_ns()}.typ"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        temp_source.write_text(content, encoding="utf-8")
+        args = [
+            "compile",
+            "--root",
+            ".",
+            "--font-path",
+            str(ASSETS_DIR),
+            "--features",
+            "html",
+            "--format",
+            "html",
+            "--input",
+            f"page-path={page_path}",
+            str(temp_source),
+            str(output_path),
+        ]
+
+        if not run_typst_command(args):
+            return {"ok": False, "message": "实时预览编译失败，请查看终端 Typst 错误。"}
+    except Exception as e:
+        return {"ok": False, "message": f"实时预览失败: {e}"}
+    finally:
+        try:
+            temp_source.unlink()
+        except OSError:
+            pass
+
+    return {
+        "ok": True,
+        "message": "实时预览已更新。",
+        "url": preview_url,
+        "output": str(output_path),
+    }
+
+
+def _admin_preview_target_for_content_page(typ_file: Path) -> tuple[str, Path, str]:
+    """
+    返回 admin 实时预览所需的 Typst page-path、输出 HTML 和预览 URL。
+    """
+    rel = typ_file.relative_to(CONTENT_DIR)
+    if rel.name == "index.typ":
+        page_path = rel.parent.as_posix()
+        if page_path == ".":
+            page_path = ""
+        output_path = SITE_DIR / rel.parent / "_admin-preview.html"
+        preview_url = f"{content_path_to_url(typ_file).rstrip('/')}/_admin-preview.html"
+    else:
+        page_path = rel.with_suffix("").as_posix()
+        output_path = SITE_DIR / rel.with_name(f"{rel.stem}.admin-preview.html")
+        preview_url = "/" + output_path.relative_to(SITE_DIR).as_posix()
+
+    return page_path, output_path, preview_url
+
+
+def discard_content_page_preview(rel_path: str) -> dict:
+    """
+    清理当前页面的 admin 临时预览产物。
+    """
+    typ_file = resolve_content_typ_path(rel_path)
+    if typ_file is None:
+        return {"ok": False, "message": "无效的页面路径。"}
+    if not typ_file.exists():
+        return {"ok": False, "message": f"页面不存在: {rel_path}"}
+
+    deleted_files: list[str] = []
+
+    try:
+        if "pdf" not in typ_file.stem.lower():
+            _, output_path, _ = _admin_preview_target_for_content_page(typ_file)
+            if output_path.exists():
+                output_path.unlink()
+                deleted_files.append(str(output_path))
+
+        for temp_source in typ_file.parent.glob("_admin-preview-*.typ"):
+            if temp_source.is_file():
+                temp_source.unlink()
+                deleted_files.append(str(temp_source))
+    except Exception as e:
+        return {"ok": False, "message": f"清理临时预览失败: {e}"}
+
+    return {
+        "ok": True,
+        "message": "已放弃修改并清理临时预览。" if deleted_files else "已放弃修改。",
+        "deleted": deleted_files,
+    }
+
+
 def escape_typst_string(value: str) -> str:
     """
     对 Typst 字符串中的特殊字符进行转义。
@@ -1790,6 +2310,8 @@ def parse_sections(index_path: Path) -> list[str]:
         if heading is None:
             continue
         _, section = heading
+        if section.startswith("#link("):
+            continue
         if section and section not in sections:
             sections.append(section)
 
@@ -1811,7 +2333,7 @@ def _parse_typst_section_heading(line: str) -> tuple[int, str] | None:
     return level, match.group(2).strip()
 
 
-def build_content_post_typ_content(
+def build_content_page_typ_content(
     title: str,
     description: str,
     date_str: str,
@@ -1836,6 +2358,50 @@ def build_content_post_typ_content(
         ")\n\n"
         f"= {title}\n\n"
     )
+
+
+def build_content_post_typ_content(
+    title: str,
+    description: str,
+    date_str: str,
+    lang: str,
+) -> str:
+    """
+    兼容旧的 admin 调用名称。
+    """
+    return build_content_page_typ_content(title, description, date_str, lang)
+
+
+def _section_line_range(lines: list[str], section: str | None) -> tuple[int, int]:
+    """
+    返回指定分组正文范围。未指定分组时返回全文范围。
+    """
+    if not section:
+        return 0, len(lines)
+
+    start_idx: int | None = None
+    section_level: int | None = None
+    for idx, line in enumerate(lines):
+        heading = _parse_typst_section_heading(line)
+        if heading is None:
+            continue
+        level, title = heading
+        if title == section:
+            start_idx = idx
+            section_level = level
+            break
+
+    if start_idx is None or section_level is None:
+        return 0, len(lines)
+
+    end_idx = len(lines)
+    for idx in range(start_idx + 1, len(lines)):
+        heading = _parse_typst_section_heading(lines[idx])
+        if heading is not None and heading[0] <= section_level:
+            end_idx = idx
+            break
+
+    return start_idx + 1, end_idx
 
 
 def _find_insert_anchor(lines: list[str], section: str | None) -> int:
@@ -1879,21 +2445,78 @@ def _find_insert_anchor(lines: list[str], section: str | None) -> int:
     return insert_idx
 
 
-def _infer_index_link_prefix(lines: list[str]) -> str:
+def _infer_index_link_style(lines: list[str], section: str | None) -> tuple[str, int | None]:
     """
-    根据栏目首页里已有链接格式推断新链接是否应使用列表项前缀。
+    根据父级页面里已有链接格式推断新链接样式。
     """
     bullet_links = 0
     bare_links = 0
+    heading_links: dict[int, int] = {}
 
-    for line in lines:
+    start_idx, end_idx = _section_line_range(lines, section)
+    scoped_lines = lines[start_idx:end_idx] or lines
+
+    for line in scoped_lines:
         stripped = line.strip()
         if re.match(r"^-\s+#link\(", stripped):
             bullet_links += 1
-        elif re.match(r"^#link\(", stripped):
+            continue
+        heading_match = re.match(r"^(=+)\s+#link\(", stripped)
+        if heading_match:
+            level = len(heading_match.group(1))
+            heading_links[level] = heading_links.get(level, 0) + 1
+            continue
+        if re.match(r"^#link\(", stripped):
             bare_links += 1
 
-    return "- " if bullet_links > bare_links else ""
+    if heading_links:
+        best_level, best_count = sorted(
+            heading_links.items(),
+            key=lambda item: (-item[1], item[0]),
+        )[0]
+        if best_count >= max(bullet_links, bare_links):
+            return "heading", best_level
+
+    if bullet_links > bare_links:
+        return "bullet", None
+
+    return "bare", None
+
+
+def _format_index_link_line(lines: list[str], link_target: str, link_text: str, section: str | None) -> str:
+    """
+    按父级页面当前风格生成目录链接行。
+    """
+    style, heading_level = _infer_index_link_style(lines, section)
+    link_markup = f'#link("{link_target}")[{link_text}]'
+
+    if style == "bullet":
+        return f"- {link_markup}"
+    if style == "heading" and heading_level:
+        return f"{'=' * heading_level} {link_markup}"
+
+    return link_markup
+
+
+def _link_target_for_parent(parent_path: str, slug: str) -> str:
+    """
+    根据父级路径生成适合写入该父级 index.typ 的链接目标。
+    """
+    if parent_path.strip().strip("/") == "":
+        return f"/{slug}/"
+
+    return f"{slug}/"
+
+
+def _page_url_for_parent(parent_path: str, slug: str) -> str:
+    """
+    根据父级路径生成新页面 URL。
+    """
+    clean_parent = parent_path.strip().strip("/")
+    if not clean_parent:
+        return f"/{slug}/"
+
+    return f"/{clean_parent}/{slug}/"
 
 
 def upsert_index_link(
@@ -1901,22 +2524,23 @@ def upsert_index_link(
     slug: str,
     link_text: str,
     section: str | None,
+    parent_path: str = "",
 ) -> tuple[bool, str]:
     """
-    在栏目首页中插入新文章链接；若链接已存在则跳过。
+    在父级页面中插入新页面链接；若链接已存在则跳过。
     """
     if not index_path.exists():
-        return False, f"栏目首页不存在: {index_path}"
+        return False, f"父级页面不存在: {index_path}"
 
     original = index_path.read_text(encoding="utf-8")
     lines = original.splitlines()
 
-    link_prefix = _infer_index_link_prefix(lines)
-    target_line = f'{link_prefix}#link("{slug}/")[{link_text}]'
-    slug_marker = f'#link("{slug}/")'
+    link_target = _link_target_for_parent(parent_path, slug)
+    target_line = _format_index_link_line(lines, link_target, link_text, section)
+    slug_marker = f'#link("{link_target}")'
 
     if any(slug_marker in line for line in lines):
-        return True, "栏目首页已有同 slug 链接，已跳过插入。"
+        return True, "父级目录已有同 slug 链接，已跳过插入。"
 
     insert_idx = _find_insert_anchor(lines, section)
 
@@ -1929,7 +2553,99 @@ def upsert_index_link(
     new_content = "\n".join(new_lines).rstrip() + "\n"
 
     index_path.write_text(new_content, encoding="utf-8")
-    return True, "已更新栏目首页链接。"
+    return True, "已更新父级目录链接。"
+
+
+def create_content_page(
+    parent_path: str,
+    title: str,
+    slug: str,
+    description: str,
+    date_str: str,
+    lang: str,
+    link_text: str,
+    section: str | None = None,
+) -> dict:
+    """
+    创建指定父级下的新页面并自动登记到父级 index.typ。
+    """
+    parent_dir = resolve_content_dir_path(parent_path)
+    if parent_dir is None:
+        return {"ok": False, "message": "无效的父级页面。"}
+    if not parent_dir.exists() or not parent_dir.is_dir():
+        return {"ok": False, "message": f"父级目录不存在: {parent_dir}"}
+
+    parent_index = parent_dir / "index.typ"
+    if not parent_index.exists():
+        return {"ok": False, "message": f"父级页面不存在: {parent_index}"}
+
+    parent_rel = parent_dir.relative_to(CONTENT_DIR)
+    parent_rel_path = "" if parent_rel == Path(".") else parent_rel.as_posix()
+
+    cleaned_slug = slugify(slug or title)
+    if not cleaned_slug:
+        return {"ok": False, "message": "slug 为空。请提供标题或可用 slug。"}
+    if cleaned_slug.startswith("_"):
+        return {"ok": False, "message": "slug 不能以下划线开头。"}
+    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", cleaned_slug):
+        return {"ok": False, "message": "slug 只允许小写字母、数字和连字符。"}
+
+    post_dir = parent_dir / cleaned_slug
+    post_file = post_dir / "index.typ"
+    if post_dir.exists() or post_file.exists():
+        return {"ok": False, "message": f"目标页面目录已存在: {post_dir}"}
+
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        return {"ok": False, "message": "日期格式错误，请使用 YYYY-MM-DD。"}
+
+    try:
+        post_dir.mkdir(parents=True, exist_ok=False)
+        post_content = build_content_page_typ_content(
+            title.strip(),
+            description.strip(),
+            date_str,
+            lang.strip(),
+        )
+        post_file.write_text(post_content, encoding="utf-8")
+    except Exception as e:
+        return {"ok": False, "message": f"创建页面文件失败: {e}"}
+
+    if parent_index.exists():
+        inserted, msg = upsert_index_link(
+            index_path=parent_index,
+            slug=cleaned_slug,
+            link_text=link_text.strip() or title.strip(),
+            section=(section.strip() if section else None),
+            parent_path=parent_rel_path,
+        )
+        if not inserted:
+            try:
+                if post_file.exists():
+                    post_file.unlink()
+                if post_dir.exists():
+                    post_dir.rmdir()
+            except Exception:
+                pass
+            return {"ok": False, "message": msg}
+    else:
+        msg = "当前父级无 index.typ，已仅创建页面文件。"
+
+    return {
+        "ok": True,
+        "message": (
+            "页面已创建，并已更新父级目录。"
+            if parent_index.exists()
+            else "页面已创建，未更新父级目录（index.typ 不存在）。"
+        ),
+        "slug": cleaned_slug,
+        "parent_path": parent_rel_path,
+        "page_path": post_file.relative_to(CONTENT_DIR).as_posix(),
+        "post_file": str(post_file),
+        "post_url": _page_url_for_parent(parent_rel_path, cleaned_slug),
+        "index_update": msg,
+    }
 
 
 def create_content_post(
@@ -1943,81 +2659,18 @@ def create_content_post(
     section: str | None = None,
 ) -> dict:
     """
-    创建指定栏目文章并自动登记到对应栏目首页。
+    兼容旧接口：一级 category 等同于父级页面路径。
     """
-    groups = set(list_content_groups())
-    if category not in groups:
-        return {"ok": False, "message": f"不支持的分类: {category}"}
-
-    category_dir = CONTENT_DIR / category
-    category_index = category_dir / "index.typ"
-
-    if not category_dir.exists():
-        return {"ok": False, "message": f"栏目目录不存在: {category_dir}"}
-
-    cleaned_slug = slugify(slug or title)
-    if not cleaned_slug:
-        return {"ok": False, "message": "slug 为空。请提供标题或可用 slug。"}
-    if cleaned_slug.startswith("_"):
-        return {"ok": False, "message": "slug 不能以下划线开头。"}
-    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", cleaned_slug):
-        return {"ok": False, "message": "slug 只允许小写字母、数字和连字符。"}
-
-    post_dir = category_dir / cleaned_slug
-    post_file = post_dir / "index.typ"
-    if post_dir.exists() or post_file.exists():
-        return {"ok": False, "message": f"目标文章目录已存在: {post_dir}"}
-
-    try:
-        datetime.strptime(date_str, "%Y-%m-%d")
-    except ValueError:
-        return {"ok": False, "message": "日期格式错误，请使用 YYYY-MM-DD。"}
-
-    try:
-        post_dir.mkdir(parents=True, exist_ok=False)
-        post_content = build_content_post_typ_content(
-            title.strip(),
-            description.strip(),
-            date_str,
-            lang.strip(),
-        )
-        post_file.write_text(post_content, encoding="utf-8")
-    except Exception as e:
-        return {"ok": False, "message": f"创建文章文件失败: {e}"}
-
-    if category_index.exists():
-        inserted, msg = upsert_index_link(
-            index_path=category_index,
-            slug=cleaned_slug,
-            link_text=link_text.strip() or title.strip(),
-            section=(section.strip() if section else None),
-        )
-        if not inserted:
-            try:
-                if post_file.exists():
-                    post_file.unlink()
-                if post_dir.exists():
-                    post_dir.rmdir()
-            except Exception:
-                pass
-            return {"ok": False, "message": msg}
-    else:
-        msg = "当前栏目无 index.typ，已仅创建文章文件。"
-
-    return {
-        "ok": True,
-        "message": (
-            "文章已创建，并已更新栏目首页。"
-            if category_index.exists()
-            else "文章已创建，未更新栏目首页（index.typ 不存在）。"
-        ),
-        "slug": cleaned_slug,
-        "category": category,
-        "page_path": post_file.relative_to(CONTENT_DIR).as_posix(),
-        "post_file": str(post_file),
-        "post_url": f"/{category}/{cleaned_slug}/",
-        "index_update": msg,
-    }
+    return create_content_page(
+        parent_path=category,
+        title=title,
+        slug=slug,
+        description=description,
+        date_str=date_str,
+        lang=lang,
+        link_text=link_text,
+        section=section,
+    )
 
 
 def get_sections_by_group(groups: list[str]) -> dict[str, list[str]]:
@@ -2031,17 +2684,27 @@ def get_sections_by_group(groups: list[str]) -> dict[str, list[str]]:
     return result
 
 
+def get_sections_by_parent_path(parents: list[dict[str, str | int]] | None = None) -> dict[str, list[str]]:
+    """
+    获取每个可作为父级的页面目录分组。
+    """
+    result: dict[str, list[str]] = {}
+    for parent in parents or collect_content_parent_dirs():
+        parent_path = str(parent.get("path", ""))
+        parent_dir = resolve_content_dir_path(parent_path)
+        if parent_dir is None:
+            continue
+        result[parent_path] = parse_sections(parent_dir / "index.typ")
+    return result
+
+
 def admin_panel_html(sections_by_group: dict[str, list[str]], default_date: str) -> str:
     """
     返回本地管理面板 HTML。
     """
     groups = sorted(sections_by_group.keys())
     category_options = []
-    if "Blog" in sections_by_group:
-        category_options.append('<option value="Blog">Blog</option>')
     for group in groups:
-        if group == "Blog":
-            continue
         escaped = html.escape(group)
         category_options.append(f'<option value="{escaped}">{escaped}</option>')
     category_options_html = "\n          ".join(category_options)
@@ -2338,21 +3001,27 @@ def admin_panel_html(sections_by_group: dict[str, list[str]], default_date: str)
 """
 
 
-def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: str) -> str:
+def admin_panel_html_v2(sections_by_parent: dict[str, list[str]], default_date: str) -> str:
     """
     返回支持全站 content 页面管理的本地管理面板 HTML。
     """
-    groups = sorted(sections_by_group.keys())
-    category_options = []
-    if "Blog" in sections_by_group:
-        category_options.append('<option value="Blog">Blog</option>')
-    for group in groups:
-        if group == "Blog":
-            continue
-        escaped = html.escape(group)
-        category_options.append(f'<option value="{escaped}">{escaped}</option>')
+    parents = sort_content_parents(collect_content_parent_dirs())
+    default_parent = default_content_parent_path(parents)
+    parent_options = []
+    for parent in parents:
+        value = html.escape(str(parent.get("path", "")))
+        depth = int(parent.get("depth", 0))
+        title = str(parent.get("title") or parent.get("label") or "Home")
+        label = str(parent.get("label") or "Home")
+        prefix = "  " * depth
+        selected = " selected" if parent.get("path") == default_parent else ""
+        parent_options.append(
+            f'<option value="{value}"{selected}>{html.escape(prefix + title)}'
+            f' · {html.escape(label if label != "Home" else "/")}</option>'
+        )
 
-    sections_json = json.dumps(sections_by_group, ensure_ascii=False).replace("</", "<\\/")
+    sections_json = json.dumps(sections_by_parent, ensure_ascii=False).replace("</", "<\\/")
+    parents_json = json.dumps(parents, ensure_ascii=False).replace("</", "<\\/")
     pages_json = json.dumps(collect_content_pages(), ensure_ascii=False).replace("</", "<\\/")
 
     page = """<!doctype html>
@@ -2363,25 +3032,39 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
   <title>内容管理面板</title>
   <style>
     :root {
-      --bg: #f6f7f4;
-      --surface: #ffffff;
-      --surface-alt: #f0f4f6;
-      --ink: #1f2933;
-      --muted: #637083;
-      --accent: #176b87;
-      --accent-strong: #0f4f67;
-      --accent-soft: #e4f2f6;
-      --error: #9f1d35;
-      --ok: #146c43;
-      --border: #d7dee6;
-      --shadow: 0 12px 28px rgba(31, 41, 51, 0.08);
+      --canvas: #faf9f5;
+      --surface-soft: #f5f0e8;
+      --surface-card: #efe9de;
+      --surface-strong: #e8e0d2;
+      --surface-dark: #181715;
+      --surface-dark-elevated: #252320;
+      --surface-dark-soft: #1f1e1b;
+      --ink: #141413;
+      --body: #3d3d3a;
+      --muted: #6c6a64;
+      --muted-soft: #8e8b82;
+      --primary: #cc785c;
+      --primary-active: #a9583e;
+      --primary-disabled: #e6dfd8;
+      --teal: #5db8a6;
+      --amber: #e8a55a;
+      --ok: #5db872;
+      --warning: #d4a017;
+      --error: #c64545;
+      --hairline: #e6dfd8;
+      --hairline-soft: #ebe6df;
+      --on-primary: #ffffff;
+      --on-dark: #faf9f5;
+      --on-dark-soft: #a09d96;
+      --shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
+      --header-h: 64px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--bg);
-      font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      background: var(--canvas);
+      font-family: Inter, "Avenir Next", "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
       min-height: 100vh;
     }
     button, input, select, textarea { font: inherit; }
@@ -2396,60 +3079,68 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 16px 20px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      gap: 24px;
+      min-height: var(--header-h);
+      padding: 0 20px;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--hairline);
       position: sticky;
       top: 0;
       z-index: 10;
     }
+    .brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--canvas);
+      font-family: Georgia, serif;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
     h1 {
       margin: 0;
-      font-size: 1.35rem;
+      font-family: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 500;
       line-height: 1.2;
-      letter-spacing: 0;
+      letter-spacing: -0.02em;
     }
     .subtle {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       line-height: 1.45;
+      overflow-wrap: anywhere;
     }
-    .tabbar {
-      display: inline-flex;
+    .topbar-actions {
+      display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      flex: 0 0 auto;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .tabbar button {
-      width: auto;
-      border: 0;
-      border-radius: 6px;
-      background: transparent;
+    .summary {
       color: var(--muted);
-      padding: 8px 12px;
-      font-weight: 650;
+      font-size: 0.875rem;
+      white-space: nowrap;
     }
-    .tabbar button.active {
-      background: var(--surface);
-      color: var(--ink);
-      box-shadow: 0 1px 4px rgba(31, 41, 51, 0.12);
-    }
-    .tab-panel { display: none; min-height: 0; }
-    .tab-panel.active { display: grid; }
-    .pages-layout {
-      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    .admin-shell {
       min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
     }
     .sidebar {
       min-height: 0;
-      padding: 16px;
-      border-right: 1px solid var(--border);
-      background: #fbfcfd;
+      padding: 16px 14px;
+      border-right: 1px solid var(--hairline);
+      background: var(--surface-soft);
       display: grid;
       grid-template-rows: auto auto minmax(0, 1fr);
       gap: 12px;
@@ -2477,21 +3168,22 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     .page-row {
       width: 100%;
       text-align: left;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
-      padding: 10px;
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      background: var(--canvas);
+      padding: 11px 12px;
       color: var(--ink);
       display: grid;
       gap: 4px;
+      box-shadow: none;
     }
     .page-row:hover,
     .page-row.active {
-      border-color: var(--accent);
-      background: var(--accent-soft);
+      border-color: var(--primary);
+      background: var(--surface-card);
     }
     .page-row-title {
-      font-weight: 700;
+      font-weight: 500;
       line-height: 1.25;
       overflow-wrap: anywhere;
     }
@@ -2506,24 +3198,26 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       display: inline-flex;
       align-items: center;
       max-width: 100%;
-      min-height: 24px;
-      padding: 2px 8px;
+      min-height: 26px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface-alt);
-      color: var(--muted);
-      font-size: 0.78rem;
+      border: 1px solid var(--hairline);
+      background: var(--surface-card);
+      color: var(--ink);
+      font-size: 0.8125rem;
+      font-weight: 500;
       line-height: 1.2;
       overflow-wrap: anywhere;
     }
-    .editor {
+    .workspace {
       min-height: 0;
       padding: 16px;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
       gap: 12px;
+      background: var(--canvas);
     }
-    .editor-toolbar {
+    .workspace-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -2555,6 +3249,17 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
       gap: 8px;
+      border-radius: 12px;
+      border: 1px solid var(--hairline);
+      overflow: hidden;
+    }
+    .source-pane {
+      background: var(--surface-dark);
+      border-color: var(--surface-dark);
+      color: var(--on-dark);
+    }
+    .preview-pane {
+      background: var(--canvas);
     }
     .pane-heading {
       display: flex;
@@ -2563,18 +3268,48 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       gap: 8px;
       color: var(--muted);
       font-size: 0.88rem;
-      min-height: 28px;
+      min-height: 40px;
+      padding: 10px 12px 0;
+    }
+    .source-pane .pane-heading {
+      color: var(--on-dark-soft);
+    }
+    .pane-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .preview-link {
-      color: var(--accent);
+      color: var(--primary);
       text-decoration: none;
-      font-weight: 650;
+      font-weight: 500;
     }
-    .preview-link:hover { text-decoration: underline; }
-    .empty-state {
-      border: 1px dashed var(--border);
+    .toggle-control {
+      width: auto;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      padding: 6px 9px;
+      border: 1px solid var(--hairline);
       border-radius: 8px;
-      background: var(--surface);
+      background: var(--canvas);
+      color: var(--ink);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .toggle-control input {
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+    .empty-state {
+      border: 1px dashed var(--hairline);
+      border-radius: 12px;
+      background: var(--surface-soft);
       color: var(--muted);
       display: grid;
       place-items: center;
@@ -2587,21 +3322,54 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px 16px;
     }
-    .create-layout {
-      place-items: start center;
-      padding: 24px;
+    .create-dialog {
+      width: min(820px, calc(100vw - 32px));
+      border: 1px solid var(--hairline);
+      border-radius: 16px;
+      padding: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      box-shadow: 0 24px 80px rgba(20, 20, 19, 0.24);
     }
-    .create-panel {
-      width: min(860px, 100%);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+    .create-dialog::backdrop {
+      background: rgba(20, 20, 19, 0.36);
+    }
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .dialog-header h2 {
+      margin: 0;
+      font-family: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+    .dialog-body {
       padding: 20px;
-      box-shadow: var(--shadow);
     }
-    .create-panel h2 {
-      margin: 0 0 14px;
-      font-size: 1.15rem;
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      grid-column: span 2;
+      flex-wrap: wrap;
+    }
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
+      color: var(--ink);
+      font-weight: 500;
       letter-spacing: 0;
     }
     .span-2 { grid-column: span 2; }
@@ -2616,18 +3384,19 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     textarea {
       width: 100%;
       border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #fff;
+      border: 1px solid var(--hairline);
+      background: var(--canvas);
       color: var(--ink);
       padding: 10px 12px;
       outline: none;
+      min-height: 40px;
       transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
     }
     input:focus,
     select:focus,
     textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.14);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.15);
     }
     textarea {
       min-height: 84px;
@@ -2641,45 +3410,49 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       font-size: 0.9rem;
       line-height: 1.55;
       tab-size: 2;
-      white-space: pre;
-      overflow: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      overflow-x: hidden;
+      overflow-y: auto;
+      border: 0;
+      border-radius: 0;
+      background: var(--surface-dark-soft);
+      color: var(--on-dark);
+      padding: 14px 16px;
+      box-shadow: none;
     }
     iframe {
       width: 100%;
       height: 100%;
       min-height: 420px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      border: 0;
       background: #fff;
     }
     .primary,
     .secondary,
     .ghost {
       width: auto;
-      min-height: 38px;
+      min-height: 40px;
       border-radius: 8px;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      font-weight: 650;
+      padding: 10px 14px;
+      border: 1px solid var(--hairline);
+      font-size: 0.875rem;
+      font-weight: 500;
       white-space: nowrap;
     }
     .primary {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #f7fbf9;
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--on-primary);
     }
-    .primary:hover {
-      background: var(--accent-strong);
-      border-color: var(--accent-strong);
+    .primary:active {
+      background: var(--primary-active);
+      border-color: var(--primary-active);
     }
     .secondary {
-      background: var(--surface);
+      background: var(--canvas);
       color: var(--ink);
-    }
-    .secondary:hover,
-    .ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent-strong);
     }
     .ghost {
       background: transparent;
@@ -2695,13 +3468,13 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     .status[hidden] { display: none; }
     .status.ok {
       background: #edf9f2;
-      color: var(--ok);
-      border: 1px solid #b6e7c9;
+      color: #27633a;
+      border: 1px solid rgba(93, 184, 114, 0.42);
     }
     .status.error {
-      background: #fff1f3;
+      background: #fff1ef;
       color: var(--error);
-      border: 1px solid #efb3bc;
+      border: 1px solid rgba(198, 69, 69, 0.32);
     }
     .hint {
       margin-top: 10px;
@@ -2709,8 +3482,8 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       color: var(--muted);
     }
     code {
-      background: #f7f2ea;
-      border: 1px solid var(--border);
+      background: var(--surface-card);
+      border: 1px solid var(--hairline);
       border-radius: 8px;
       padding: 2px 6px;
       font-family: "JetBrains Mono", "Cascadia Code", monospace;
@@ -2735,17 +3508,20 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       .topbar {
         align-items: stretch;
         flex-direction: column;
+        padding: 14px 16px;
       }
-      .tabbar { width: 100%; }
-      .tabbar button { flex: 1 1 0; }
-      .pages-layout { grid-template-columns: 1fr; }
+      .topbar-actions { align-items: stretch; }
+      .summary { white-space: normal; }
+      .admin-shell { grid-template-columns: 1fr; }
       .sidebar {
         border-right: 0;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--hairline);
         max-height: 46vh;
       }
+      .workspace { padding: 12px; }
       form { grid-template-columns: 1fr; }
       .span-2 { grid-column: span 1; }
+      .dialog-footer { grid-column: span 1; }
       .actions { justify-content: stretch; }
       .actions button { flex: 1 1 140px; }
     }
@@ -2754,17 +3530,20 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
 <body>
   <div class="app">
     <header class="topbar">
-      <div>
-        <h1>内容管理面板</h1>
-        <div class="subtle">content/ 页面编辑与本地预览</div>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">*</span>
+        <div>
+          <h1>Admin</h1>
+          <div class="subtle">content 页面编辑与本地预览</div>
+        </div>
       </div>
-      <nav class="tabbar" aria-label="管理区域">
-        <button type="button" class="active" data-tab="pages">页面管理</button>
-        <button type="button" data-tab="create">新建文章</button>
-      </nav>
+      <div class="topbar-actions">
+        <span id="shell-summary" class="summary"></span>
+        <button id="create-page" class="primary" type="button">新建页面</button>
+      </div>
     </header>
 
-    <main id="pages-panel" class="tab-panel pages-layout active">
+    <main class="admin-shell">
       <aside class="sidebar">
         <div class="filters">
           <label class="sr-only" for="page-search">搜索页面</label>
@@ -2783,17 +3562,17 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
         <div id="page-list" class="page-list"></div>
       </aside>
 
-      <section class="editor">
-        <div class="editor-toolbar">
+      <section class="workspace">
+        <div class="workspace-toolbar">
           <div class="page-title">
             <strong id="selected-title">未选择页面</strong>
             <span id="selected-path" class="subtle"></span>
           </div>
           <div class="actions">
             <button id="save-page" class="primary" type="button" disabled>保存</button>
+            <button id="discard-page" class="ghost" type="button" disabled>放弃修改</button>
             <button id="save-build-page" class="secondary" type="button" disabled>保存并构建</button>
             <button id="build-page" class="secondary" type="button" disabled>构建预览</button>
-            <button id="open-preview" class="ghost" type="button" disabled>打开预览</button>
           </div>
         </div>
 
@@ -2803,12 +3582,18 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
               <span>源码</span>
               <span id="page-meta"></span>
             </div>
-            <textarea id="page-content" class="source-editor" spellcheck="false"></textarea>
+            <textarea id="page-content" class="source-editor" spellcheck="false" wrap="soft"></textarea>
           </div>
           <div class="preview-pane">
             <div class="pane-heading">
               <span>预览</span>
-              <a id="preview-link" class="preview-link" href="#" target="_blank" rel="noopener">新窗口</a>
+              <div class="pane-actions">
+                <label class="toggle-control" for="auto-preview">
+                  <input id="auto-preview" type="checkbox" checked />
+                  <span>自动预览</span>
+                </label>
+                <a id="preview-link" class="preview-link" href="#" target="_blank" rel="noopener">新窗口</a>
+              </div>
             </div>
             <iframe id="preview-frame" title="页面预览"></iframe>
           </div>
@@ -2818,22 +3603,27 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       </section>
     </main>
 
-    <main id="create-panel" class="tab-panel create-layout">
-      <section class="create-panel">
-        <h2>新建文章</h2>
+    <dialog id="create-dialog" class="create-dialog">
+      <div class="dialog-header">
+        <div>
+          <h2>新建页面</h2>
+        </div>
+        <button id="close-create" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="dialog-body">
         <form id="post-form">
           <div class="span-2">
             <label for="title">标题</label>
             <input id="title" name="title" required placeholder="例如：Typst 实战笔记" />
           </div>
           <div>
-            <label for="category">目标分类</label>
-            <select id="category" name="category" required>
-              __CATEGORY_OPTIONS__
+            <label for="parent-path">父级页面</label>
+            <select id="parent-path" name="parent_path">
+              __PARENT_OPTIONS__
             </select>
           </div>
           <div>
-            <label for="slug">Slug（可留空自动生成）</label>
+            <label for="slug">目录名 Slug</label>
             <input id="slug" name="slug" placeholder="例如：typst-notes" />
           </div>
           <div>
@@ -2849,26 +3639,28 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
             <input id="lang" name="lang" required value="zh" />
           </div>
           <div>
-            <label for="link_text">目录页显示文案（默认同标题）</label>
+            <label for="link_text">目录文案</label>
             <input id="link_text" name="link_text" placeholder="例如：Typst 实战笔记" />
           </div>
           <div class="span-2">
-            <label for="section">目录页分组（来自该分类的 <code>==/===</code> 小节）</label>
+            <label for="section">目录分组</label>
             <select id="section" name="section">
               <option value="">(不指定分组，追加到末尾)</option>
             </select>
           </div>
-          <div class="span-2">
-            <button class="primary" type="submit">创建文章并更新目录</button>
+          <div class="dialog-footer">
+            <button id="cancel-create" class="ghost" type="button">取消</button>
+            <button id="submit-create" class="primary" type="submit">创建页面</button>
           </div>
         </form>
         <div id="create-status" class="status" hidden></div>
-        <p class="hint">面板默认只监听 <code>127.0.0.1</code>。停止服务直接在终端按 <code>Ctrl+C</code>。</p>
-      </section>
-    </main>
+      </div>
+    </dialog>
   </div>
   <script>
-    const sectionsByGroup = __SECTIONS_JSON__;
+    let sectionsByParent = __SECTIONS_JSON__;
+    let parentDirs = __PARENTS_JSON__;
+    const defaultParentPath = __DEFAULT_PARENT_JSON__;
     let pages = __PAGES_JSON__;
     let currentPage = null;
     let isDirty = false;
@@ -2878,11 +3670,14 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     const pageStatus = document.getElementById("page-status");
     const titleInput = document.getElementById("title");
     const slugInput = document.getElementById("slug");
-    const categorySelect = document.getElementById("category");
+    const parentSelect = document.getElementById("parent-path");
     const sectionSelect = document.getElementById("section");
-    const tabButtons = document.querySelectorAll("[data-tab]");
-    const pagesPanel = document.getElementById("pages-panel");
-    const createPanel = document.getElementById("create-panel");
+    const shellSummary = document.getElementById("shell-summary");
+    const createPageButton = document.getElementById("create-page");
+    const createDialog = document.getElementById("create-dialog");
+    const closeCreateButton = document.getElementById("close-create");
+    const cancelCreateButton = document.getElementById("cancel-create");
+    const submitCreateButton = document.getElementById("submit-create");
     const pageSearch = document.getElementById("page-search");
     const pageGroup = document.getElementById("page-group");
     const pageList = document.getElementById("page-list");
@@ -2897,9 +3692,12 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     const previewFrame = document.getElementById("preview-frame");
     const previewLink = document.getElementById("preview-link");
     const savePageButton = document.getElementById("save-page");
+    const discardPageButton = document.getElementById("discard-page");
     const saveBuildPageButton = document.getElementById("save-build-page");
     const buildPageButton = document.getElementById("build-page");
-    const openPreviewButton = document.getElementById("open-preview");
+    const autoPreviewToggle = document.getElementById("auto-preview");
+    let livePreviewTimer = null;
+    let livePreviewSeq = 0;
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, function (char) {
@@ -2935,6 +3733,9 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     }
 
     function pageKind(page) {
+      if (page.is_pdf) {
+        return "PDF 源";
+      }
       if (page.is_home) {
         return "首页";
       }
@@ -2964,25 +3765,65 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
 
     function setWorking(button, label) {
       const original = button.textContent;
+      const wasDisabled = button.disabled;
       button.textContent = label;
       button.disabled = true;
       return () => {
         button.textContent = original;
+        button.disabled = wasDisabled;
         updatePageButtons();
       };
     }
 
-    function switchTab(tab) {
-      for (const button of tabButtons) {
-        button.classList.toggle("active", button.dataset.tab === tab);
+    function clearLivePreviewTimer() {
+      if (livePreviewTimer) {
+        clearTimeout(livePreviewTimer);
+        livePreviewTimer = null;
       }
-      pagesPanel.classList.toggle("active", tab === "pages");
-      createPanel.classList.toggle("active", tab === "create");
     }
 
-    tabButtons.forEach((button) => {
-      button.addEventListener("click", () => switchTab(button.dataset.tab));
-    });
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, options);
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        return {
+          ok: false,
+          message: `响应不是有效 JSON (${response.status})。`,
+        };
+      }
+      if (!response.ok && payload && payload.ok !== false) {
+        return {
+          ...payload,
+          ok: false,
+          message: payload.message || `请求失败 (${response.status})。`,
+        };
+      }
+      return payload;
+    }
+
+    function openCreateDialog() {
+      clearStatus(createStatus);
+      if (typeof createDialog.showModal === "function") {
+        createDialog.showModal();
+      } else {
+        createDialog.hidden = false;
+      }
+      titleInput.focus();
+    }
+
+    function closeCreateDialog() {
+      if (typeof createDialog.close === "function" && createDialog.open) {
+        createDialog.close();
+      } else {
+        createDialog.hidden = true;
+      }
+    }
+
+    function updateShellSummary() {
+      shellSummary.textContent = `${pages.length} 页 · ${parentDirs.length} 个父级`;
+    }
 
     function renderGroupOptions() {
       const selected = pageGroup.value;
@@ -3013,6 +3854,7 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
         return (!group || page.group === group) && matchesPage(page, query);
       });
 
+      updateShellSummary();
       pageCount.textContent = `${visiblePages.length} / ${pages.length}`;
 
       if (visiblePages.length === 0) {
@@ -3051,33 +3893,41 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       pageMeta.textContent = [
         formatBytes(byteLength(pageContent.value)),
         currentPage.mtime ? `修改于 ${formatTime(currentPage.mtime)}` : "",
+        currentPage.is_pdf ? "PDF 源" : "",
         isDirty ? "未保存" : "",
       ].filter(Boolean).join(" · ");
 
       const url = previewUrl(currentPage.url, currentPage.mtime || Date.now());
-      previewLink.href = url;
+      previewLink.href = currentPage.is_pdf ? "#" : url;
       editorGrid.hidden = false;
       emptyEditor.hidden = true;
     }
 
     function updatePageButtons() {
       const enabled = Boolean(currentPage);
+      const canPreview = enabled && !currentPage.is_pdf;
       savePageButton.disabled = !enabled || !isDirty;
-      saveBuildPageButton.disabled = !enabled;
-      buildPageButton.disabled = !enabled;
-      openPreviewButton.disabled = !enabled;
+      discardPageButton.disabled = !enabled || !isDirty;
+      saveBuildPageButton.disabled = !canPreview;
+      buildPageButton.disabled = !canPreview;
     }
 
     async function refreshPages() {
-      const response = await fetch("/api/pages");
-      const payload = await response.json();
-      if (!payload.ok) {
-        showStatus(pageStatus, false, payload.message || "页面列表刷新失败。");
-        return;
+      try {
+        const payload = await requestJson("/api/pages");
+        if (!payload.ok) {
+          showStatus(pageStatus, false, payload.message || "页面列表刷新失败。");
+          return;
+        }
+        pages = payload.pages || [];
+        parentDirs = payload.parents || parentDirs;
+        sectionsByParent = payload.sections || sectionsByParent;
+        renderGroupOptions();
+        renderParentOptions();
+        renderPages();
+      } catch (error) {
+        showStatus(pageStatus, false, "页面列表刷新失败，请查看终端日志。");
       }
-      pages = payload.pages || [];
-      renderGroupOptions();
-      renderPages();
     }
 
     async function loadPage(path) {
@@ -3085,11 +3935,18 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
         return;
       }
 
+      clearLivePreviewTimer();
+      livePreviewSeq += 1;
       clearStatus(pageStatus);
-      const response = await fetch(`/api/page?path=${encodeURIComponent(path)}`);
-      const payload = await response.json();
-      if (!payload.ok) {
-        showStatus(pageStatus, false, payload.message || "页面读取失败。");
+      let payload;
+      try {
+        payload = await requestJson(`/api/page?path=${encodeURIComponent(path)}`);
+        if (!payload.ok) {
+          showStatus(pageStatus, false, payload.message || "页面读取失败。");
+          return;
+        }
+      } catch (error) {
+        showStatus(pageStatus, false, "页面读取失败，请查看终端日志。");
         return;
       }
 
@@ -3097,8 +3954,13 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       pageContent.value = payload.content || "";
       isDirty = false;
       const url = previewUrl(payload.url, payload.mtime || Date.now());
-      previewFrame.src = url;
-      previewLink.href = url;
+      if (payload.is_pdf) {
+        previewFrame.removeAttribute("src");
+        previewLink.href = "#";
+      } else {
+        previewFrame.src = url;
+        previewLink.href = url;
+      }
       updateSelectedSummary();
       updatePageButtons();
       renderPages();
@@ -3108,11 +3970,17 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       if (!currentPage) {
         return false;
       }
+      if (!isDirty) {
+        if (showMessage) {
+          showStatus(pageStatus, true, "没有需要保存的修改。");
+        }
+        return true;
+      }
 
       const done = setWorking(savePageButton, "保存中");
       clearStatus(pageStatus);
       try {
-        const response = await fetch("/api/page", {
+        const payload = await requestJson("/api/page", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -3121,7 +3989,6 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
             expected_mtime: currentPage.mtime,
           }),
         });
-        const payload = await response.json();
         if (!payload.ok) {
           showStatus(pageStatus, false, payload.message || "保存失败。");
           return false;
@@ -3153,16 +4020,19 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       if (!currentPage) {
         return false;
       }
+      if (currentPage.is_pdf) {
+        showStatus(pageStatus, false, "PDF 源暂不支持 HTML 构建预览。");
+        return false;
+      }
 
       const done = setWorking(buildPageButton, "构建中");
       clearStatus(pageStatus);
       try {
-        const response = await fetch("/api/build-page", {
+        const payload = await requestJson("/api/build-page", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ path: currentPage.path }),
         });
-        const payload = await response.json();
         if (!payload.ok) {
           showStatus(pageStatus, false, payload.message || "构建失败。");
           return false;
@@ -3179,6 +4049,126 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
         return false;
       } finally {
         done();
+      }
+    }
+
+    async function discardCurrentChanges() {
+      if (!currentPage || !isDirty) {
+        return false;
+      }
+      if (!confirm("放弃当前未保存修改，并恢复为磁盘上的源文件？")) {
+        return false;
+      }
+
+      const pagePath = currentPage.path;
+      clearLivePreviewTimer();
+      livePreviewSeq += 1;
+
+      const done = setWorking(discardPageButton, "放弃中");
+      clearStatus(pageStatus);
+      try {
+        let cleanupOk = true;
+        let cleanupMessage = "";
+        try {
+          const cleanupPayload = await requestJson("/api/discard-preview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path: pagePath }),
+          });
+          cleanupOk = Boolean(cleanupPayload.ok);
+          cleanupMessage = cleanupPayload.message || "";
+        } catch (error) {
+          cleanupOk = false;
+          cleanupMessage = "临时预览清理请求失败。";
+        }
+
+        const payload = await requestJson(`/api/page?path=${encodeURIComponent(pagePath)}`);
+        if (!payload.ok) {
+          showStatus(pageStatus, false, payload.message || "页面读取失败。");
+          return false;
+        }
+
+        currentPage = payload;
+        pageContent.value = payload.content || "";
+        isDirty = false;
+        const url = previewUrl(payload.url, payload.mtime || Date.now());
+        if (payload.is_pdf) {
+          previewFrame.removeAttribute("src");
+          previewLink.href = "#";
+        } else {
+          previewFrame.src = url;
+          previewLink.href = url;
+        }
+        updateSelectedSummary();
+        updatePageButtons();
+        renderPages();
+        showStatus(
+          pageStatus,
+          cleanupOk,
+          cleanupOk ? (cleanupMessage || "已放弃修改。") : `已恢复源文件，但${cleanupMessage}`
+        );
+        return true;
+      } catch (error) {
+        showStatus(pageStatus, false, "放弃修改失败，请查看终端日志。");
+        return false;
+      } finally {
+        done();
+      }
+    }
+
+    function scheduleLivePreview() {
+      clearLivePreviewTimer();
+      if (!currentPage || currentPage.is_pdf || !autoPreviewToggle.checked) {
+        return;
+      }
+      livePreviewTimer = setTimeout(runLivePreview, 600);
+    }
+
+    async function runLivePreview() {
+      if (!currentPage || currentPage.is_pdf || !autoPreviewToggle.checked) {
+        return false;
+      }
+
+      const seq = ++livePreviewSeq;
+      const pagePath = currentPage.path;
+      const content = pageContent.value;
+      clearStatus(pageStatus);
+      pageMeta.textContent = [
+        formatBytes(byteLength(content)),
+        currentPage.mtime ? `修改于 ${formatTime(currentPage.mtime)}` : "",
+        "预览中",
+        isDirty ? "未保存" : "",
+      ].filter(Boolean).join(" · ");
+
+      try {
+        const payload = await requestJson("/api/live-preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            path: pagePath,
+            content,
+          }),
+        });
+        if (seq !== livePreviewSeq || !currentPage || currentPage.path !== pagePath) {
+          return false;
+        }
+        if (!payload.ok) {
+          showStatus(pageStatus, false, payload.message || "实时预览失败。");
+          updateSelectedSummary();
+          return false;
+        }
+
+        const url = previewUrl(payload.url, Date.now());
+        previewFrame.src = url;
+        previewLink.href = url;
+        updateSelectedSummary();
+        return true;
+      } catch (error) {
+        if (seq === livePreviewSeq) {
+          showStatus(pageStatus, false, "实时预览请求失败，请查看终端日志。");
+          updateSelectedSummary();
+        }
+        return false;
       }
     }
 
@@ -3201,9 +4191,28 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       isDirty = true;
       updateSelectedSummary();
       updatePageButtons();
+      scheduleLivePreview();
+    });
+
+    autoPreviewToggle.addEventListener("change", () => {
+      if (autoPreviewToggle.checked) {
+        scheduleLivePreview();
+      } else {
+        clearLivePreviewTimer();
+      }
+    });
+
+    createPageButton.addEventListener("click", openCreateDialog);
+    closeCreateButton.addEventListener("click", closeCreateDialog);
+    cancelCreateButton.addEventListener("click", closeCreateDialog);
+    createDialog.addEventListener("click", (event) => {
+      if (event.target === createDialog) {
+        closeCreateDialog();
+      }
     });
 
     savePageButton.addEventListener("click", () => saveCurrentPage(true));
+    discardPageButton.addEventListener("click", discardCurrentChanges);
     buildPageButton.addEventListener("click", buildCurrentPage);
     saveBuildPageButton.addEventListener("click", async () => {
       const saved = await saveCurrentPage(false);
@@ -3211,16 +4220,29 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
         await buildCurrentPage();
       }
     });
-    openPreviewButton.addEventListener("click", () => {
-      if (!currentPage) {
-        return;
+    function renderParentOptions() {
+      const previous = parentSelect.selectedIndex >= 0 ? parentSelect.value : defaultParentPath;
+      const orderedParents = [...parentDirs];
+      const options = orderedParents.map((parent) => {
+        const value = escapeHtml(parent.path || "");
+        const title = parent.title || parent.label || "Home";
+        const label = parent.label === "Home" ? "/" : parent.label;
+        const prefix = "  ".repeat(Number(parent.depth) || 0);
+        return `<option value="${value}">${escapeHtml(prefix + title)} · ${escapeHtml(label)}</option>`;
+      });
+
+      parentSelect.innerHTML = options.join("");
+      if (orderedParents.some((parent) => parent.path === previous)) {
+        parentSelect.value = previous;
+      } else if (orderedParents.some((parent) => parent.path === defaultParentPath)) {
+        parentSelect.value = defaultParentPath;
       }
-      window.open(previewUrl(currentPage.url, currentPage.mtime || Date.now()), "_blank", "noopener");
-    });
+      refreshSections();
+    }
 
     function refreshSections() {
-      const category = categorySelect.value;
-      const sections = sectionsByGroup[category] || [];
+      const parentPath = parentSelect.value || "";
+      const sections = sectionsByParent[parentPath] || [];
 
       const options = ['<option value="">(不指定分组，追加到末尾)</option>'];
       for (const section of sections) {
@@ -3230,8 +4252,7 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
       sectionSelect.innerHTML = options.join("");
     }
 
-    categorySelect.addEventListener("change", refreshSections);
-    refreshSections();
+    parentSelect.addEventListener("change", refreshSections);
 
     function toSlug(value) {
       return value
@@ -3256,31 +4277,38 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
+      const done = setWorking(submitCreateButton, "创建中");
+      clearStatus(createStatus);
 
       try {
-        const response = await fetch("/api/create-post", {
+        const payload = await requestJson("/api/create-post", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
-        const payload = await response.json();
         showStatus(createStatus, Boolean(payload.ok), payload.message || "未知响应");
         if (payload.ok && payload.slug) {
           slugInput.value = payload.slug;
         }
         if (payload.ok) {
           await refreshPages();
+          closeCreateDialog();
           if (payload.page_path) {
-            switchTab("pages");
             await loadPage(payload.page_path);
           }
+          form.reset();
+          slugInput.dataset.userEdited = "";
+          renderParentOptions();
         }
       } catch (error) {
         showStatus(createStatus, false, "请求失败，请查看终端日志。");
+      } finally {
+        done();
       }
     });
 
     renderGroupOptions();
+    renderParentOptions();
     renderPages();
     updateSelectedSummary();
     updatePageButtons();
@@ -3290,21 +4318,24 @@ def admin_panel_html_v2(sections_by_group: dict[str, list[str]], default_date: s
 """
 
     return (
-        page.replace("__CATEGORY_OPTIONS__", "\n              ".join(category_options))
+        page.replace("__PARENT_OPTIONS__", "\n              ".join(parent_options))
         .replace("__DEFAULT_DATE__", html.escape(default_date))
+        .replace("__DEFAULT_PARENT_JSON__", json.dumps(default_parent, ensure_ascii=False))
         .replace("__SECTIONS_JSON__", sections_json)
+        .replace("__PARENTS_JSON__", parents_json)
         .replace("__PAGES_JSON__", pages_json)
     )
 
 
 def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0.1") -> bool:
     """
-    启动本地内容管理面板，用于管理 content 页面和快速新建各栏目文章。
+    启动本地内容管理面板，用于管理 content 页面和快速新建页面。
     """
     groups = list_content_groups()
-    sections_by_group = get_sections_by_group(groups)
+    parents = collect_content_parent_dirs()
+    sections_by_parent = get_sections_by_parent_path(parents)
     default_date = datetime.now().strftime("%Y-%m-%d")
-    page_html = admin_panel_html_v2(sections_by_group, default_date).encode("utf-8")
+    page_html = admin_panel_html_v2(sections_by_parent, default_date).encode("utf-8")
 
     class AdminHandler(BaseHTTPRequestHandler):
         def _send_json(self, payload: dict, status: int = 200):
@@ -3381,7 +4412,15 @@ def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0
                 self._send_html(page_html)
                 return
             if path == "/api/pages":
-                self._send_json({"ok": True, "pages": collect_content_pages()})
+                current_parents = collect_content_parent_dirs()
+                self._send_json(
+                    {
+                        "ok": True,
+                        "pages": collect_content_pages(),
+                        "parents": current_parents,
+                        "sections": get_sections_by_parent_path(current_parents),
+                    }
+                )
                 return
             if path == "/api/page":
                 query = parse_qs(parsed.query)
@@ -3399,7 +4438,13 @@ def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0
 
         def do_POST(self):  # noqa: N802
             path = urlparse(self.path).path
-            if path not in {"/api/create-post", "/api/page", "/api/build-page"}:
+            if path not in {
+                "/api/create-post",
+                "/api/page",
+                "/api/build-page",
+                "/api/live-preview",
+                "/api/discard-preview",
+            }:
                 self.send_error(404, "Not Found")
                 return
 
@@ -3435,28 +4480,44 @@ def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0
                 self._send_json(result, 200 if result.get("ok") else 400)
                 return
 
+            if path == "/api/live-preview":
+                rel_path = str(payload.get("path", "")).strip()
+                content = str(payload.get("content", ""))
+                result = live_preview_content_page(rel_path, content)
+                self._send_json(result, 200 if result.get("ok") else 400)
+                return
+
+            if path == "/api/discard-preview":
+                rel_path = str(payload.get("path", "")).strip()
+                result = discard_content_page_preview(rel_path)
+                self._send_json(result, 200 if result.get("ok") else 400)
+                return
+
             title = str(payload.get("title", "")).strip()
             description = str(payload.get("description", "")).strip()
             date_str = str(payload.get("date", "")).strip()
             lang = str(payload.get("lang", "zh")).strip() or "zh"
-            category = str(payload.get("category", "")).strip()
+            parent_raw = payload.get("parent_path")
+            if parent_raw is None:
+                parent_raw = payload.get("category", "")
+            parent_path = str(parent_raw).strip()
             slug = str(payload.get("slug", "")).strip()
             section = str(payload.get("section", "")).strip()
             link_text = str(payload.get("link_text", "")).strip() or title
 
-            current_groups = set(list_content_groups())
-
             if not title:
                 self._send_json({"ok": False, "message": "标题不能为空。"}, 400)
                 return
-            if not category:
-                self._send_json({"ok": False, "message": "目标分类不能为空。"}, 400)
-                return
-            if category not in current_groups:
+            parent_dir = resolve_content_dir_path(parent_path)
+            if parent_dir is None or not parent_dir.exists() or not parent_dir.is_dir():
                 self._send_json(
-                    {"ok": False, "message": f"不支持的分类: {category}。请刷新面板后重试。"},
+                    {"ok": False, "message": f"无效父级页面: {parent_path or '/'}。请刷新面板后重试。"},
                     400,
                 )
+                return
+            parent_index = parent_dir / "index.typ"
+            if not parent_index.exists():
+                self._send_json({"ok": False, "message": f"父级页面不存在: {parent_index}"}, 400)
                 return
             if not description:
                 self._send_json({"ok": False, "message": "描述不能为空。"}, 400)
@@ -3465,19 +4526,19 @@ def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0
                 self._send_json({"ok": False, "message": "日期不能为空。"}, 400)
                 return
 
-            current_sections = parse_sections(CONTENT_DIR / category / "index.typ")
+            current_sections = parse_sections(parent_index)
             if section and section not in current_sections:
                 self._send_json(
                     {
                         "ok": False,
-                        "message": f"无效分组: {category} / {section}。请刷新面板后重试。",
+                        "message": f"无效分组: {parent_path or '/'} / {section}。请刷新面板后重试。",
                     },
                     400,
                 )
                 return
 
-            result = create_content_post(
-                category=category,
+            result = create_content_page(
+                parent_path=parent_path,
                 title=title,
                 slug=slug,
                 description=description,
@@ -3496,6 +4557,7 @@ def admin(port: int = 8765, open_browser_flag: bool = True, host: str = "127.0.0
     print(f"  管理面板: http://{host}:{port}/admin")
     print(f"  站点预览: http://{host}:{port}/")
     print(f"  可用分类: {', '.join(groups) if groups else '无'}")
+    print(f"  可作为父级的页面: {len(parents)} 个")
 
     if open_browser_flag:
         import webbrowser
@@ -4012,7 +5074,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     preview_parser.set_defaults(open_browser=True)
 
-    admin_parser = subparsers.add_parser("admin", help="启动本地内容管理面板（快速新建文章）")
+    admin_parser = subparsers.add_parser("admin", help="启动本地内容管理面板（编辑和新建页面）")
     admin_parser.add_argument(
         "-p", "--port", type=int, default=8765, help="管理面板端口号（默认: 8765）"
     )

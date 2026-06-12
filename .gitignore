@@ -19,6 +19,7 @@ uv.lock
 
 # local tooling
 biome.json
+.tufted-cache/
 
 # build outputs
 _site/
@@ -35,3 +36,4 @@ Thumbs.db
 
 # todo
 TODO.md
+DESIGN.md
