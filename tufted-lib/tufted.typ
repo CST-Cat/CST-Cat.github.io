@@ -3,6 +3,7 @@
 #import "notes.typ": template-notes
 #import "figures.typ": template-figures
 #import "blog-entry.typ": blog-entry
+#import "byline.typ": template-byline
 #import "layout.typ": full-width, margin-note, html-img, priority-image
 #import "links.typ": template-links
 #import "metadata.typ": metadata
@@ -19,6 +20,7 @@
   description: "",
   lang: "zh",
   date: none,
+  extra-info: none,
   website-title: "",
   website-url: none,
 
@@ -44,6 +46,7 @@
   show: template-notes
   show: template-figures
   show: template-links
+  show: template-byline.with(author: author, date: date, extra-info: extra-info)
 
   set text(lang: lang)
 
