@@ -23,6 +23,7 @@ Tufted Blog Template 构建脚本
     uv run build.py clean       # 清理生成的文件
     uv run build.py preview     # 启动本地预览服务器（默认端口 8000）
     uv run build.py admin       # 启动本地内容管理面板（编辑和新建页面）
+    uv run build.py images      # 下载文章图片并转换为 Typst 图片格式
     uv run build.py preview -p 3000  # 使用自定义端口
     uv run build.py --help      # 显示帮助信息
 
@@ -80,6 +81,7 @@ CONFIG_FILE = Path("config.typ")  # 全局配置文件
 CACHE_DIR = Path(".tufted-cache")  # 本地缓存目录（不提交）
 CONTENT_MANIFEST_FILE = CACHE_DIR / "content-manifest.json"  # content 页面结构清单
 CONTENT_MANIFEST_VERSION = 1
+IMAGE_PROCESSOR_SCRIPT = Path("scripts/process_images.py")
 
 
 @dataclass
@@ -4969,6 +4971,26 @@ Sitemap: {site_url}/sitemap.xml
         return False
 
 
+def process_article_images(
+    sources: list[str] | None = None,
+    *,
+    all_content: bool = False,
+) -> bool:
+    """下载文章图片，并把图片标记转换为 Typst 格式。"""
+    if not IMAGE_PROCESSOR_SCRIPT.exists():
+        print(f"❌ 图片处理脚本不存在: {IMAGE_PROCESSOR_SCRIPT}")
+        return False
+
+    command = [sys.executable, str(IMAGE_PROCESSOR_SCRIPT)]
+    if all_content:
+        command.append("--all")
+    command.extend(sources or [])
+
+    print("🖼️ 检查文章图片...")
+    result = subprocess.run(command)
+    return result.returncode == 0
+
+
 def build(force: bool = False) -> bool:
     """
     完整构建：HTML + PDF + 资源。
@@ -4976,6 +4998,9 @@ def build(force: bool = False) -> bool:
     参数:
         force: 是否强制重建所有文件
     """
+    if not process_article_images(all_content=True):
+        return False
+
     print("-" * 60)
     if force:
         clean()
@@ -5088,6 +5113,16 @@ def create_parser() -> argparse.ArgumentParser:
     )
     admin_parser.set_defaults(open_browser=True)
 
+    images_parser = subparsers.add_parser(
+        "images",
+        help="下载文章图片，并转换为 Typst 的 #image(...) 格式",
+    )
+    images_parser.add_argument(
+        "sources",
+        nargs="*",
+        help="指定 .typ 文件或目录；留空则处理全部文章",
+    )
+
     return parser
 
 
@@ -5127,6 +5162,12 @@ if __name__ == "__main__":
                 port=getattr(args, "port", 8765),
                 open_browser_flag=getattr(args, "open_browser", True),
                 host=getattr(args, "host", "127.0.0.1"),
+            )
+        case "images":
+            image_sources = getattr(args, "sources", [])
+            success = process_article_images(
+                sources=image_sources,
+                all_content=not image_sources,
             )
         case _:
             print(f"❌ 未知命令: {args.command}")
