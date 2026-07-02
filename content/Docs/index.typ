@@ -10,6 +10,7 @@
 
 == 2026
 
+- #link("tailscale-derp/")[自建 Tailscale DERP]
 - #link("oracle-example/")[oracle cloud一些基础操作]
 - #link("terminus-mosh/")[termius+mosh配置教程]
 - #link("komari-docker/")[docker部署komari]
