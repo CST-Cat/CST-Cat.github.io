@@ -8,7 +8,7 @@
 
 == 博客文章
 
-#link("toc-stress-test/")[左侧浮动目录压力测试文章]
+#link("10k-gif-auto-annotation/")[万张GIF大模型自动标注记录]
 
 #link("tufted-Optimize/")[Tufted-Blog-Template 优化记录]
 

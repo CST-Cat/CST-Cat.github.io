@@ -10,6 +10,7 @@
 
 == 2026
 
+- #link("windows-to-mac-apps/")[Windows 用户购入 MacBook 后推荐安装的软件]
 - #link("tailscale-derp/")[自建 Tailscale DERP]
 - #link("oracle-example/")[oracle cloud一些基础操作]
 - #link("terminus-mosh/")[termius+mosh配置教程]

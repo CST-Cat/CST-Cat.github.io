@@ -339,12 +339,14 @@ table {
 
 /* Naked tables behave like the main text column */
 section>table {
-	width: auto;
-	position: relative;
-	left: 27.5%;
-	transform: translateX(-50%);
+	display: block;
+	width: 55%;
+	max-width: 55%;
 	margin-left: 0;
 	margin-right: 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+	box-sizing: border-box;
 }
 
 table th,
@@ -377,8 +379,8 @@ table tbody tr:hover {
 
 	/* Reset naked table positioning on mobile */
 	section>table {
-		left: 0;
-		transform: none;
+		width: 100%;
+		max-width: 100%;
 		margin: 1.5em auto;
 	}
 
@@ -805,10 +807,10 @@ TABLE OF CONTENTS
 .toc-sidebar {
 	position: fixed;
 	top: 15rem;
-	left: 1rem;
+	left: 1%;
 	z-index: 10;
 	display: none;
-	width: 13%;
+	width: 10.5%;
 	max-height: calc(100vh - 11rem);
 	overflow-y: auto;
 	color: var(--theme-line-numbers-text, #aaa);
