@@ -26,13 +26,13 @@ body {
 }
 
 /* Main content fills remaining space */
-body>article {
+body > article {
 	flex: 1 0 auto;
 	padding: 4.5rem 0 1.5rem;
 }
 
 /* Footer stays at bottom */
-body>footer {
+body > footer {
 	margin-top: auto;
 	flex-shrink: 0;
 }
@@ -57,29 +57,21 @@ img[loading="lazy"] {
 */
 
 /* 1. Content centered in the main text column (55% width) */
-section>img,
-section>svg {
+section > img,
+section > svg {
 	max-width: 55%;
 	position: relative;
 	left: 27.5%;
 	transform: translateX(-50%);
-}
-
-section>img,
-section>svg {
 	display: block;
 }
 
 /* 2. Content centered in figures (100% of figure width) */
-section>figure:not(.fullwidth)>img,
-section>figure:not(.fullwidth)>svg {
+section > figure:not(.fullwidth) > img,
+section > figure:not(.fullwidth) > svg {
 	max-width: 100%;
 	margin-left: auto;
 	margin-right: auto;
-}
-
-section>figure:not(.fullwidth)>img,
-section>figure:not(.fullwidth)>svg {
 	display: block;
 }
 
@@ -98,309 +90,10 @@ section>figure:not(.fullwidth)>svg {
 }
 
 /*******************************************************************************
-TYPOGRAPHY
-*******************************************************************************/
-
-/* Paragraph alignment and spacing */
-p {
-	text-align: justify;
-	text-justify: inter-ideograph;
-	line-height: 2.2rem;
-}
-
-/* List spacing */
-ul,
-ol,
-dl {
-	line-height: 2.2rem;
-}
-
-/* Heading styles */
-h1,
-h2,
-h3,
-h4,
-h5 {
-	font-style: normal;
-	font-weight: bold;
-	color: #111;
-}
-
-h2 {
-	font-size: 2.3rem;
-	line-height: 1.2;
-	margin-top: 2rem;
-	margin-bottom: 1rem;
-}
-
-h3 {
-	font-size: 2rem;
-	line-height: 1.2;
-	margin-top: 1.5rem;
-	margin-bottom: 0.8rem;
-}
-
-h4 {
-	font-size: 1.75rem;
-	line-height: 1.2;
-	margin-top: 1.2rem;
-	margin-bottom: 0.5rem;
-}
-
-h5 {
-	font-size: 1.5rem;
-	line-height: 1.2;
-	margin-top: 1rem;
-	margin-bottom: 0.5rem;
-}
-
-/* Article metadata shown directly below the title */
-.article-byline {
-	width: 55%;
-	margin: -0.4rem 0 1.6rem;
-	color: var(--theme-text, #111);
-	font-size: 1.2rem;
-	line-height: 1.5;
-	opacity: 0.7;
-}
-
-.article-byline p {
-	width: 100%;
-	margin: 0;
-	text-align: left;
-	line-height: inherit;
-}
-
-.article-extra-info {
-	margin-top: 0.2rem;
-	font-size: 0.85em;
-}
-
-/* English/numeric text in headings */
-.heading-en {
-	font-style: italic;
-}
-
-/*******************************************************************************
-CODE BLOCKS AND INLINE CODE
-*******************************************************************************/
-
-/* Code block container */
-pre {
-	position: relative;
-	background-color: #f7f7f7;
-	border: 1px solid #e0e0e0;
-	border-radius: 5px;
-	padding: 1em;
-	padding-bottom: 0.5em;
-	overflow-x: auto;
-	margin-bottom: 1.5em;
-	width: 55%;
-	margin-left: 0;
-	margin-right: 0;
-	float: none;
-	clear: none;
-	box-sizing: border-box;
-	left: 0;
-}
-
-/* Code within pre */
-pre>code {
-	width: 95%;
-	font-size: 1.2rem;
-	line-height: 1.5;
-	margin-left: 0%;
-	background-color: transparent;
-	padding: 0;
-	padding-bottom: 0.7em;
-	border: none;
-}
-
-/* Code blocks with line numbers */
-pre.has-line-numbers {
-	display: flex;
-	align-items: flex-start;
-}
-
-.line-numbers-rows {
-	display: flex;
-	flex-direction: column;
-	padding-right: 0.4em;
-	margin-right: 0.4em;
-	border-right: 1px solid #ddd;
-	color: #aaa;
-	user-select: none;
-	text-align: right;
-	min-width: 1.2em;
-	font-size: 1.2rem;
-	line-height: 1.5;
-	font-family: monospace;
-}
-
-/* Inline code */
-code {
-	font-size: 1.2rem;
-	background-color: #f7f7f7;
-	padding: 0.1em 0.3em;
-	border-radius: 3px;
-	border: 1px solid #e7e7e7;
-}
-
-/* Code blocks in lists */
-li pre,
-ul pre,
-ol pre,
-dl pre {
-	width: 100%;
-}
-
-/* Code blocks in figures */
-figure pre {
-	width: 100%;
-}
-
-/* Copy button */
-.copy-button {
-	position: absolute;
-	top: 0.5em;
-	right: 0.5em;
-	padding: 0.3em 0.6em;
-	font-size: 0.8rem;
-	color: #666;
-	background-color: #fff;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	cursor: pointer;
-	opacity: 0;
-	transition:
-		opacity 0.2s,
-		background-color 0.2s;
-}
-
-pre:hover .copy-button {
-	opacity: 1;
-}
-
-.copy-button:hover {
-	background-color: #f0f0f0;
-	color: #333;
-}
-
-.copy-button.copied {
-	background-color: #e6fffa;
-	color: #008000;
-	border-color: #008000;
-}
-
-/*******************************************************************************
-QUOTE BLOCKS
-*******************************************************************************/
-
-/* Quote blocks with left border */
-div[style*="border-inline-start"] {
-	width: 55% !important;
-	font-size: 1.4rem;
-	line-height: 2.2rem;
-	clear: none;
-	margin: 1.5em 0;
-	padding-right: 0;
-	box-sizing: border-box;
-}
-
-/* Nested quote blocks should take full width of parent */
-div[style*="border-inline-start"] div[style*="border-inline-start"] {
-	width: 100% !important;
-	margin: 0.5em 0;
-}
-
-div[style*="border-inline-start"] p {
-	font-size: 1.4rem;
-	margin: 0.5em 0;
-	width: 100%;
-}
-
-div[style*="border-inline-start"] .footnote-ref,
-div[style*="border-inline-start"] .marginnote,
-div[style*="border-inline-start"] .footnote-ref a {
-	color: #111;
-}
-
-/*******************************************************************************
-TABLES
-*******************************************************************************/
-
-table {
-	width: auto;
-	margin: 1.5em auto;
-	border-collapse: collapse;
-	font-size: 1.4rem;
-	line-height: 1.2;
-}
-
-/* Naked tables behave like the main text column */
-section>table {
-	display: block;
-	width: 55%;
-	max-width: 55%;
-	margin-left: 0;
-	margin-right: 0;
-	overflow-x: auto;
-	overflow-y: hidden;
-	box-sizing: border-box;
-}
-
-table th,
-table td {
-	padding: 0.5em 0.7em;
-	border: 1px solid #ccc;
-	text-align: left;
-	vertical-align: top;
-}
-
-table th,
-table thead td {
-	background-color: #f5f5f5;
-	font-weight: bold;
-	text-align: center;
-}
-
-table tbody tr:nth-child(even) {
-	background-color: #fafafa;
-}
-
-table tbody tr:hover {
-	background-color: #f0f0f0;
-}
-
-@media (max-width: 760px) {
-	table {
-		font-size: 1.2rem;
-	}
-
-	/* Reset naked table positioning on mobile */
-	section>table {
-		width: 100%;
-		max-width: 100%;
-		margin: 1.5em auto;
-	}
-
-	figure {
-		margin: 1.5em auto;
-	}
-
-	table th,
-	table td {
-		padding: 0.4em 0.6em;
-	}
-}
-
-/*******************************************************************************
 MATH NOTATION
 *******************************************************************************/
 
-/* Block math equations - display as block, centered */
-.math-block,
-figure[role="math"] {
+.math-block {
 	display: block;
 	width: 55%;
 	text-align: center;
@@ -413,44 +106,19 @@ figure[role="math"] {
 	overflow-y: hidden;
 }
 
-/* Math content wrapper - prevent shrinking */
-.math-block>*,
-figure[role="math"]>* {
-	display: inline-block;
-	min-width: max-content;
-	text-align: center;
-}
-
-figure>.math-block,
-figure>figure[role="math"] {
-	display: block;
+figure > .math-block {
 	width: 100%;
-	text-align: center;
 	margin: 0 auto;
-	padding: 0.5em 0;
 	max-width: 100%;
-	overflow-x: auto;
-	overflow-y: hidden;
 }
 
-/* Math content wrapper for nested figures */
-figure>.math-block>*,
-figure>figure[role="math"]>* {
-	display: inline-block;
-	min-width: max-content;
-	text-align: center;
-}
-
-.fullwidth>.math-block,
-.fullwidth>figure[role="math"] {
+.fullwidth > .math-block {
 	width: 100%;
 	margin: 1em auto;
 	max-width: 100%;
 }
 
-/* Inline math - smaller size, aligned with text baseline */
-.math-inline,
-span[role="math"] {
+.math-inline {
 	display: inline-block;
 	vertical-align: baseline;
 	margin: 0 0.1em;
@@ -523,26 +191,369 @@ span[role="math"] {
 	opacity: 1;
 }
 
-.math-inline>math,
-.math-block>math {
+.math-inline > math,
+.math-block > math {
 	color: inherit;
 }
 
-.math-inline>svg,
-.math-block>svg {
+.math-inline > svg,
+.math-block > svg {
 	display: inline-block;
 }
 
-.math-block>svg {
+.math-block > svg {
 	min-width: max-content;
 	text-align: center;
 }
 
 /*******************************************************************************
-RESPONSIVE LAYOUT
+TYPOGRAPHY
 *******************************************************************************/
 
+hr {
+	border: 0;
+	border-top: 1px solid var(--theme-table-border, #ccc);
+	margin: 1.5rem 0;
+}
+
+/* Paragraph alignment and spacing */
+p {
+	text-align: justify;
+	text-justify: inter-ideograph;
+}
+
+/* Paragraph and list spacing */
+p,
+ul,
+ol,
+dl {
+	line-height: 2.2rem;
+}
+
+/* Heading styles */
+h1,
+h2,
+h3,
+h4,
+h5 {
+	font-style: normal;
+	font-weight: bold;
+	color: #111;
+}
+
+h2,
+h3,
+h4,
+h5 {
+	line-height: 1.2;
+}
+
+h2 {
+	font-size: 2.3rem;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+}
+
+h3 {
+	font-size: 2rem;
+	margin-top: 1.5rem;
+	margin-bottom: 0.8rem;
+}
+
+h4 {
+	font-size: 1.75rem;
+	margin-top: 1.2rem;
+	margin-bottom: 0.5rem;
+}
+
+h5 {
+	font-size: 1.5rem;
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+/* Article metadata shown directly below the title */
+.article-byline {
+	width: 55%;
+	margin: -0.4rem 0 1.6rem;
+	color: var(--theme-text, #111);
+	font-size: 1.2rem;
+	line-height: 1.5;
+	opacity: 0.7;
+}
+
+.article-byline p {
+	width: 100%;
+	margin: 0;
+	text-align: left;
+	line-height: inherit;
+}
+
+.article-extra-info {
+	margin-top: 0.2rem;
+	font-size: 0.85em;
+}
+
+/* English/numeric text in headings */
+.heading-en {
+	font-style: italic;
+}
+
+/*******************************************************************************
+CODE BLOCKS AND INLINE CODE
+*******************************************************************************/
+
+/* Code block container */
+pre {
+	position: relative;
+	background-color: #f7f7f7;
+	border: 1px solid #e0e0e0;
+	border-radius: 5px;
+	padding: 1em;
+	padding-bottom: 0.5em;
+	overflow-x: auto;
+	margin-bottom: 1.5em;
+	width: 55%;
+	margin-left: 0;
+	margin-right: 0;
+	float: none;
+	clear: none;
+	box-sizing: border-box;
+	left: 0;
+}
+
+/* Code within pre */
+pre > code {
+	width: 95%;
+	font-size: 1.2rem;
+	line-height: 1.5;
+	margin-left: 0%;
+	background-color: transparent;
+	padding: 0;
+	padding-bottom: 0.7em;
+	border: none;
+}
+
+/* Code blocks with line numbers */
+pre.has-line-numbers {
+	display: flex;
+	align-items: flex-start;
+}
+
+.line-numbers-rows {
+	display: flex;
+	flex-direction: column;
+	padding-right: 0.4em;
+	margin-right: 0.4em;
+	border-right: 1px solid #ddd;
+	color: #aaa;
+	user-select: none;
+	text-align: right;
+	min-width: 1.2em;
+	font-size: 1.2rem;
+	line-height: 1.5;
+	font-family: monospace;
+}
+
+/* Inline code */
+code {
+	font-size: 1.2rem;
+	background-color: #f7f7f7;
+	padding: 0.1em 0.3em;
+	border-radius: 3px;
+	border: 1px solid #e7e7e7;
+}
+
+/* Code blocks in lists and figures */
+li pre,
+ul pre,
+ol pre,
+dl pre,
+figure pre {
+	width: 100%;
+}
+
+/* Copy button */
+.copy-button {
+	position: absolute;
+	top: 0.5em;
+	right: 0.5em;
+	padding: 0.3em 0.6em;
+	font-size: 0.8rem;
+	color: #666;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	cursor: pointer;
+	opacity: 0;
+	transition:
+		opacity 0.2s,
+		background-color 0.2s;
+}
+
+pre:hover .copy-button {
+	opacity: 1;
+}
+
+.copy-button:hover {
+	background-color: #f0f0f0;
+	color: #333;
+}
+
+.copy-button.copied {
+	background-color: #e6fffa;
+	color: #008000;
+	border-color: #008000;
+}
+
+/*******************************************************************************
+QUOTE BLOCKS
+*******************************************************************************/
+
+/* Native quotes and theorion blocks */
+:is(blockquote.quote-block, div[style*="border-inline-start"]) {
+	width: 55% !important;
+	font-size: 1.4rem;
+	line-height: 2.2rem;
+	clear: none;
+	text-align: left;
+	margin: 1.5em 0;
+	padding-right: 0;
+	box-sizing: border-box;
+
+	& :is(blockquote.quote-block, div[style*="border-inline-start"]) {
+		width: 100% !important;
+		margin: 0.5em 0;
+	}
+
+	& p {
+		text-align: inherit;
+		font-size: 1.4rem;
+		margin: 0.5em 0;
+		width: 100%;
+	}
+
+	& .footnote-ref,
+	& .marginnote,
+	& .footnote-ref a {
+		color: #111;
+	}
+
+	@media (max-width: 760px) {
+		width: 100% !important;
+	}
+}
+
+blockquote.quote-block {
+	border-inline-start: 0.25em solid #c8c8c8;
+	padding: 0.1em 0 0.1em 1em;
+	color: #646464;
+
+	& > .quote-attribution {
+		margin-top: 0.5em;
+		text-align: right;
+	}
+}
+
+/* Keep display math consistent with formulas in the main text column. */
+:is(blockquote.quote-block, div[style*="border-inline-start"])
+	> figure.math-block,
+.quote-body > figure.math-block {
+	width: 100%;
+	max-width: 100%;
+	font-size: 1em;
+}
+
+/*******************************************************************************
+TABLES
+*******************************************************************************/
+
+table {
+	width: auto;
+	margin: 1.5em auto;
+	border-collapse: collapse;
+	font-size: 1.4rem;
+	line-height: 1.2;
+}
+
+/* A table cell has its own float context; keep its notes below earlier floats. */
+table:has(.marginnote) {
+	clear: right;
+}
+
+/* Keep narrow tables compact; scroll only when their content is too wide. */
+.table-scroll {
+	box-sizing: border-box;
+	width: fit-content;
+	max-width: 100%;
+	overflow-x: auto;
+	margin: 1.5em auto;
+}
+
+.table-scroll > table {
+	width: auto;
+	max-width: none;
+	margin: 0;
+}
+
+section > .table-scroll {
+	max-width: 55%;
+	position: relative;
+	left: 27.5%;
+	transform: translateX(-50%);
+	margin-left: 0;
+	margin-right: 0;
+}
+
+table th,
+table td {
+	padding: 0.5em 0.7em;
+	border: 1px solid #ccc;
+	text-align: left;
+	vertical-align: top;
+}
+
+table th,
+table thead td {
+	background-color: #f5f5f5;
+	font-weight: bold;
+	text-align: center;
+}
+
+table tbody tr:nth-child(even) {
+	background-color: #fafafa;
+}
+
+table tbody tr:hover {
+	background-color: #f0f0f0;
+}
+
 @media (max-width: 760px) {
+	table {
+		font-size: 1.2rem;
+	}
+
+	/* Reset naked table positioning on mobile */
+	section > .table-scroll {
+		max-width: 100%;
+		left: 0;
+		transform: none;
+		margin: 1.5em auto;
+	}
+
+	figure {
+		margin: 1.5em auto;
+	}
+
+	table th,
+	table td {
+		padding: 0.4em 0.6em;
+	}
+
+	/* Responsive content layout */
+	.math-block {
+		width: 100%;
+	}
 
 	/* Margin notes render inline on narrow screens */
 	.marginnote {
@@ -563,12 +574,17 @@ RESPONSIVE LAYOUT
 	}
 
 	/* Footnote margin notes collapse by default */
-	.footnote-ref+.marginnote {
+	.footnote-ref + .marginnote {
 		display: none;
 	}
 
-	.footnote-ref+.marginnote.is-expanded {
+	.footnote-ref + .marginnote.is-expanded {
 		display: block;
+	}
+
+	/* Margin citations collapse too; tapping the citation expands them */
+	.sidenote-cite:not(.is-expanded) {
+		display: none;
 	}
 
 	/* Limit image size inside expanded margin notes */
@@ -580,12 +596,7 @@ RESPONSIVE LAYOUT
 		display: block;
 	}
 
-	sup.footnote-ref {
-		line-height: 1;
-		top: -0.2em;
-	}
-
-	sup.footnote-ref>a.footnote-ref-link {
+	sup.footnote-ref > a.footnote-ref-link {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -603,7 +614,7 @@ RESPONSIVE LAYOUT
 		cursor: pointer;
 	}
 
-	sup.footnote-ref>a.footnote-ref-link.is-expanded {
+	sup.footnote-ref > a.footnote-ref-link.is-expanded {
 		background: var(--highlight-weak);
 	}
 
@@ -612,19 +623,14 @@ RESPONSIVE LAYOUT
 		hyphens: auto;
 	}
 
-	/* Full-width quote blocks on mobile */
-	div[style*="border-inline-start"] {
-		width: 100% !important;
-	}
-
 	/* Full-width code blocks on mobile */
 	pre {
 		width: 100%;
 	}
 
 	/* Full-width tables and images on mobile */
-	section>img,
-	section>svg {
+	section > img,
+	section > svg {
 		max-width: 100%;
 		left: 0;
 		transform: none;
@@ -632,17 +638,9 @@ RESPONSIVE LAYOUT
 		margin-right: auto;
 	}
 
-	/* Math equations take full width on mobile */
-	.math-block,
-	figure[role="math"] {
+	.article-byline {
 		width: 100%;
 	}
-
-	/* Blog index rows take full width on mobile */
-	.blog-entry {
-		width: 100%;
-	}
-
 }
 
 /*******************************************************************************
@@ -668,33 +666,106 @@ footer {
 	margin-bottom: 1em;
 }
 
-header nav {
+.site-nav {
 	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem 1em;
+	margin-top: 1em;
+}
+
+.site-nav-links {
+	display: flex;
+	flex-wrap: wrap;
 	gap: 1em;
 }
 
-header nav>p {
+.site-nav-links > p {
 	display: flex;
 	gap: inherit;
 	margin: 0;
 	flex-wrap: wrap;
 }
 
-.site-nav a:any-link {
+.site-nav-links a:any-link {
 	text-decoration: none;
 	border-bottom: 0;
 	box-shadow: none;
 	font-size: 1.5rem;
 	padding: 0.2em 0.4em;
-	margin-top: 1em;
 	border-radius: var(--radius-sm);
 	transition: background-color 120ms ease;
 }
 
-.site-nav a:hover,
-.site-nav a:focus-visible {
+.site-nav-links a:hover,
+.site-nav-links a:focus-visible {
 	background: var(--highlight-weak);
 	outline: none;
+}
+
+.site-nav-tools {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	flex-shrink: 0;
+	margin-left: auto;
+	margin-right: 3em;
+}
+
+.site-nav-tools .nav-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.8rem;
+	height: 2.8rem;
+	padding: 0;
+	background: transparent;
+	border: none;
+	border-radius: 0.375rem;
+	cursor: pointer;
+	text-decoration: none;
+	box-shadow: none;
+	transition: background-color 0.15s ease;
+	color: var(--theme-icon);
+}
+
+.site-nav-tools .nav-icon:hover {
+	background: var(--highlight-weak, rgba(128, 128, 128, 0.2));
+}
+
+.site-nav-tools .nav-icon:focus-visible {
+	outline: 2px solid var(--highlight-strong, rgba(128, 128, 128, 0.4));
+	outline-offset: 2px;
+}
+
+.nav-icon::before {
+	content: "";
+	width: 1.8rem;
+	height: 1.8rem;
+	background-color: currentColor;
+	mask: var(--nav-icon) center / contain no-repeat;
+}
+
+.rss-link {
+	--nav-icon: url("/assets/icons/rss.svg");
+}
+
+@media (max-width: 760px) {
+	.site-nav-tools {
+		margin-right: 0;
+	}
+}
+
+@media (forced-colors: active) {
+	.nav-icon::before {
+		/* Preserve the mask paint while respecting the system palette. */
+		forced-color-adjust: none;
+		background-color: CanvasText;
+	}
+
+	.site-nav-tools .nav-icon:focus-visible {
+		outline-color: Highlight;
+	}
 }
 
 /*******************************************************************************
@@ -710,7 +781,7 @@ sup.footnote-ref {
 }
 
 .footnote-ref,
-.footnote-ref+.marginnote {
+.sidenote-footnote {
 	--highlight: transparent;
 	background-color: var(--highlight);
 	box-shadow: 0 0 0 5px var(--highlight);
@@ -721,7 +792,7 @@ sup.footnote-ref {
 }
 
 /* Highlight margin note when footnote reference is hovered */
-.footnote-ref:hover+.marginnote {
+.footnote-ref:hover + .marginnote {
 	--highlight: var(--highlight-weak);
 	transition-delay: 0s;
 }
@@ -732,9 +803,57 @@ sup.footnote-ref {
 	transition-delay: 0s;
 }
 
+.sidenote-anchor {
+	font: inherit;
+	line-height: inherit;
+	pointer-events: none;
+}
+
 @media (min-width: 761px) {
+	/* Manual notes must not create an otherwise empty line in the text column. */
+	.sidenote-anchor {
+		display: none;
+	}
+
+	p.sidenote-only {
+		display: contents;
+	}
+
 	sup.marginnote-ref {
 		display: none;
+	}
+
+	/* Keep fallback note geometry stable when notes are nested in lists or blocks. */
+	article > section {
+		/* Fractions of the section width; JS reads the column start as well. */
+		--sidenote-content-width: 0.55;
+		--sidenote-column-start: 0.605;
+		--sidenote-column-width: 0.275;
+		container-type: inline-size;
+	}
+
+	article > section .marginnote {
+		inline-size: calc(100cqi * var(--sidenote-column-width));
+		margin-inline-end: calc(
+			100cqi *
+			(
+				var(--sidenote-content-width) -
+				var(--sidenote-column-start) -
+				var(--sidenote-column-width)
+			)
+		);
+	}
+
+	/* A nested float cannot avoid its parent's text. Keep nested notes in
+	   normal flow so their height is included in the outer side note. */
+	article > section .marginnote .marginnote {
+		display: block;
+		float: none;
+		clear: none;
+		position: static;
+		inline-size: auto;
+		min-inline-size: 0;
+		margin: 0.5em 0;
 	}
 }
 
@@ -800,99 +919,132 @@ BLOG INDEX
 	white-space: nowrap;
 }
 
+@media (max-width: 760px) {
+	/* Blog index rows take full width on mobile */
+	.blog-entry {
+		width: 100%;
+	}
+}
+
 /*******************************************************************************
 TABLE OF CONTENTS
 *******************************************************************************/
 
 .toc-sidebar {
 	position: fixed;
-	top: 15rem;
-	left: 1%;
-	z-index: 10;
-	display: none;
-	width: 10.5%;
-	max-height: calc(100vh - 11rem);
+	display: block;
+	top: 50%;
+	left: 3.5rem;
+	z-index: 1001;
+	box-sizing: border-box;
+	width: max-content;
+	max-width: min(26rem, calc(100vw - 4.5rem));
+	max-height: calc(100dvh - 2rem);
 	overflow-y: auto;
-	color: var(--theme-line-numbers-text, #aaa);
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--theme-table-border, #ccc);
+	border-radius: 1rem;
+	background: var(--theme-bg, #fffff8);
+	color: var(--theme-text, #111);
+	box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 10%);
+	visibility: hidden;
+	opacity: 0;
+	transform: translate(-0.5rem, -50%);
+	transition:
+		opacity 160ms ease,
+		transform 160ms ease,
+		visibility 160ms;
+}
+
+.toc-sidebar.is-open {
+	visibility: visible;
+	opacity: 1;
+	transform: translate(0, -50%);
 }
 
 .toc-sidebar ol {
+	width: auto;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
 .toc-sidebar li {
-	margin: 0 0 0.2em;
+	margin: 0.15em 0;
 }
 
-.toc-sidebar .toc-after-title {
-	padding-left: 0.8em;
+.toc-sidebar li.toc-h3 {
+	padding-left: 1.2rem;
 }
 
 .toc-sidebar a:any-link {
 	display: block;
-	color: inherit;
-	font-size: 0.95rem;
-	line-height: 1.1;
+	color: var(--theme-copy-btn-text, #666);
+	font-size: 1.15rem;
+	line-height: 1.3;
 	text-decoration: none;
-	border-left: 1px solid transparent;
-	padding-left: 0.6em;
-	transition:
-		border-color 120ms ease,
-		color 120ms ease;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	transition: color 120ms ease;
 }
 
 .toc-sidebar a:hover,
 .toc-sidebar a:focus-visible,
 .toc-sidebar a.is-active {
-	color: var(--theme-copy-btn-hover-text, #333);
-	border-left-color: currentColor;
+	color: var(--theme-heading, #111);
 	outline: none;
 }
 
-@media (min-width: 1200px) {
-	.toc-sidebar {
-		display: block;
-	}
+.toc-sidebar a.is-active {
+	font-weight: bold;
 }
 
-/* --- Synced from upstream Tufted-Blog-Template: table-scroll support (required by tufted-lib/figures.typ) --- */
-/* A table cell has its own float context; keep its notes below earlier floats. */
-table:has(.marginnote) {
-	clear: right;
+.toc-toggle {
+	position: fixed;
+	top: 50%;
+	left: 0.5rem;
+	z-index: 1002;
+	display: flex;
+	max-height: min(24rem, 65vh);
+	padding: 0.9rem 0.65rem;
+	transform: translateY(-50%);
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.72rem;
+	overflow-y: auto;
+	border: none;
+	border-radius: 1rem;
+	background: transparent;
+	color: var(--theme-copy-btn-text, #666);
+	cursor: pointer;
+	transition: background-color 120ms ease;
 }
 
-/* Keep narrow tables compact; scroll only when their content is too wide. */
-.table-scroll {
-	box-sizing: border-box;
-	width: fit-content;
-	max-width: 100%;
-	overflow-x: auto;
-	margin: 1.5em auto;
+.toc-toggle:hover {
+	background: rgba(128, 128, 128, 0.1);
 }
 
-.table-scroll > table {
-	width: auto;
-	max-width: none;
-	margin: 0;
+.toc-toggle:focus-visible {
+	outline: 2px solid var(--theme-copy-btn-text, #666);
+	outline-offset: 2px;
 }
 
-section > .table-scroll {
-	max-width: 55%;
-	position: relative;
-	left: 27.5%;
-	transform: translateX(-50%);
-	margin-left: 0;
-	margin-right: 0;
+.toc-toggle-line {
+	width: 1.35rem;
+	height: 2px;
+	flex: 0 0 auto;
+	background: currentColor;
+	opacity: 0.4;
+	transition:
+		width 120ms ease,
+		background-color 120ms ease;
 }
 
-
-@media (max-width: 760px) {
-	section > .table-scroll {
-		max-width: 100%;
-		left: 0;
-		transform: none;
-		margin: 1.5em auto;
+.toc-toggle-line.is-indented {
+	width: 0.85rem;
 }
+
+.toc-toggle-line.is-active {
+	background: var(--theme-heading, #111);
+	opacity: 0.8;
 }
