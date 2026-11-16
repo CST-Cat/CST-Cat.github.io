@@ -76,7 +76,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 # ============================================================================
 
 from build_lib.config import *  # noqa: F401,F403
-from build_lib.compile import build_html, build_pdf  # noqa: F401
+from build_lib.compile import build_html, build_pdf, warn_if_typst_version_is_outdated  # noqa: F401
 from build_lib.assets import copy_assets, copy_content_assets  # noqa: F401
 from build_lib.fonts import normalize_font_display, remove_unused_font_assets  # noqa: F401
 from build_lib.versioning import add_asset_versioning  # noqa: F401
@@ -232,6 +232,9 @@ if __name__ == "__main__":
     # 确保在项目根目录运行
     script_dir = Path(__file__).parent.absolute()
     os.chdir(script_dir)
+
+    if args.command in {"build", "html", "pdf"}:
+        warn_if_typst_version_is_outdated()
 
     # 获取 force 参数
     force = getattr(args, "force", False)

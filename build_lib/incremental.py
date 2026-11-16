@@ -52,7 +52,7 @@ def is_dep_file(path: Path) -> bool:
     """
     try:
         resolved_path = path.resolve()
-        project_root = Path(__file__).parent.resolve()
+        project_root = Path(__file__).parent.parent.resolve()
         content_dir = (project_root / CONTENT_DIR).resolve()
 
         # config.typ 是依赖文件

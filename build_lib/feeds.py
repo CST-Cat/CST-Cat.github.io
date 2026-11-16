@@ -13,12 +13,13 @@ import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Literal
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, unquote, urljoin, urlparse, urlsplit
 
 from .config import *  # noqa: F401,F403
 
@@ -77,10 +78,12 @@ def get_feed_dirs() -> set[str]:
 
         match = re.search(r"feed-dir\s*:\s*\((.*?)\)", content, re.DOTALL)
         if match:
-            return set(
-                c.strip("/") for c in re.findall(r'"([^"]*)"', match.group(1)) if c and c.strip("/")
-            )
-    except Exception as e:
+            return {
+                c.strip("/")
+                for c in re.findall(r'"([^"]*)"', match.group(1))
+                if c and c.strip("/")
+            }
+    except (OSError, UnicodeError) as e:
         print(f"⚠️ 解析 feed-dir 失败: {e}")
 
     return set()
@@ -120,8 +123,8 @@ def extract_post_metadata(index_html: Path) -> tuple[str, str, str, datetime | N
         try:
             date_obj = datetime.strptime(parser["date"].split("T")[0], "%Y-%m-%d")
             date_obj = date_obj.replace(tzinfo=timezone.utc)
-        except Exception:
-            pass
+        except ValueError as e:
+            print(f"⚠️ 文章 {index_html} 的日期无效，将尝试目录名日期: {e}")
 
     # 如果没找到日期，尝试从文件夹名提取 (YYYY-MM-DD)
     if not date_obj:
@@ -134,6 +137,223 @@ def extract_post_metadata(index_html: Path) -> tuple[str, str, str, datetime | N
                 pass
 
     return title, description, link, date_obj
+
+
+@dataclass
+class FeedHTMLNode:
+    tag: str
+    attrs: list[tuple[str, str | None]] = field(default_factory=list)
+    children: list["FeedHTMLNode | str"] = field(default_factory=list)
+
+
+class FeedHTMLParser(HTMLParser):
+    """Parse compiler-generated, explicitly closed HTML without browser execution."""
+
+    VOID_TAGS = frozenset(
+        {
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
+        }
+    )
+    OMIT_TAGS = frozenset({"script", "button", "iframe", "object", "embed"})
+    OMIT_ATTRS = frozenset(
+        {"hidden", "inert", "loading", "decoding", "srcset", "sizes"}
+    )
+    TEXT_STYLES = frozenset({"color", "font-weight", "font-style", "text-decoration"})
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.root = FeedHTMLNode("")
+        self.stack = [self.root]
+        self.article_section = None
+
+    def handle_starttag(self, tag, attrs):
+        # Preserve SVG's case-sensitive element and attribute names.
+        source = self.get_starttag_text() or ""
+        match = re.match(r"<([^\s/>]+)", source)
+        original_tag = match.group(1) if match else tag
+        names = re.findall(r"([^\s=/>]+)\s*=", source)
+        spelling = {name.lower(): name for name in names}
+        node = FeedHTMLNode(
+            original_tag, [(spelling.get(name, name), value) for name, value in attrs]
+        )
+        self.stack[-1].children.append(node)
+        if tag == "section" and self.stack[-1].tag == "article":
+            self.article_section = self.article_section or node
+        if tag not in self.VOID_TAGS:
+            self.stack.append(node)
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        if tag not in self.VOID_TAGS:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag):
+        for index in range(len(self.stack) - 1, 0, -1):
+            if self.stack[index].tag.lower() == tag:
+                del self.stack[index:]
+                break
+
+    def handle_data(self, data):
+        self.stack[-1].children.append(data)
+
+
+def extract_post_content(index_html: Path, article_url: str) -> str:
+    """Extract article HTML for readers without site CSS/JS; append margin notes.
+
+    Input is trusted Typst output, not arbitrary untrusted HTML. MathML and SVG
+    remain inline: rendering support depends on the reader. Fragment links point
+    back to the original article, avoiding ID collisions between feed entries.
+    """
+    parser = FeedHTMLParser()
+    parser.feed(index_html.read_text(encoding="utf-8"))
+    notes = []
+    manual_note_number = 0
+
+    def standalone_manual_note(node):
+        if not isinstance(node, FeedHTMLNode) or node.tag != "p":
+            return None
+        note = None
+        for child in node.children:
+            if isinstance(child, str) and not child.strip():
+                continue
+            if not isinstance(child, FeedHTMLNode):
+                return None
+            classes = dict(child.attrs).get("class", "").split()
+            if "sidenote-anchor" in classes:
+                continue
+            if "sidenote-manual" in classes and note is None:
+                note = child
+                continue
+            return None
+        return note
+
+    def render(node, in_note=False, in_svg=False):
+        nonlocal manual_note_number
+        if isinstance(node, str):
+            return escape(node, quote=False)
+        if note := standalone_manual_note(node):
+            return (
+                "<blockquote>"
+                + "".join(render(child, True) for child in note.children)
+                + "</blockquote>"
+            )
+        in_svg = in_svg or node.tag == "svg"
+        attrs = dict(node.attrs)
+        classes = attrs.get("class", "").split()
+        if (
+            node.tag in parser.OMIT_TAGS
+            or (node.tag == "style" and not in_svg)
+            or ("sidenote-anchor" in classes)
+        ):
+            return ""
+        if (
+            "marginnote" in classes
+            and "sidenote-caption" not in classes
+            and not in_note
+        ):
+            is_footnote = "sidenote-footnote" in classes
+            if is_footnote:
+                notes.append(f"<div>{render(node, True)}</div>")
+                # Its existing numbered reference is already in the paragraph.
+                return ""
+            manual_note_number += 1
+            number = manual_note_number
+            notes.append(
+                f'<div id="rss-note-{number}"><strong>[*{number}]</strong> '
+                f"{render(node, True)}</div>"
+            )
+            return f'<sup><a href="#rss-note-{number}">[*{number}]</a></sup>'
+        tag = "figcaption" if "sidenote-caption" in classes else node.tag
+        output_attrs = []
+        for name, value in node.attrs:
+            if (
+                name.lower().startswith("on")
+                or (name == "class" and not in_svg)
+                or name in parser.OMIT_ATTRS
+            ):
+                continue
+            if name == "style" and not in_svg:
+                # Preserve text emphasis and syntax colors, not website positioning.
+                value = ";".join(
+                    declaration
+                    for declaration in (value or "").split(";")
+                    if declaration.partition(":")[0].strip().lower()
+                    in parser.TEXT_STYLES
+                )
+                if not value:
+                    continue
+            if name in {"href", "src", "poster", "xlink:href"} and value:
+                # SVG fragment references must remain local to the inline graphic.
+                if not (
+                    in_svg and name in {"href", "xlink:href"} and value.startswith("#")
+                ):
+                    value = urljoin(article_url, value)
+                embedded_image = name == "src" and value.startswith(
+                    (
+                        "data:image/png;",
+                        "data:image/jpeg;",
+                        "data:image/webp;",
+                        "data:image/gif;",
+                    )
+                )
+                if not embedded_image and urlsplit(value).scheme.lower() not in {
+                    "",
+                    "http",
+                    "https",
+                    "mailto",
+                    "tel",
+                }:
+                    continue
+            output_attrs.append(
+                name if value is None else f'{name}="{escape(value, quote=True)}"'
+            )
+        opening = (
+            "<" + tag + (" " + " ".join(output_attrs) if output_attrs else "") + ">"
+        )
+        if tag in parser.VOID_TAGS:
+            return opening
+        children = node.children
+        if tag == "figure":
+            children = []
+            for child in node.children:
+                if isinstance(child, FeedHTMLNode) and child.tag == "p":
+                    content = [
+                        part
+                        for part in child.children
+                        if not isinstance(part, str) or part.strip()
+                    ]
+                    if (
+                        len(content) == 1
+                        and isinstance(content[0], FeedHTMLNode)
+                        and "sidenote-caption"
+                        in dict(content[0].attrs).get("class", "").split()
+                    ):
+                        child = content[0]
+                children.append(child)
+        return (
+            opening
+            + "".join(render(child, in_note, in_svg) for child in children)
+            + f"</{tag}>"
+        )
+
+    section = parser.article_section
+    if section is None:
+        return ""
+    body = "".join(render(child) for child in section.children)
+    return body + ("<hr>" + "".join(notes) if notes else "")
 
 def collect_posts(dirs: set[str], site_url: str) -> list[dict]:
     """
@@ -155,6 +375,7 @@ def collect_posts(dirs: set[str], site_url: str) -> list[dict]:
             - dir (str): 文章所属分类（即目录名）
             - link (str): 文章的完整 URL
             - date (datetime): 文章日期对象（带时区）
+            - content (str): 适合订阅阅读的正文 HTML
     """
     posts = []
 
@@ -170,6 +391,9 @@ def collect_posts(dirs: set[str], site_url: str) -> list[dict]:
                 continue
 
             title, description, link, date_obj = extract_post_metadata(index_html)
+            link = link or urljoin(
+                site_url.rstrip("/") + "/", item.relative_to(SITE_DIR).as_posix() + "/"
+            )
 
             if not date_obj:
                 print(f"⚠️ 无法确定文章 '{item.name}' 的日期，已跳过。")
@@ -182,6 +406,7 @@ def collect_posts(dirs: set[str], site_url: str) -> list[dict]:
                     "dir": d,
                     "link": link,
                     "date": date_obj,
+                    "content": extract_post_content(index_html, link),
                 }
             )
 
@@ -193,7 +418,7 @@ def build_rss_xml(posts: list[dict], config: dict) -> str:
 
     功能:
         使用 Python 标准库 xml.etree.ElementTree 根据文章数据和站点配置生成完整的 RSS Feed XML。
-        支持条件输出 description 标签（仅在有描述时输出）。
+        保留 description 摘要，并用 content:encoded 输出正文 HTML。
 
     参数:
         posts (list[dict]): 文章数据列表，每个字典应包含:
@@ -217,6 +442,8 @@ def build_rss_xml(posts: list[dict], config: dict) -> str:
     # 注册 atom 命名空间前缀
     ATOM_NS = "http://www.w3.org/2005/Atom"
     ET.register_namespace("atom", ATOM_NS)
+    CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
+    ET.register_namespace("content", CONTENT_NS)
 
     # 创建 RSS 根元素（命名空间声明由 register_namespace 自动处理）
     rss = ET.Element("rss", version="2.0")
@@ -227,7 +454,9 @@ def build_rss_xml(posts: list[dict], config: dict) -> str:
     ET.SubElement(channel, "link").text = config["site_url"]
     ET.SubElement(channel, "description").text = config["site_description"]
     ET.SubElement(channel, "language").text = config["lang"]
-    ET.SubElement(channel, "lastBuildDate").text = format_datetime(datetime.now(timezone.utc))
+    ET.SubElement(channel, "lastBuildDate").text = format_datetime(
+        datetime.now(timezone.utc)
+    )
 
     # 添加 atom:link 自链接
     atom_link = ET.SubElement(channel, f"{{{ATOM_NS}}}link")
@@ -248,6 +477,8 @@ def build_rss_xml(posts: list[dict], config: dict) -> str:
         # 仅在有描述时添加
         if des := post["description"]:
             ET.SubElement(item, "description").text = des
+        if content := post.get("content"):
+            ET.SubElement(item, f"{{{CONTENT_NS}}}encoded").text = content
 
     # 生成 XML 字符串
     ET.indent(rss, space="  ")
@@ -269,7 +500,7 @@ def generate_rss(site_url: str) -> bool:
     返回:
         bool: 生成是否成功。在以下情况返回 True：
             - 成功生成 RSS 文件
-            - 未找到任何分类目录（跳过生成）
+            - 未配置分类目录（删除旧 Feed）
             - 未找到任何文章（生成空 Feed）
         仅在发生异常时返回 False。
     """
@@ -277,26 +508,22 @@ def generate_rss(site_url: str) -> bool:
     dirs = get_feed_dirs()
 
     if not dirs:
+        rss_file.unlink(missing_ok=True)
         print("⚠️ 跳过 RSS 订阅源生成: 未配置任何目录。")
         return True
 
     # 检查是否至少有一个目录存在
-    existing = {d for d in dirs if (SITE_DIR / d).exists()}
+    existing = {d for d in dirs if (SITE_DIR / d).is_dir()}
     missing = dirs - existing
 
     for d in missing:
         print(f"⚠️ 警告: 配置的目录 '{d}' 不存在。")
-
-    if not existing:
-        print("⚠️ 跳过 RSS 订阅源生成: 配置的目录都不存在。")
-        return True
 
     # 收集文章
     posts = collect_posts(existing, site_url)
 
     if not posts:
         print("⚠️ 未找到任何文章，RSS 订阅源为空。")
-        return True
 
     # 按日期降序排序
     posts = sorted(posts, key=lambda x: x["date"], reverse=True)
@@ -327,7 +554,7 @@ def generate_rss(site_url: str) -> bool:
         print(f"   原因: feedgen 库报错 - {e}")
         print("   解决: 请检查 config.typ 中的必需配置字段（title 和 description）")
         return False
-    except Exception as e:
+    except OSError as e:
         print("❌ 错误: 生成 RSS 订阅源时出错")
         print(f"   异常: {type(e).__name__}: {e}")
         return False
@@ -381,7 +608,7 @@ def generate_sitemap(site_url: str) -> bool:
         sitemap_path.write_text(sitemap_content, encoding="utf-8")
         print(f"✅ Sitemap 构建完成: 包含 {len(urlset)} 个页面")
         return True
-    except Exception as e:
+    except (OSError, UnicodeError) as e:
         print(f"❌ Sitemap 构建失败: {e}")
         return False
 
@@ -398,6 +625,6 @@ Sitemap: {site_url}/sitemap.xml
     try:
         (SITE_DIR / "robots.txt").write_text(robots_content, encoding="utf-8")
         return True
-    except Exception as e:
+    except (OSError, UnicodeError) as e:
         print(f"❌ 生成 robots.txt 失败: {e}")
         return False

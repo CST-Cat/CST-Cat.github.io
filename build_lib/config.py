@@ -28,7 +28,9 @@ CACHE_DIR = Path(".tufted-cache")  # 本地缓存目录（不提交）
 CONTENT_MANIFEST_FILE = CACHE_DIR / "content-manifest.json"  # content 页面结构清单
 CONTENT_MANIFEST_VERSION = 1
 IMAGE_PROCESSOR_SCRIPT = Path("scripts/process_images.py")
+MATHML_MIN_TYPST_VERSION = (0, 15, 0)  # HTML 原生 MathML 支持基线
 
+@dataclass
 class BuildStats:
     """构建统计信息"""
 

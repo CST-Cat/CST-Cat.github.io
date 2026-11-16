@@ -54,6 +54,52 @@ def get_file_output_path(typ_file: Path, type: Literal["pdf", "html"]) -> Path:
     relative_path = typ_file.relative_to(CONTENT_DIR)
     return SITE_DIR / relative_path.with_suffix(f".{type}")
 
+def get_typst_version() -> tuple[int, ...] | None:
+    """
+    获取当前 Typst CLI 的语义化版本号。
+
+    返回:
+        tuple[int, int, int] | None: 版本号，获取失败时返回 None
+    """
+    script_dir = Path(__file__).parent.parent
+    local_typst = script_dir / "typst"
+    typst_cmd = str(local_typst) if local_typst.exists() else "typst"
+    try:
+        result = subprocess.run(
+            [typst_cmd, "--version"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+    except (FileNotFoundError, OSError):
+        return None
+
+    if result.returncode != 0:
+        return None
+
+    match = re.search(r"typst (\d+)\.(\d+)\.(\d+)", result.stdout)
+    if match is None:
+        return None
+
+    return tuple(int(component) for component in match.groups())
+
+
+def warn_if_typst_version_is_outdated() -> None:
+    """
+    对低于 MathML 支持基线的 Typst 版本输出提示。
+    """
+    version = get_typst_version()
+    if version is None or version >= MATHML_MIN_TYPST_VERSION:
+        return
+
+    current = ".".join(str(component) for component in version)
+    required = ".".join(str(component) for component in MATHML_MIN_TYPST_VERSION)
+    print(
+        f"  ⚠️ 检测到 Typst {current}。HTML 导出的原生 MathML 公式支持需要 Typst {required}+，建议升级 Typst 版本。"
+    )
+
+
 def run_typst_command(args: list[str]) -> bool:
     """
     运行 typst 命令。
@@ -66,7 +112,7 @@ def run_typst_command(args: list[str]) -> bool:
     """
     try:
         # 优先使用项目本地的 typst 二进制
-        script_dir = Path(__file__).parent
+        script_dir = Path(__file__).parent.parent
         local_typst = script_dir / "typst"
         typst_cmd = str(local_typst) if local_typst.exists() else "typst"
 
