@@ -856,3 +856,43 @@ TABLE OF CONTENTS
 		display: block;
 	}
 }
+
+/* --- Synced from upstream Tufted-Blog-Template: table-scroll support (required by tufted-lib/figures.typ) --- */
+/* A table cell has its own float context; keep its notes below earlier floats. */
+table:has(.marginnote) {
+	clear: right;
+}
+
+/* Keep narrow tables compact; scroll only when their content is too wide. */
+.table-scroll {
+	box-sizing: border-box;
+	width: fit-content;
+	max-width: 100%;
+	overflow-x: auto;
+	margin: 1.5em auto;
+}
+
+.table-scroll > table {
+	width: auto;
+	max-width: none;
+	margin: 0;
+}
+
+section > .table-scroll {
+	max-width: 55%;
+	position: relative;
+	left: 27.5%;
+	transform: translateX(-50%);
+	margin-left: 0;
+	margin-right: 0;
+}
+
+
+@media (max-width: 760px) {
+	section > .table-scroll {
+		max-width: 100%;
+		left: 0;
+		transform: none;
+		margin: 1.5em auto;
+}
+}
