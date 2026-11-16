@@ -14,11 +14,11 @@
 
 ==== Plamo
 
-==== #link("CarModels/")[CarModels]
+==== #link("car-models/")[CarModels]
 
 == Tech
 
-==== #link("Phone/")[Phone]
+==== #link("phone/")[Phone]
 
 ==== Computer
 

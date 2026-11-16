@@ -296,7 +296,7 @@ srcset="miku-w480.webp 480w, miku-w768.webp 768w, ..."
 
 本轮在不触发构建脚本的前提下，完成了以下收尾：
 
-- `CarModels` 图片路径由 `/content/Vault/CarModels/imgs/...` 统一改为 `imgs/...`。
+- `CarModels` 图片路径由 `/content/Vault/car-models/imgs/...` 统一改为 `imgs/...`。
 - 首屏第一张图改为 `#tufted.priority-image(...)`，输出 `loading="eager"` 与 `fetchpriority="high"`。
 - 新增 `tufted.priority-image` helper，用于首屏高优先级图片声明。
 - `scripts/generate_responsive_images.py` 增加跳过规则：小图、过矮图、超长条图不生成响应式 WebP 变体。

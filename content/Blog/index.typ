@@ -10,7 +10,7 @@
 
 #link("10k-gif-auto-annotation/")[万张GIF大模型自动标注记录]
 
-#link("tufted-Optimize/")[Tufted-Blog-Template 优化记录]
+#link("tufted-optimize/")[Tufted-Blog-Template 优化记录]
 
 
 == 考研记录
@@ -19,5 +19,5 @@
 
 #link("kaoyan-notes-408/")[408笔记]
 
-#link("journal/")[考研周记]
+#link("kaoyan-weekly-journal/")[考研周记]
 

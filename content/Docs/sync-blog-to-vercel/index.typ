@@ -132,7 +132,7 @@ content/                    源文件目录
 ├── Blog/
 │   └── index.typ          博客首页
 ├── Docs/
-│   └── 同步vercel/
+│   └── sync-blog-to-vercel/
 │       └── index.typ      本页面
 └── ...
 
@@ -142,7 +142,7 @@ _site/                      输出目录
 ├── Blog/
 │   └── index.html         生成的 HTML
 ├── Docs/
-│   └── 同步vercel/
+│   └── sync-blog-to-vercel/
 │       └── index.html     生成的 HTML
 ├── assets/                静态资源
 └── ...

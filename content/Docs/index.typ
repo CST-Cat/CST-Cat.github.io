@@ -13,7 +13,7 @@
 - #link("windows-to-mac-apps/")[Windows 用户购入 MacBook 后推荐安装的软件]
 - #link("tailscale-derp/")[自建 Tailscale DERP]
 - #link("oracle-example/")[oracle cloud一些基础操作]
-- #link("terminus-mosh/")[termius+mosh配置教程]
+- #link("termius-mosh/")[termius+mosh配置教程]
 - #link("komari-docker/")[docker部署komari]
 
 == 2025
@@ -26,4 +26,4 @@
 - #link("typst-syntax-demo/")[Typst 语法演示模板]
 - #link("typst-example/")[Typst 功能速览与样例]
 - #link("vps-intro/")[MJJ部分名词介绍]
-- #link("同步vercel/")[同步博客到 Vercel]
+- #link("sync-blog-to-vercel/")[同步博客到 Vercel]
