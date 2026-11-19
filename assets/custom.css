@@ -64,3 +64,85 @@ h1, h2, h3, h4, h5 {
 code, pre, kbd, tt {
     font-family: "JetBrains Mono", monospace !important;
 }
+
+/*******************************************************************************
+NAV FIX (local override, not upstream)
+窄屏时上游 .site-nav 允许换行，工具组会被挤到第二行；
+且 RSS 链接外层 <p> 的默认边距会把该行撑高。此处收紧。
+*******************************************************************************/
+
+/* RSS 外层 <p> 边距清零（所有宽度生效，避免工具组被撑高） */
+.site-nav-tools > p {
+    margin: 0;
+}
+
+/* 窄屏：导航不换行，链接字号与间距收紧，保证一排放得下 */
+@media (max-width: 760px) {
+    .site-nav {
+        flex-wrap: nowrap;
+    }
+
+    .site-nav-links {
+        flex-wrap: nowrap;
+        gap: 0.5em;
+    }
+
+    .site-nav-links a:any-link {
+        font-size: 1.25rem;
+        padding: 0.2em 0.3em;
+    }
+
+    .site-nav-tools {
+        margin-right: 0;
+    }
+}
+
+/* 更窄时（手机）进一步收紧链接字号与间距，让六个链接排成一行；
+   工具组仍可换到第二行，但边距已清零，不再出现大片空白 */
+@media (max-width: 480px) {
+    .site-nav {
+        flex-wrap: wrap;
+    }
+
+    .site-nav-links {
+        flex-wrap: wrap;
+        gap: 0.35em;
+    }
+
+    .site-nav-links a:any-link {
+        font-size: 0.92rem;
+        padding: 0.15em 0.2em;
+    }
+}
+
+/*******************************************************************************
+HEADER TOP ROW (local override)
+RSS 与深浅模式按钮移到欢迎语同行：第一行 flex 布局，工具组靠右。
+两个按钮缩小（2.8rem -> 2.1rem，图标 1.8rem -> 1.35rem）；
+hover / focus / 图标 mask / 主题切换等特效仍用上游原规则，一概不动。
+*******************************************************************************/
+
+.site-header-top {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.site-header-top .site-nav-tools {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.site-header-text > p {
+    margin: 0;
+}
+
+.site-nav-tools .nav-icon {
+    width: 2.1rem;
+    height: 2.1rem;
+}
+
+.site-nav-tools .nav-icon::before {
+    width: 1.35rem;
+    height: 1.35rem;
+}

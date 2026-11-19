@@ -142,15 +142,53 @@
       // Body
       html.body({
         // Custom header elements (site header, not navigation)
+        // LOCAL DIVERGENCE from upstream: the tools (custom icons, RSS,
+        // theme toggle) are emitted on this welcome row instead of inside
+        // the navigation, per the site owner's request. Layout and sizing
+        // live in assets/custom.css (.site-header-top).
         html.header(
-          class: "site-header",
+          class: "site-header site-header-top",
           {
-            for (i, element) in header-elements.enumerate() {
-              element
-              if i < header-elements.len() - 1 {
-                html.br()
+            html.div(class: "site-header-text", {
+              for (i, element) in header-elements.enumerate() {
+                element
+                if i < header-elements.len() - 1 {
+                  html.br()
+                }
               }
-            }
+            })
+            html.div(class: "site-nav-tools", {
+              // Custom header icons
+              for icon in header-icons {
+                icon
+              }
+              // RSS feed icon
+              if feed-dir != none and feed-dir.len() > 0 {
+                let label = if lang == "zh" { "订阅 RSS" } else { "Subscribe via RSS" }
+                html.elem(
+                  "a",
+                  attrs: (
+                    href: "/feed.xml",
+                    class: "nav-icon rss-link",
+                    type: "application/rss+xml",
+                    aria-label: label,
+                    title: label,
+                  ),
+                  "",
+                )
+              }
+              // Toggle theme button
+              html.elem(
+                "button",
+                attrs: (
+                  id: "theme-toggle",
+                  class: "nav-icon theme-toggle-btn",
+                  type: "button",
+                  aria-label: "Toggle theme",
+                ),
+                "",
+              )
+            })
           },
         )
 
@@ -167,38 +205,6 @@
                   }
                 })
               }
-              html.div(class: "site-nav-tools", {
-                // Custom header icons
-                for icon in header-icons {
-                  icon
-                }
-                // RSS feed icon
-                if feed-dir != none and feed-dir.len() > 0 {
-                  let label = if lang == "zh" { "订阅 RSS" } else { "Subscribe via RSS" }
-                  html.elem(
-                    "a",
-                    attrs: (
-                      href: "/feed.xml",
-                      class: "nav-icon rss-link",
-                      type: "application/rss+xml",
-                      aria-label: label,
-                      title: label,
-                    ),
-                    "",
-                  )
-                }
-                // Toggle theme button
-                html.elem(
-                  "button",
-                  attrs: (
-                    id: "theme-toggle",
-                    class: "nav-icon theme-toggle-btn",
-                    type: "button",
-                    aria-label: "Toggle theme",
-                  ),
-                  "",
-                )
-              })
             },
           ),
         )
