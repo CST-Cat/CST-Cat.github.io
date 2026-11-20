@@ -1,18 +1,21 @@
 /* 字体样式在模板 head 中通过 <link> 直接加载，避免 @import 级联延迟 */
 
-/* --- English Serif (for body text) --- */
+/* --- English Serif (for body text) ---
+   Anthropic Serif (from the Claude APK font extract, personal use).
+   Subset to the site's measured Latin charset + insurance ranges;
+   opsz pinned at 16 (text optical size), wght 300-800 kept variable. */
 @font-face {
-    font-family: "Crimson Pro";
-    src: url("/assets/fonts/CrimsonPro-VariableFont_wght.woff2") format("woff2");
-    font-weight: 100 900;
+    font-family: "Anthropic Serif";
+    src: url("/assets/fonts/AnthropicSerif-VariableFont_wght.woff2") format("woff2");
+    font-weight: 300 800;
     font-style: normal;
     font-display: optional;
 }
 
 @font-face {
-    font-family: "Crimson Pro";
-    src: url("/assets/fonts/CrimsonPro-Italic-VariableFont_wght.woff2") format("woff2");
-    font-weight: 100 900;
+    font-family: "Anthropic Serif";
+    src: url("/assets/fonts/AnthropicSerif-Italic-VariableFont_wght.woff2") format("woff2");
+    font-weight: 300 800;
     font-style: italic;
     font-display: optional;
 }
@@ -30,9 +33,9 @@
 FONT APPLICATION
 *******************************************************************************/
 
-/* 正文: 英文用 Crimson Pro，中文用朱雀仿宋 */
+/* 正文: 英文用 Anthropic Serif，中文用朱雀仿宋 */
 body {
-    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", Georgia, serif !important;
+    font-family: "Anthropic Serif", "Zhuque Fangsong (technical preview)", Georgia, serif !important;
     font-weight: 400 !important;
     font-variant-ligatures: none !important;
     font-feature-settings: "liga" 0, "clig" 0 !important;
@@ -44,14 +47,14 @@ body.font-loaded {
     opacity: 1;
 }
 
-/* 标题: 英文用 Crimson Pro，中文用朱雀仿宋 */
+/* 标题: 英文用 Anthropic Serif，中文用朱雀仿宋 */
 h1, h2, h3, h4, h5 {
-    font-family: "Crimson Pro", "Zhuque Fangsong (technical preview)", serif !important;
+    font-family: "Anthropic Serif", "Zhuque Fangsong (technical preview)", serif !important;
 }
 
 /* 侧栏/边注: 思源屏显臻宋 */
 .marginnote, .sidenote {
-    font-family: "Source Han Serif CN for Display", "Crimson Pro", serif !important;
+    font-family: "Source Han Serif CN for Display", "Anthropic Serif", serif !important;
     color: #858580 !important;
 }
 
@@ -60,9 +63,11 @@ h1, h2, h3, h4, h5 {
     font-style: normal !important;
 }
 
-/* 代码: JetBrains Mono */
+/* 代码: 英文 JetBrains Mono，中文 Noto Sans Mono CJK SC；连字一律关 */
 code, pre, kbd, tt {
-    font-family: "JetBrains Mono", monospace !important;
+    font-family: "JetBrains Mono", "Noto Sans Mono CJK SC", monospace !important;
+    font-variant-ligatures: none !important;
+    font-feature-settings: "liga" 0, "calt" 0 !important;
 }
 
 /*******************************************************************************
