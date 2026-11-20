@@ -113,8 +113,7 @@
           "/assets/tufte.min.css",
           "/assets/tufted.css",
           "/assets/theme.css",
-          "https://ik.imagekit.io/bavig10763/packages/sypxzs/dist/%E6%80%9D%E6%BA%90%E5%B1%8F%E6%98%BE%E8%87%BB%E5%AE%8B/result.css?t_3=1467",
-          "https://ik.imagekit.io/bavig10763/packages/zqfs/dist/ZhuqueFangsong-Regular/result.css?t_3=1467",
+          "/assets/fonts/cjk-fonts.css",
         )
         for (css-link) in (base-css + css).dedup() {
           html.link(rel: "stylesheet", href: css-link)
