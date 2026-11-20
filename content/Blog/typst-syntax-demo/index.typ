@@ -225,7 +225,7 @@ H#sub[2]O
 ```
 
 *效果：*
-- #link("/Docs/typst-example/sample-PDF.pdf")[下载 PDF 文件]
+- #link("/Blog/typst-example/sample-PDF.pdf")[下载 PDF 文件]
 - #link("../")[返回上级目录]
 
 #html.hr()
