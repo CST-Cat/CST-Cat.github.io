@@ -29,6 +29,16 @@
     font-display: optional;
 }
 
+/* 代码中文：Noto Sans Mono CJK SC 子集自托管（站点已用字 + 字频前 3500 保险集），仅 CJK 区段生效 */
+@font-face {
+    font-family: "Noto Sans Mono CJK SC";
+    src: url("/assets/fonts/NotoSansMonoCJKsc-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: optional;
+    unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-2A6DF;
+}
+
 /*******************************************************************************
 FONT APPLICATION
 *******************************************************************************/
