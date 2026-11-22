@@ -8,6 +8,8 @@
 
 == 2026
 
+#link("baidu-world-2026-li-yanhong/")[百度世界2026李彦宏全部内容整理]
+
 #link("10k-gif-auto-annotation/")[万张GIF大模型自动标注记录]
 
 #link("tufted-optimize/")[Tufted-Blog-Template 优化记录]
