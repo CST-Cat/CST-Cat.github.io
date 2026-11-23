@@ -232,6 +232,7 @@ BACK TO TOP BUTTON
 }
 
 .page-jump-btn.is-visible {
+	display: flex;
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(0);

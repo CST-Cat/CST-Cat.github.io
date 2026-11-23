@@ -5,7 +5,7 @@
   const MIN_H3_HEADINGS = 3;
 
   function collectHeadings(section) {
-    return Array.from(section.querySelectorAll("h2, h3, h4, h5, h6")).filter(
+    return Array.from(section.querySelectorAll("h2, h3")).filter(
       (heading) => !heading.closest('[role="doc-bibliography"]'),
     );
   }
@@ -45,10 +45,6 @@
     toggle.setAttribute("aria-label", label);
     toggle.setAttribute("aria-controls", nav.id);
 
-    const minLevel = Math.min(
-      ...headings.map((heading) => Number(heading.tagName.slice(1))),
-    );
-
     headings.forEach((heading, index) => {
       const id = ensureHeadingId(heading, index, usedIds);
       const item = document.createElement("li");
@@ -60,10 +56,8 @@
       link.textContent = heading.textContent.trim();
       indicator.className = "toc-toggle-line";
       indicator.setAttribute("aria-hidden", "true");
-      const depth = Number(heading.tagName.slice(1)) - minLevel;
-      if (depth > 0) {
-        item.style.paddingLeft = `${depth * 1.2}rem`;
-        indicator.style.width = `${Math.max(1.35 - depth * 0.45, 0.35)}rem`;
+      if (heading.tagName === "H3") {
+        indicator.classList.add("is-indented");
       }
 
       item.appendChild(link);

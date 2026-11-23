@@ -1,20 +1,23 @@
+#import "tags.typ": article-tags, prepare-page-tags, tag-navigation
 #import "math.typ": template-math
 #import "refs.typ": template-refs
 #import "notes.typ": template-notes
 #import "figures.typ": template-figures
 #import "blog-entry.typ": blog-entry
-#import "byline.typ": template-byline
-#import "layout.typ": full-width, margin-note, html-img, priority-image, template-quotes
+#import "layout.typ": full-width, margin-note, template-quotes
 #import "links.typ": icon-link, template-links
 #import "metadata.typ": metadata
+#import "byline.typ": template-byline
 
-/// Tufted 博客模板的主包装函数。
+/// The main wrapper function of Tufted Blog Template.
 ///
 /// Builds the document shell, metadata, styles and scripts, navigation, article,
 /// and footer. The template also installs show rules for figures, notes,
 /// references, math, links, and article bylines.
 ///
 /// - `header-links`: Dictionary mapping navigation URLs to visible labels.
+/// - `tags`: Article tag strings, normalized and exported for the catalogue.
+/// - `tag-index`: Site-root directory whose tags appear in this page's sidebar.
 /// - `header-icons`: Icon-link content, typically created with `icon-link`.
 /// - `title`: Page title.
 /// - `author`: Author name shown in metadata and the article byline.
@@ -40,6 +43,8 @@
 #let tufted-web(
   header-links: (:),
   header-icons: (),
+  tags: (),
+  tag-index: none,
 
   // Meta data
   title: "",
@@ -78,10 +83,10 @@
   show: template-figures
   show: template-quotes
   show: template-links
-  show: template-byline.with(author: author, date: date, extra-info: extra-info)
   show line: it => if target() == "html" { html.hr() } else { it }
 
-  set text(lang: lang)
+  // HTML accepts BCP 47 tags; Typst text expects the base language code.
+  set text(lang: lang.split("-").first())
   set raw(syntaxes: (
     "custom-syntaxes/Just.sublime-syntax",
     "custom-syntaxes/Mermaid.sublime-syntax",
@@ -89,11 +94,26 @@
     "custom-syntaxes/JSONC.sublime-syntax",
   ))
 
+  // Prepare tags for a page.
+  let (tags, groups, active, title, description, date, extra-info, content) = prepare-page-tags(
+    tags,
+    tag-index,
+    (title: title, description: description, date: date, extra-info: extra-info, content: content),
+    lang: lang,
+  )
+  show: template-byline.with(author: author, date: date, extra-info: extra-info, tags-content: if tags.len() > 0 {
+    article-tags(tags)
+  } else { [] })
+
   html.html(
     lang: lang,
     {
       // Head
       html.head({
+        if active == none {
+          if tags.len() > 0 { html.meta(name: "article-tags", content: json.encode(tags)) }
+          if tag-index != none { html.meta(name: "tag-index", content: tag-index) }
+        }
         // All metadata
         metadata(
           title: title,
@@ -110,10 +130,9 @@
 
         // load CSS
         let base-css = (
-          "/assets/tufte.min.css",
+          "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css",
           "/assets/tufted.css",
           "/assets/theme.css",
-          "/assets/fonts/cjk-fonts.css",
         )
         for (css-link) in (base-css + css).dedup() {
           html.link(rel: "stylesheet", href: css-link)
@@ -121,7 +140,6 @@
 
         // load JS scripts
         let base-js = (
-          "/assets/font-ready.js",
           "/assets/scripts/code-blocks.js",
           "/assets/scripts/format-headings.js",
           "/assets/scripts/theme-toggle.js",
@@ -141,53 +159,15 @@
       // Body
       html.body({
         // Custom header elements (site header, not navigation)
-        // LOCAL DIVERGENCE from upstream: the tools (custom icons, RSS,
-        // theme toggle) are emitted on this welcome row instead of inside
-        // the navigation, per the site owner's request. Layout and sizing
-        // live in assets/custom.css (.site-header-top).
         html.header(
-          class: "site-header site-header-top",
+          class: "site-header",
           {
-            html.div(class: "site-header-text", {
-              for (i, element) in header-elements.enumerate() {
-                element
-                if i < header-elements.len() - 1 {
-                  html.br()
-                }
+            for (i, element) in header-elements.enumerate() {
+              element
+              if i < header-elements.len() - 1 {
+                html.br()
               }
-            })
-            html.div(class: "site-nav-tools", {
-              // Custom header icons
-              for icon in header-icons {
-                icon
-              }
-              // RSS feed icon
-              if feed-dir != none and feed-dir.len() > 0 {
-                let label = if lang == "zh" { "订阅 RSS" } else { "Subscribe via RSS" }
-                html.elem(
-                  "a",
-                  attrs: (
-                    href: "/feed.xml",
-                    class: "nav-icon rss-link",
-                    type: "application/rss+xml",
-                    aria-label: label,
-                    title: label,
-                  ),
-                  "",
-                )
-              }
-              // Toggle theme button
-              html.elem(
-                "button",
-                attrs: (
-                  id: "theme-toggle",
-                  class: "nav-icon theme-toggle-btn",
-                  type: "button",
-                  aria-label: "Toggle theme",
-                ),
-                "",
-              )
-            })
+            }
           },
         )
 
@@ -204,13 +184,48 @@
                   }
                 })
               }
+              html.div(class: "site-nav-tools", {
+                // Custom header icons
+                for icon in header-icons {
+                  icon
+                }
+                // RSS feed icon
+                if feed-dir != none and feed-dir.len() > 0 {
+                  let label = if lang == "zh" { "订阅 RSS" } else { "Subscribe via RSS" }
+                  html.elem(
+                    "a",
+                    attrs: (
+                      href: "/feed.xml",
+                      class: "nav-icon rss-link",
+                      type: "application/rss+xml",
+                      aria-label: label,
+                      title: label,
+                    ),
+                    "",
+                  )
+                }
+                // Toggle theme button
+                html.elem(
+                  "button",
+                  attrs: (
+                    id: "theme-toggle",
+                    class: "nav-icon theme-toggle-btn",
+                    type: "button",
+                    aria-label: "Toggle theme",
+                  ),
+                  "",
+                )
+              })
             },
           ),
         )
 
         // Main content
         html.article(
-          html.section(content),
+          html.section({
+            tag-navigation(groups, lang: lang, active: active)
+            content
+          }),
         )
 
         // Custom footer elements
